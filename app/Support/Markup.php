@@ -43,7 +43,10 @@ class Markup
             return '#';
         }
         if (str_starts_with($url, '/') && ! str_starts_with($url, '//')) {
-            return url($url);
+            // url() trims a trailing slash; keep it so links hit the canonical address, not a 301 (D8).
+            $absolute = url($url);
+
+            return str_ends_with($url, '/') && ! str_ends_with($absolute, '/') ? $absolute.'/' : $absolute;
         }
 
         return preg_match('#^https?://#i', $url) ? $url : '#';

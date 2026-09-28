@@ -27,8 +27,8 @@
             </form>
 
             <div class="mt-6 space-y-2 pl-10">
-                <p>Don’t have an account? <a class="text-brand hover:underline" href="{{ url('/register/') }}">Signup Now »</a></p>
-                <p><a class="text-brand hover:underline" href="{{ url('/password-reset/') }}">Lost your password?</a></p>
+                <p>Don’t have an account? <a class="text-brand hover:underline" href="{{ \App\Support\SiteUrl::to('/register/') }}">Signup Now »</a></p>
+                <p><a class="text-brand hover:underline" href="{{ \App\Support\SiteUrl::to('/password-reset/') }}">Lost your password?</a></p>
             </div>
             <p class="mt-8 text-sm">Firm staff sign in through the <a class="text-brand hover:underline" href="{{ url('/admin/login') }}">staff portal</a>.</p>
         </div>

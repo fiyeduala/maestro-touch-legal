@@ -52,14 +52,14 @@
                 <div>
                     <label class="flex items-start gap-2">
                         <input class="mt-1.5" type="checkbox" name="accept_terms" value="1" @checked(old('accept_terms'))>
-                        <span>By registering to this website you agree to the <a class="text-brand hover:underline" href="{{ url('/terms-and-conditions/') }}" target="_blank" rel="noopener">terms &amp; conditions</a>. <span class="req">*</span></span>
+                        <span>By registering to this website you agree to the <a class="text-brand hover:underline" href="{{ \App\Support\SiteUrl::to('/terms-and-conditions/') }}" target="_blank" rel="noopener">terms &amp; conditions</a>. <span class="req">*</span></span>
                     </label>
                     @error('accept_terms')<p class="form-error">{{ $message }}</p>@enderror
                 </div>
                 <div>
                     <label class="flex items-start gap-2">
                         <input class="mt-1.5" type="checkbox" name="accept_privacy" value="1" @checked(old('accept_privacy'))>
-                        <span>I have read and accept the <a class="text-brand hover:underline" href="{{ url('/privacy-policy/') }}" target="_blank" rel="noopener">privacy policy</a> and allow “Maestro Touch Legal” to collect and store the data I submit through this form. <span class="req">*</span></span>
+                        <span>I have read and accept the <a class="text-brand hover:underline" href="{{ \App\Support\SiteUrl::to('/privacy-policy/') }}" target="_blank" rel="noopener">privacy policy</a> and allow “Maestro Touch Legal” to collect and store the data I submit through this form. <span class="req">*</span></span>
                     </label>
                     @error('accept_privacy')<p class="form-error">{{ $message }}</p>@enderror
                 </div>
@@ -68,8 +68,8 @@
             </form>
 
             <div class="mt-6 space-y-2 pl-10">
-                <p>Already have an account? <a class="text-brand hover:underline" href="{{ url('/log-in/') }}">Sign In »</a></p>
-                <p><a class="text-brand hover:underline" href="{{ url('/password-reset/') }}">Lost your password?</a></p>
+                <p>Already have an account? <a class="text-brand hover:underline" href="{{ \App\Support\SiteUrl::to('/log-in/') }}">Sign In »</a></p>
+                <p><a class="text-brand hover:underline" href="{{ \App\Support\SiteUrl::to('/password-reset/') }}">Lost your password?</a></p>
             </div>
         </div>
     </section>

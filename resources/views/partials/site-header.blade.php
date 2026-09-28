@@ -12,7 +12,7 @@
     } elseif ($user) {
         [$accountLabel, $accountUrl] = ['My Account', url('/portal')];
     } else {
-        [$accountLabel, $accountUrl] = [Settings::get('navigation.account_label'), url('/register/')];
+        [$accountLabel, $accountUrl] = [Settings::get('navigation.account_label'), \App\Support\SiteUrl::to('/register/')];
     }
 
     $headerBg = match ($tone ?? 'white') {

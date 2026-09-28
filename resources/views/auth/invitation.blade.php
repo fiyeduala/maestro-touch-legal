@@ -33,7 +33,7 @@
                 @elseif ($accountExists)
                     <div class="alert alert-info">
                         An account already exists for this address. Please
-                        <a class="text-brand underline" href="{{ $isStaffInvite ? url('/admin/login') : url('/log-in/') }}">sign in</a>
+                        <a class="text-brand underline" href="{{ $isStaffInvite ? url('/admin/login') : \App\Support\SiteUrl::to('/log-in/') }}">sign in</a>
                         first, then open this link again.
                     </div>
                 @else

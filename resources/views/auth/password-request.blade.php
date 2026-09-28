@@ -19,8 +19,8 @@
             </form>
 
             <div class="mt-6 space-y-2 pl-10">
-                <p>Already have an account? <a class="text-brand hover:underline" href="{{ url('/log-in/') }}">Sign In »</a></p>
-                <p>Don’t have an account? <a class="text-brand hover:underline" href="{{ url('/register/') }}">Signup Now »</a></p>
+                <p>Already have an account? <a class="text-brand hover:underline" href="{{ \App\Support\SiteUrl::to('/log-in/') }}">Sign In »</a></p>
+                <p>Don’t have an account? <a class="text-brand hover:underline" href="{{ \App\Support\SiteUrl::to('/register/') }}">Signup Now »</a></p>
             </div>
         </div>
     </section>

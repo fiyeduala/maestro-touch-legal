@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\StaffApplicationFileController;
 use App\Http\Controllers\Auth\InvitationController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\Site\FeedController;
 use App\Http\Controllers\Site\SiteController;
 use App\Http\Middleware\AddTrailingSlash;
 use App\Http\Middleware\EnsureActiveClient;
+use App\Http\Middleware\EnsureStaffSessionVerified;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,8 +24,13 @@ use Illuminate\Support\Facades\Route;
 Route::get('/robots.txt', [FeedController::class, 'robots']);
 Route::get('/sitemap.xml', [FeedController::class, 'sitemap'])->name('sitemap');
 
+// Confidential staff downloads: a verified staff-panel session plus the policy check in the controller.
+Route::middleware(['auth', EnsureStaffSessionVerified::class])->prefix('admin/download')->group(function () {
+    Route::get('/application-files/{file}', StaffApplicationFileController::class)->name('admin.application-file');
+});
+
 // Staff previews of unpublished content (never cached, noindex).
-Route::middleware('auth')->prefix('preview')->group(function () {
+Route::middleware(['auth', EnsureStaffSessionVerified::class])->prefix('preview')->group(function () {
     Route::get('/pages/{page}/{revision?}', [SiteController::class, 'previewPage'])->name('preview.page');
     Route::get('/posts/{post}', [SiteController::class, 'previewPost'])->name('preview.post');
 });

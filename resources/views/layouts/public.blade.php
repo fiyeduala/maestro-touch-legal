@@ -1,11 +1,13 @@
 @php
     use App\Domain\Operations\Settings;
     use App\Support\Markup;
+    use App\Support\SiteUrl;
 
     $siteTitle = Settings::get('site.title');
     $pageTitle = isset($title) && $title !== '' ? Markup::plain($title).' - '.$siteTitle : $siteTitle;
     $metaDescription = $description ?? null;
-    $canonical = $canonical ?? url()->current();
+    // Public URLs end in "/" (WordPress style); url()->current() would drop it.
+    $canonical = $canonical ?? SiteUrl::to(request()->path());
     $ogImage = $ogImage ?? Settings::get('site.og_image_path');
     $overlayHeader = $overlayHeader ?? false;
     $headerTone = $headerTone ?? 'white';
@@ -45,7 +47,7 @@
     <link rel="icon" href="{{ url('/wp-content/uploads/2025/08/blue-1-150x150.png') }}" sizes="32x32">
     <link rel="icon" href="{{ Markup::safeUrl(Settings::get('site.favicon_path')) }}" sizes="192x192">
     <link rel="apple-touch-icon" href="{{ Markup::safeUrl(Settings::get('site.favicon_path')) }}">
-    <link rel="alternate" type="application/rss+xml" title="{{ $siteTitle }} &raquo; Feed" href="{{ url('/feed/') }}">
+    <link rel="alternate" type="application/rss+xml" title="{{ $siteTitle }} &raquo; Feed" href="{{ \App\Support\SiteUrl::to('/feed/') }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')

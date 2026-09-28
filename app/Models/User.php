@@ -71,7 +71,8 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     /** @return list<string> */
     public function activeRoleValues(): array
     {
-        return $this->roleCache ??= $this->activeRoleGrants()->pluck('role')->unique()->values()->all();
+        return $this->roleCache ??= $this->activeRoleGrants()->pluck('role')
+            ->map(fn (Role|string $r) => $r instanceof Role ? $r->value : $r)->unique()->values()->all();
     }
 
     /** @return list<Role> */

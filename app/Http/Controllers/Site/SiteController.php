@@ -12,6 +12,7 @@ use App\Support\SiteUrl;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 
 /** Public website: CMS pages, blog listing/archives/search and single posts. */
@@ -86,20 +87,28 @@ class SiteController extends Controller
     }
 
     /** Draft preview for staff who may edit content. Never cached, never indexed. */
-    public function previewPage(Page $page, ?PageRevision $revision = null): View
+    public function previewPage(Page $page, ?PageRevision $revision = null): Response
     {
         Gate::authorize('manage-content');
         $revision ??= $page->draftRevision ?? $page->publishedRevision;
         abort_unless($revision && $revision->page_id === $page->id, 404);
 
-        return $this->renderPage($page, $revision, preview: true);
+        return $this->previewResponse($this->renderPage($page, $revision, preview: true));
     }
 
-    public function previewPost(Post $post): View
+    public function previewPost(Post $post): Response
     {
         Gate::authorize('manage-content');
 
-        return $this->renderPost($post->load(['cover', 'categories', 'tags', 'author']), preview: true);
+        return $this->previewResponse($this->renderPost($post->load(['cover', 'categories', 'tags', 'author']), preview: true));
+    }
+
+    /** Unpublished content must never be indexed or kept by a shared cache. */
+    private function previewResponse(View $view): Response
+    {
+        return response($view)
+            ->header('X-Robots-Tag', 'noindex, nofollow')
+            ->header('Cache-Control', 'private, no-store');
     }
 
     private function publishedPage(string $path): Page

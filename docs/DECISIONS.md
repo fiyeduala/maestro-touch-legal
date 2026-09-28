@@ -19,8 +19,8 @@ posts, search results and social shares keep working without redirects. New uplo
 ### D4 — In-app role model instead of spatie/laravel-permission (2026-09-28)
 The current spatie/laravel-permission (8.x) requires PHP 8.3; the 8.2 pin would lock an older major. Roles here are a
 fixed set of seven with capabilities defined in code, and the real control is record-level (matter team membership),
-so a small `roles` + `role_user` (with granted/revoked actor and timestamps) model is simpler and gives a full grant
-history for audit.
+so a single `user_roles` table (one row per grant, with granted/revoked actor and timestamps; role names come from
+the `App\Domain\Identity\Role` enum) is simpler and gives a full grant history for audit.
 
 ### D5 — Staff two-factor authentication uses Filament 5's built-in MFA (2026-09-28)
 Authenticator-app (TOTP) with recovery codes, email code as an alternative. Required for every staff account.
@@ -34,3 +34,56 @@ Poppins is self-hosted (no Google Fonts request) to avoid a third-party dependen
 Local PHP has no `curl.cainfo`, so HTTPS calls fail. Verification is never disabled: local tooling uses the Mozilla
 bundle at `storage/certs/cacert.pem` (git-ignored). Recommended permanent fix on this PC: set
 `curl.cainfo` and `openssl.cafile` in `C:\Program Files\php 8.2\php.ini` to that file. Not needed on cPanel.
+
+### D8 — Public URLs keep WordPress-style trailing slashes (2026-09-28)
+Every public page and post URL ends in `/` exactly as on the live site, so existing links, search results and shares
+keep working. The bare form (`/about`) answers 301 to `/about/`. Laravel's `url()` trims slashes, so public links,
+canonicals, the sitemap and the feed use `App\Support\SiteUrl::to()`. The test client also trims slashes;
+`tests/TestCase.php` restores them so tests request the real address.
+
+### D9 — No external password-breach (HIBP) check (2026-09-28)
+Passwords need at least 12 characters with mixed case, a number and a symbol. The "pwned passwords" lookup is not
+used: it needs an outbound HTTPS call during registration, which is unreliable on shared hosting and would make
+sign-up fail whenever the API is unreachable. It can be switched on later if the host proves reliable.
+
+### D10 — Staff sessions carry a verified-sign-in marker (2026-09-28)
+After the password and 2-step challenge, the staff session is marked (`EnsureStaffSessionVerified`). Staff-only
+routes outside Filament's own pages (page/post previews, application file downloads) require that marker as well as
+the role, so a session opened any other way cannot reach them. Staff sign in at `/admin/login`; the public
+`/log-in/` refuses staff accounts.
+
+### D11 — Content model and publishing rights (2026-09-28)
+- **Pages** are the fixed set of mirrored templates (home, about, offering, contact, terms, privacy, blog, careers,
+  log in, register). Their copy is editable by section, but pages cannot be created or deleted in the admin. Saving
+  creates a draft revision; the live page changes only on **Publish**. Drafts can be previewed or discarded.
+- **Publishing** pages and posts needs the `publish-content` gate: Technical Administrator or Firm Principal, or
+  Content Editors when the owner turns on "editors can publish" (off by default). Editors can write drafts and submit
+  posts for review. Editing a post that is already live also needs publish rights.
+- Renaming a live post's slug adds a 301 from the old address automatically and re-points older redirects, so there
+  are no chains. Every save stores a revision snapshot.
+- Rich text is sanitised with HTML Purifier on save (profiles `content` and `comment`).
+- Redirects are applied by global middleware before routing, but can never shadow `/admin`, `/portal`, Livewire,
+  build assets or application-file routes. 410 Gone is supported for removed content.
+
+### D12 — Public media storage (2026-09-28)
+New blog and brand uploads go on the `media` disk (`public/media/`, git-ignored). Legacy WordPress files stay at
+`/wp-content/uploads/` (D3). Accepted types are JPEG, PNG, WebP, GIF and PDF, up to 10 MB. SVG is refused because it
+can carry scripts. The real file type is checked on the server, duplicates are rejected by SHA-256, and imported
+WordPress media cannot be deleted from the library. Uploads are public by design and the upload screen says so;
+confidential files never go here.
+
+### D13 — WordPress import is repeatable and never overwrites local edits (2026-09-28)
+`php artisan mtl:import-wordpress` reads the REST capture (`docs/source-capture/rest`) or, with `--live=`, the live
+site read-only. Each record is mapped by its WordPress ID with a checksum of the source:
+- re-running with WordPress unchanged changes nothing;
+- if WordPress changed but the post was also edited here, the local version is kept and the run reports a conflict;
+- `--dry-run` reports what would change without saving.
+
+`hello-world` is imported as a draft. Comments are imported, but new public comments stay off until the owner
+decides (`content.comments_open`).
+
+### D14 — Site settings are a fixed list of typed keys (2026-09-28)
+The Settings screen (full administrators only) edits a defined set of keys: site identity, menu, brand colours,
+contact details, mail sender, admin notification recipients, Tawk.to IDs and publishing options. There is no
+free-form "custom script" field. Tawk.to takes only the property and widget IDs, which are format-checked, and the
+app builds the embed code itself, on public pages only. Changes are audited.

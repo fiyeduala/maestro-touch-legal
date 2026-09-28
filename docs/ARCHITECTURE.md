@@ -115,7 +115,7 @@ slugs of published posts or recorded redirects; every fixed route wins first.
 | Financial history | Issued invoices, payments and ledger entries are never edited; corrections are credit notes/reversal entries. |
 | Audit | `audit_events` is insert-only from the application (no update/delete code paths or UI). Secrets are redacted before writing. Database/server administrators remain technically able to alter it; no cryptographic immutability is claimed. |
 | Messages | Never edited or deleted; amendments are new records linked to the original with their own audience. Internal notes are a separate model/table, never loaded by client-facing queries, emails, digests or exports. |
-| Files | Confidential files on the `private` disk (`storage/app/private`), served only via authorised controller routes with `Content-Disposition` rules; checksums recorded. Public blog/brand media on the `public_media` disk. No virus scanning is claimed unless a scanner is configured. |
+| Files | Confidential files on the `private` disk (`storage/app/private`), served only via authorised controller routes with `Content-Disposition` rules; checksums recorded. Public blog/brand media on the `media` disk (`public/media`, DECISIONS D12). No virus scanning is claimed unless a scanner is configured. |
 | Time | Stored in UTC; firm business timezone setting (default `Africa/Lagos`); client timezone used for display. |
 | Secrets | `.env` for infrastructure secrets; admin-editable integration keys stored encrypted (`encrypted` cast, `APP_KEY`), masked in UI, excluded from audit payloads. `APP_KEY` must never change after launch; `APP_PREVIOUS_KEYS` is used for rotation. |
 

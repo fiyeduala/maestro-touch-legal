@@ -8,6 +8,11 @@ namespace App\Support;
  */
 class SiteUrl
 {
+    /** Lower-case words joined by single hyphens, as WordPress generated them. */
+    public const SLUG_PATTERN = '/^[a-z0-9]+(?:-[a-z0-9]+)*$/';
+
+    public const SLUG_HELP = 'Use lower-case letters, numbers and single hyphens only, e.g. land-title-in-lagos.';
+
     public static function to(string $path): string
     {
         $path = '/'.trim($path, '/');

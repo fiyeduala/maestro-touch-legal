@@ -19,6 +19,6 @@
     <div class="mt-10 rounded-md bg-tint p-6">
         <h2 class="heading-3">Need Legal Help?</h2>
         <p class="mt-2">Tell us what you need and our team will get back to you.</p>
-        <a class="btn mt-4" href="{{ url('/contact/') }}">Contact Us</a>
+        <a class="btn mt-4" href="{{ \App\Support\SiteUrl::to('/contact/') }}">Contact Us</a>
     </div>
 @endsection

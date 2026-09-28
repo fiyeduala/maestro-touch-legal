@@ -104,6 +104,21 @@ class PageRevisions
         return $copy;
     }
 
+    /** Drops the open draft; the published revision (if any) is untouched and the draft stays in history. */
+    public function discardDraft(Page $page, ?User $actor = null): void
+    {
+        DB::transaction(function () use ($page, $actor) {
+            $page = Page::lockForUpdate()->findOrFail($page->id);
+            $draft = $page->draft_revision_id ? PageRevision::find($page->draft_revision_id) : null;
+            if (! $draft) {
+                return;
+            }
+            $draft->update(['status' => 'superseded']);
+            $page->update(['draft_revision_id' => null]);
+            Audit::record('page.draft_discarded', "Discarded draft r{$draft->number} of {$page->path}", $page, context: ['revision' => $draft->number], actor: $actor);
+        });
+    }
+
     public function unpublish(Page $page, ?User $actor = null): void
     {
         abort_if($page->is_system && $page->path === '/', 422, 'The home page cannot be unpublished.');

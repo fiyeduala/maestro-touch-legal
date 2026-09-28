@@ -12,7 +12,7 @@
         <p class="mt-1 text-xs">
             @foreach ($footerLinks as $path => $label)
                 @unless ($loop->first)<span aria-hidden="true">·</span>@endunless
-                <a href="{{ url($path) }}" class="hover:text-brand">{{ $label }}</a>
+                <a href="{{ \App\Support\SiteUrl::to($path) }}" class="hover:text-brand">{{ $label }}</a>
             @endforeach
         </p>
     </div>

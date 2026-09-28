@@ -121,7 +121,7 @@
                     <div>
                         <label class="flex items-start gap-2">
                             <input class="mt-1.5" type="checkbox" name="consent" value="1" @checked(old('consent'))>
-                            <span>I agree to Maestro Touch Legal storing and processing the information and documents in this application to assess it, as described in the <a class="text-brand hover:underline" href="{{ url('/privacy-policy/') }}" target="_blank" rel="noopener">privacy policy</a>. <span class="req">*</span></span>
+                            <span>I agree to Maestro Touch Legal storing and processing the information and documents in this application to assess it, as described in the <a class="text-brand hover:underline" href="{{ \App\Support\SiteUrl::to('/privacy-policy/') }}" target="_blank" rel="noopener">privacy policy</a>. <span class="req">*</span></span>
                         </label>
                         @error('consent')<p class="form-error">{{ $message }}</p>@enderror
                     </div>

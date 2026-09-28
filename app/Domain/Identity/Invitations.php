@@ -92,6 +92,9 @@ class Invitations
         if (! $actor->isFullAdministrator()) {
             throw new AccountAdministrationException('Only a Technical Administrator or Firm Principal can revoke invitations.');
         }
+        if ($invitation->accepted_at || $invitation->revoked_at) {
+            throw new AccountAdministrationException('This invitation is no longer open.');
+        }
 
         $invitation->forceFill(['revoked_at' => now(), 'revoked_by' => $actor->id])->save();
         Audit::record('invitation.revoked', "Revoked invitation to {$invitation->email}", $invitation, actor: $actor);

@@ -47,10 +47,22 @@ were retrieved and self-hosted. No placeholder logo is needed.
 
 ## 5. Content decisions needed
 
-- `/hello-world/` (WordPress sample post with a sample comment): recommend importing it as an unpublished draft and
-  returning 410 for its URL.
+- `/hello-world/` (WordPress sample post with a sample comment): now imported as an unpublished draft, so its URL
+  returns 404. A 410 redirect entry can be added in Redirects if preferred.
 - Four genuine reader comments (posts 838, 857, 870): import as an approved read-only archive shown under each post,
   or keep them archived but hidden? Commenting on new posts: enable with moderation, or turn off?
 - New wording needed for: privacy notice, enquiry-form help text, legal-team application page, portal onboarding
   (including the notice that daily conversation recaps are sent by email). Drafts will be supplied for approval.
 - Existing `/terms-and-conditions/` describes the old portal; review against the new portal features before launch.
+
+## 6. Found while building Phase 2 (awaiting owner)
+
+| Item | Current state | Blocking? |
+|---|---|---|
+| **Privacy policy** | A draft exists in the page editor but is **not published**; `/privacy-policy/` returns 404 until the owner approves and publishes it. Forms link to it. | **Yes, blocks launch** |
+| Careers page (`/join-our-legal-team/`) wording and application form labels | New wording, drafted for approval | Before launch |
+| Image alt text | Imported as-is from WordPress. Some values are empty or meaningless (e.g. "blue", a random string, "woocommerce placeholder"). Not invented or changed; they can be corrected in the Media library. | No (accessibility) |
+| Staff sign-in address | Staff now sign in at `/admin/login`; the public `/log-in/` is for clients only and refuses staff accounts | No; staff need telling |
+| "Login/Register" menu label | Kept as on the live site; points to `/register/` (which links to sign-in). Signed-in users see "My Account" or "Staff Admin" instead | No |
+| Comments | Imported comments display under their posts; **new** public comments are switched off by default (Settings → Publishing), with moderation when on | Owner decision |
+| Author avatars | Not shown; the live site's Gravatar images are not loaded (no third-party request) | No |

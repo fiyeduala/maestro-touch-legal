@@ -26,10 +26,8 @@ class ApplyRedirects
         }
 
         $path = Redirect::normalise($request->getPathInfo());
-        foreach (self::PROTECTED_PREFIXES as $prefix) {
-            if ($path === $prefix || str_starts_with($path, $prefix.'/')) {
-                return $next($request);
-            }
+        if (self::isProtected($path)) {
+            return $next($request);
         }
 
         $map = self::map();
@@ -54,6 +52,18 @@ class ApplyRedirects
         }
 
         return redirect()->to($target, in_array($status, [301, 302, 307, 308], true) ? $status : 301);
+    }
+
+    /** Application areas (panel, portal, assets, tokens) that a managed redirect may never capture. */
+    public static function isProtected(string $path): bool
+    {
+        foreach (self::PROTECTED_PREFIXES as $prefix) {
+            if ($path === $prefix || str_starts_with($path, $prefix.'/')) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /** @return array<string, array{0:int,1:?string,2:int}> */

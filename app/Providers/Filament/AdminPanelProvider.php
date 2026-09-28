@@ -55,6 +55,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->font('Poppins', url: fn () => Vite::asset('resources/css/admin-font.css'), provider: LocalFontProvider::class)
             ->sidebarCollapsibleOnDesktop()
+            ->navigationGroups(['Website', 'People', 'System'])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
