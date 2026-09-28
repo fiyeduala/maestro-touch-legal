@@ -3,6 +3,7 @@
 namespace Tests\Feature\Admin;
 
 use App\Domain\Identity\Role;
+use App\Domain\Operations\BankInstructions;
 use App\Domain\Operations\Settings;
 use App\Filament\Pages\SiteSettings;
 use App\Filament\Resources\Comments\Pages\ListComments;
@@ -37,6 +38,28 @@ class SettingsAndMediaTest extends TestCase
         Settings::flush();
         $this->assertSame('hello@example.com', Settings::get('contact.email'));
         $this->assertTrue(Settings::get('integrations.tawk_enabled'));
+        $this->assertDatabaseHas('audit_events', ['action' => 'settings.updated']);
+    }
+
+    public function test_bank_instructions_are_set_per_currency(): void
+    {
+        $this->actingAsStaff($this->userWithRoles(Role::FirmPrincipal));
+        $this->assertFalse(BankInstructions::available('NGN'));
+
+        // A half-filled account is refused rather than shown to clients.
+        Livewire::test(SiteSettings::class)
+            ->fillForm(['bank.ngn_bank_name' => 'Example Bank', 'bank.ngn_account_number' => '12345'])
+            ->call('save')
+            ->assertHasFormErrors(['bank.ngn_account_name', 'bank.ngn_account_number']);
+
+        Livewire::test(SiteSettings::class)
+            ->fillForm(['bank.ngn_bank_name' => 'Example Bank', 'bank.ngn_account_name' => 'Maestro Touch Legal', 'bank.ngn_account_number' => '0123456789'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        Settings::flush();
+        $this->assertSame('0123456789', BankInstructions::for('NGN')['account_number']);
+        $this->assertFalse(BankInstructions::available('USD'));
         $this->assertDatabaseHas('audit_events', ['action' => 'settings.updated']);
     }
 

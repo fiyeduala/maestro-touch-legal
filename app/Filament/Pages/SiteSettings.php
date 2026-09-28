@@ -55,6 +55,9 @@ class SiteSettings extends Page
         'mail.from_name', 'mail.from_address', 'mail.reply_to', 'notifications.admin_recipients',
         'integrations.tawk_enabled', 'integrations.tawk_property_id', 'integrations.tawk_widget_id',
         'seo.google_site_verification', 'firm.nvn_url', 'content.editors_can_publish',
+        'bank.ngn_bank_name', 'bank.ngn_account_name', 'bank.ngn_account_number', 'bank.ngn_notes',
+        'bank.usd_bank_name', 'bank.usd_account_name', 'bank.usd_account_number', 'bank.usd_swift', 'bank.usd_routing',
+        'bank.usd_bank_address', 'bank.usd_intermediary', 'bank.usd_notes',
     ];
 
     /** @var array<string, mixed>|null */
@@ -79,6 +82,11 @@ class SiteSettings extends Page
         $link = fn (string $name, string $label) => TextInput::make($name)->label($label)->required()->maxLength(500)
             ->regex('#^(/(?!/)|https?://|mailto:|tel:)#i');
         $hex = fn (string $name, string $label) => ColorPicker::make($name)->label($label)->required()->regex('/^#[0-9a-fA-F]{6}$/');
+        // A currency's account is either left empty or given all of its required details.
+        $anyBank = fn (string $currency) => fn (Get $get) => collect($currency === 'ngn'
+            ? ['bank_name', 'account_name', 'account_number']
+            : ['bank_name', 'account_name', 'account_number', 'swift'])
+            ->contains(fn ($field) => filled($get("bank.{$currency}_{$field}")));
 
         return $schema->statePath('data')->components([
             Tabs::make()->persistTabInQueryString()->tabs([
@@ -136,6 +144,38 @@ class SiteSettings extends Page
                             ->nestedRecursiveRules(['email'])
                             ->helperText('Addresses that receive new-enquiry and application alerts. Nothing is sent if this is empty.'),
                     ]),
+                ]),
+                Tab::make('Bank transfer')->schema([
+                    Section::make('Naira (NGN) account')
+                        ->description('Clients see these details when paying an NGN invoice by transfer. Leave empty to offer no NGN transfer option.')
+                        ->columns(2)->schema([
+                            TextInput::make('bank.ngn_bank_name')->label('Bank')->maxLength(120)
+                                ->required($anyBank('ngn')),
+                            TextInput::make('bank.ngn_account_name')->label('Account name')->maxLength(160)
+                                ->required($anyBank('ngn')),
+                            TextInput::make('bank.ngn_account_number')->label('Account number (NUBAN)')
+                                ->regex('/^\d{10}$/')->validationMessages(['regex' => 'A Nigerian account number has 10 digits.'])
+                                ->required($anyBank('ngn')),
+                            Textarea::make('bank.ngn_notes')->label('Extra instructions')->rows(2)->maxLength(500),
+                        ]),
+                    Section::make('US dollar (USD) account')
+                        ->description('Clients see these details when paying a USD invoice by transfer. Leave empty to offer no USD transfer option.')
+                        ->columns(2)->schema([
+                            TextInput::make('bank.usd_bank_name')->label('Bank')->maxLength(120)
+                                ->required($anyBank('usd')),
+                            TextInput::make('bank.usd_account_name')->label('Account name')->maxLength(160)
+                                ->required($anyBank('usd')),
+                            TextInput::make('bank.usd_account_number')->label('Account number / IBAN')->maxLength(40)
+                                ->regex('/^[A-Za-z0-9 -]{6,40}$/')
+                                ->required($anyBank('usd')),
+                            TextInput::make('bank.usd_swift')->label('SWIFT / BIC')
+                                ->regex('/^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$/')->validationMessages(['regex' => 'Enter an 8 or 11 character SWIFT code in capitals.'])
+                                ->required($anyBank('usd')),
+                            TextInput::make('bank.usd_routing')->label('Routing / ABA number (if any)')->maxLength(40),
+                            TextInput::make('bank.usd_intermediary')->label('Intermediary bank (if any)')->maxLength(255),
+                            Textarea::make('bank.usd_bank_address')->label('Bank address')->rows(2)->maxLength(500),
+                            Textarea::make('bank.usd_notes')->label('Extra instructions')->rows(2)->maxLength(500),
+                        ]),
                 ]),
                 Tab::make('Integrations')->schema([
                     Section::make('Tawk.to live chat')

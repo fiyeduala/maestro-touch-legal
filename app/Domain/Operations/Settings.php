@@ -56,6 +56,20 @@ class Settings
         'content.editors_can_publish' => [false, false],
         'content.comments_open' => [false, false], // new public comments (moderated); owner decision
         'notifications.admin_recipients' => [[], false], // explicitly configured addresses only
+        // Bank-transfer instructions, one set per currency (see BankInstructions). Shown to clients, so not
+        // encrypted; every change is audited like any other setting.
+        'bank.ngn_bank_name' => [null, false],
+        'bank.ngn_account_name' => [null, false],
+        'bank.ngn_account_number' => [null, false],
+        'bank.ngn_notes' => [null, false],
+        'bank.usd_bank_name' => [null, false],
+        'bank.usd_account_name' => [null, false],
+        'bank.usd_account_number' => [null, false],
+        'bank.usd_swift' => [null, false],
+        'bank.usd_routing' => [null, false],
+        'bank.usd_bank_address' => [null, false],
+        'bank.usd_intermediary' => [null, false],
+        'bank.usd_notes' => [null, false],
     ];
 
     private static ?array $loaded = null;

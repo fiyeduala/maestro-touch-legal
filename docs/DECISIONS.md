@@ -138,8 +138,8 @@ Intake forms are versioned. A published version is never edited; saving changes 
 already given always match the questions that were asked. An engagement template's version rises only when its
 cleaned (sanitised) body changes. Renaming or deactivating does not change the version. Services and templates
 are deactivated, never deleted. `ServiceSeeder` adds the eight practice areas from the live site with
-**unpublished** draft intake questions and an **inactive** sample engagement template. All of this is draft copy
-for owner approval (content-gaps §7).
+intake questions **published** (owner approved the wording on 28 Sep 2026) and an **inactive** outline engagement
+template, which stays off until the firm writes its real terms (content-gaps §7).
 
 ### D24 — Public enquiry form (2026-09-28)
 The main form is at `/legal-assistance/`. Step one is choosing a service, which is a plain link, so the form works

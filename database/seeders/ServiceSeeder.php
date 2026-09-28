@@ -11,10 +11,9 @@ use Illuminate\Database\Seeder;
  * Starting catalogue: the eight practice areas named on the current site's Practice Areas page.
  * Only creates what is missing, so it never overwrites anything an administrator has changed.
  *
- * Intake forms are seeded as unpublished drafts and the sample engagement template is inactive:
- * the questions and the terms are placeholder copy for the owner to review, edit and publish
- * (docs/content-gaps.md §5). Until a form is published the public form asks only the standard
- * contact questions and summary for that service.
+ * The intake questions were approved by the owner on 28 Sep 2026 and are seeded as published version 1;
+ * later changes go through the admin screens as new versions. The sample engagement template is only an
+ * outline and stays inactive until the firm writes its real terms in the template editor.
  */
 class ServiceSeeder extends Seeder
 {
@@ -79,6 +78,7 @@ HTML;
                 $service->intakeForms()->create([
                     'version' => 1,
                     'fields' => array_map(fn ($field) => $field + ['required' => false, 'options' => [], 'help' => null], [...$questions, ...self::BASE_QUESTIONS]),
+                    'published_at' => now(), // wording approved by the owner, 28 Sep 2026
                 ]);
             }
         }

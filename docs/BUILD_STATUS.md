@@ -98,12 +98,12 @@ repeatability/conflicts, and application file access.
 |---|---|
 | **Privacy policy approval** (draft in the page editor) | **Launch** |
 | Contact page details (email/phone/address/WhatsApp); live page has none | Final Contact page content |
-| cPanel details (PHP CLI/web versions + extensions, SSH/terminal, document-root control, cron, MySQL version, upload limits, disk, symlinks) | Phase 6 deployment layout; hosting verification step of Phase 1 |
+| Namecheap shared hosting (owner, 28 Sep). Published Namecheap docs say: PHP 8.2–8.5 via "Select PHP Version" with per-extension toggles; SSH on port 21098; cron no more often than every 5 minutes and at most 5 cron jobs; default `upload_max_filesize`/`post_max_size` 1024M. **Still to confirm on the actual account:** MySQL/MariaDB version, document-root control for the domain, disk quota | Phase 6 deployment layout |
 | WordPress WXR export + uploads backup | Final migration coverage (drafts/private/scheduled/SEO fields) |
-| Decisions in `docs/content-gaps.md` §2–§7 (typos, layout quirks, comments, careers wording, alt text, new enquiry and portal wording, intake questions) | Final copy sign-off |
-| **The firm's real engagement terms** (the seeded template is an inactive outline) and approval of the seeded intake questions | Sending engagement terms in production; publishing intake forms |
-| cPanel `upload_max_filesize` ≥ 20M and `post_max_size` ≥ 25M (D19) | Uploads over the host default |
-| SMTP, Paystack sandbox/live, bank instructions, Tawk IDs, admin/digest emails | Live integration checks (build proceeds with test doubles) |
+| Decisions in `docs/content-gaps.md` §2–§6 (typos, layout quirks, comments, careers wording, alt text). §7 new wording approved 28 Sep | Final copy sign-off |
+| **The firm's real engagement terms**, written in Admin → Engagement templates (the seeded template is an inactive outline) | Sending engagement terms in production |
+| Upload limits ≥ 20M/25M (D19). Namecheap default is 1024M, so likely fine; owner will check at deployment | Uploads over the host default |
+| SMTP (owner fills `.env` on cPanel), Paystack test keys (owner supplying), NGN and USD bank details (Settings → Bank transfer), Tawk IDs, admin notification emails (Settings → Email) | Live integration checks (build proceeds with test doubles). Owner reviews everything locally before any cPanel upload |
 
 ## Local environment notes
 

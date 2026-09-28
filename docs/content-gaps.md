@@ -67,9 +67,9 @@ were retrieved and self-hosted. No placeholder logo is needed.
 | Comments | Imported comments display under their posts; **new** public comments are switched off by default (Settings → Publishing), with moderation when on | Owner decision |
 | Author avatars | Not shown; the live site's Gravatar images are not loaded (no third-party request) | No |
 
-## 7. New wording drafted in Phase 3 (awaiting owner approval)
+## 7. New wording drafted in Phase 3 (approved by the owner, 28 Sep 2026)
 
-All of the following is placeholder copy written for this build. None of it has been approved.
+The owner approved all of the wording below on 28 Sep 2026, except the engagement-terms outline, which is not real terms.
 
 | Where | Wording |
 |---|---|
@@ -78,5 +78,5 @@ All of the following is placeholder copy written for this build. None of it has 
 | Contact page | "Send Us a Message" heading and form labels (below the preserved live copy) |
 | Acknowledgement email to enquirers | Subject and body |
 | Portal | "Needs Your Attention", "Your Matters", "Send Documents", upload help text, draft approval prompts, quotation acceptance statement, engagement signing text ("Type your full name to sign", "I have read these terms and agree to them") |
-| Service catalogue | The eight practice-area services (names taken from the live Practice Areas page) and their intake questions, which are **unpublished drafts** |
+| Service catalogue | The eight practice-area services (names taken from the live Practice Areas page) and their intake questions, seeded as **published** version 1 |
 | Engagement terms | "Standard engagement terms (draft for owner approval)" is a structural outline only and **inactive**. The firm must supply the real terms. |
