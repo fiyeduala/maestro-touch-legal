@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\DocumentFileController;
 use App\Http\Controllers\Portal\PortalController;
 use App\Http\Controllers\Site\CareersController;
 use App\Http\Controllers\Site\CommentController;
@@ -27,6 +28,7 @@ Route::get('/sitemap.xml', [FeedController::class, 'sitemap'])->name('sitemap');
 // Confidential staff downloads: a verified staff-panel session plus the policy check in the controller.
 Route::middleware(['auth', EnsureStaffSessionVerified::class])->prefix('admin/download')->group(function () {
     Route::get('/application-files/{file}', StaffApplicationFileController::class)->name('admin.application-file');
+    Route::get('/documents/{version}', [DocumentFileController::class, 'staff'])->name('admin.document-file');
 });
 
 // Staff previews of unpublished content (never cached, noindex).
@@ -38,6 +40,7 @@ Route::middleware(['auth', EnsureStaffSessionVerified::class])->prefix('preview'
 // Client portal (Phase 2 shell).
 Route::middleware(['auth', 'verified', EnsureActiveClient::class])->prefix('portal')->name('portal.')->group(function () {
     Route::get('/', [PortalController::class, 'home'])->name('home');
+    Route::get('/documents/{version}', [DocumentFileController::class, 'client'])->name('document-file');
     Route::get('/profile', [PortalController::class, 'profile'])->name('profile');
     Route::put('/profile', [PortalController::class, 'updateProfile'])->name('profile.update');
     Route::put('/profile/password', [PortalController::class, 'updatePassword'])->middleware('throttle:auth-forms')->name('password.update');

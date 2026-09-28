@@ -143,6 +143,16 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
             ->withTimestamps();
     }
 
+    public function matterMemberships(): HasMany
+    {
+        return $this->hasMany(MatterTeamMember::class)->whereNull('removed_at');
+    }
+
+    public function assignedTasks(): HasMany
+    {
+        return $this->hasMany(Task::class, 'assignee_id');
+    }
+
     // --- Filament ----------------------------------------------------------
 
     public function canAccessPanel(Panel $panel): bool

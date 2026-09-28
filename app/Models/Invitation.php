@@ -63,6 +63,11 @@ class Invitation extends Model
         return $this->belongsTo(User::class, 'accepted_user_id');
     }
 
+    public function client(): BelongsTo
+    {
+        return $this->belongsTo(Client::class);
+    }
+
     public function staffApplication(): BelongsTo
     {
         return $this->belongsTo(StaffApplication::class);

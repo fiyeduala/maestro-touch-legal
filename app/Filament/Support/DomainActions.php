@@ -2,7 +2,7 @@
 
 namespace App\Filament\Support;
 
-use App\Domain\Identity\AccountAdministrationException;
+use App\Domain\RuleViolation;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -32,7 +32,7 @@ class DomainActions
     {
         try {
             $callback();
-        } catch (AccountAdministrationException $e) {
+        } catch (RuleViolation $e) {
             Notification::make()->danger()->title('Not done')->body($e->getMessage())->send();
             $action->halt();
         }

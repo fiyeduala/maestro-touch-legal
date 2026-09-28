@@ -3,6 +3,7 @@
 namespace App\Domain\Identity;
 
 use App\Domain\Operations\Audit;
+use App\Models\Client;
 use App\Models\Invitation;
 use App\Models\StaffApplication;
 use App\Models\User;
@@ -27,19 +28,23 @@ class Invitations
      * @param  list<Role>  $roles
      * @return array{0: Invitation, 1: string} the invitation and its plaintext token
      */
-    public function issue(string $email, string $name, array $roles, ?User $actor, ?StaffApplication $application = null, bool $send = true): array
+    public function issue(string $email, string $name, array $roles, ?User $actor, ?StaffApplication $application = null, bool $send = true, ?Client $client = null): array
     {
         if ($actor && ! $actor->isFullAdministrator()) {
-            throw new AccountAdministrationException('Only a Technical Administrator or Firm Principal can invite staff.');
+            throw new AccountAdministrationException('Only a Technical Administrator or Firm Principal can send invitations.');
         }
         if ($roles === []) {
             throw new AccountAdministrationException('Select at least one role for the invitation.');
+        }
+        // A client-contact invitation carries only the Client role, so it can never grant staff access.
+        if ($client && $roles !== [Role::Client]) {
+            throw new AccountAdministrationException('A client portal invitation can only grant client access.');
         }
 
         $email = Str::lower(trim($email));
         $token = Str::random(48);
 
-        $invitation = DB::transaction(function () use ($email, $name, $roles, $actor, $application, $token) {
+        $invitation = DB::transaction(function () use ($email, $name, $roles, $actor, $application, $token, $client) {
             // Only one live invitation per address.
             Invitation::pending()->where('email', $email)
                 ->update(['revoked_at' => now(), 'revoked_by' => $actor?->id]);
@@ -51,6 +56,7 @@ class Invitations
                 'token_hash' => Invitation::hashToken($token),
                 'invited_by' => $actor?->id,
                 'staff_application_id' => $application?->id,
+                'client_id' => $client?->id,
                 'expires_at' => now()->addDays(self::TTL_DAYS),
             ]);
 
@@ -154,10 +160,37 @@ class Invitations
             $user->staffProfile()->firstOrCreate([]);
         }
 
+        if ($invitation->client_id) {
+            $this->linkClientContact($invitation, $user);
+        }
+
         $invitation->forceFill(['accepted_at' => now(), 'accepted_user_id' => $user->id])->save();
         Audit::record('invitation.accepted', "{$user->email} accepted an invitation", $invitation, actor: $user);
 
         return $user;
+    }
+
+    /** The first contact becomes the client's owner contact; later ones are authorised contacts. A revoked link is restored. */
+    private function linkClientContact(Invitation $invitation, User $user): void
+    {
+        $existing = DB::table('client_user')->where('client_id', $invitation->client_id)->where('user_id', $user->id)->first();
+        $hasOwner = DB::table('client_user')->where('client_id', $invitation->client_id)->whereNull('revoked_at')
+            ->where('relationship', 'owner')->where('user_id', '!=', $user->id)->exists();
+        $values = [
+            'relationship' => $hasOwner ? 'authorised_contact' : 'owner',
+            'added_by' => $invitation->invited_by,
+            'revoked_at' => null,
+            'revoked_by' => null,
+            'updated_at' => now(),
+        ];
+
+        if ($existing) {
+            DB::table('client_user')->where('id', $existing->id)->update($values);
+        } else {
+            DB::table('client_user')->insert($values + ['client_id' => $invitation->client_id, 'user_id' => $user->id, 'created_at' => now()]);
+        }
+
+        Audit::record('client.contact_added', "{$user->email} became a portal contact for client #{$invitation->client_id}", $invitation, actor: $user);
     }
 
     private function assertUsable(Invitation $invitation): void

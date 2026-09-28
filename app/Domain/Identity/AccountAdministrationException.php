@@ -2,7 +2,7 @@
 
 namespace App\Domain\Identity;
 
-use RuntimeException;
+use App\Domain\RuleViolation;
 
 /** A refused account change; the message is safe to show to the acting administrator. */
-class AccountAdministrationException extends RuntimeException {}
+class AccountAdministrationException extends RuleViolation {}
