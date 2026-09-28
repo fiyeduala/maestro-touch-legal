@@ -290,7 +290,7 @@ foreach ($media as $m) {
 foreach ($assets as $k => &$a) {
     $path = parse_url($k, PHP_URL_PATH) ?? '';
     $a['local_path'] = str_contains($path, '/wp-content/uploads/')
-        ? 'public/media/legacy/'.ltrim(substr($path, strpos($path, '/wp-content/uploads/') + strlen('/wp-content/uploads/')), '/')
+        ? 'public/wp-content/uploads/'.ltrim(substr($path, strpos($path, '/wp-content/uploads/') + strlen('/wp-content/uploads/')), '/')
         : null;
     $a['retrieval_status'] = $a['local_path'] && is_file("$root/".$a['local_path']) ? 'retrieved' : 'pending';
 }

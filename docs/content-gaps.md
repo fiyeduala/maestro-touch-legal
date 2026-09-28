@@ -1,0 +1,56 @@
+# Content gaps, suspected typos and owner decisions
+
+Status 28 September 2026. Nothing listed here has been changed in the new site; the source wording is preserved
+until the owner approves a change.
+
+## 1. Inputs still needed
+
+| Item | Why | Blocking? |
+|---|---|---|
+| WordPress export (Tools → Export → All content, `.xml`) | Drafts, private/scheduled posts, SEO plugin fields and full comment data are not public. Published posts are already captured through the REST API. | No; needed before final migration sign-off |
+| `wp-content/uploads` backup (zip) | All 41 image files referenced publicly (media library + CSS backgrounds) were retrieved; files never attached to a post or page only exist in the backup | No |
+| Contact details for the Contact page (email, phone, address, WhatsApp number) | The live Contact page has none | Blocks final Contact page content |
+| cPanel facts: PHP versions, SSH/terminal, document-root control, cron, MySQL version, disk | Deployment layout | Blocks Phase 6 only |
+| SMTP, Paystack (test + live), bank instructions (NGN/USD), Tawk property/widget IDs, admin + digest recipient emails | Integrations | No; test doubles are used until provided |
+
+Assets: the original logo (`mtl-blue.png`), white variant (`white.png`), favicon (`blue-1.png`) and all page imagery
+were retrieved and self-hosted. No placeholder logo is needed.
+
+## 2. Suspected typos in existing copy (awaiting approval; NOT corrected)
+
+| Page / section | Existing text | Suggested |
+|---|---|---|
+| Home → What We Offer → Document Drafting & Review | "**rom** contracts to legal letters, we help draft, review, and refine the documents you need." | "From contracts…" |
+| About → 01 Why We're Different | "…stores your legal documents safely in one place" (no full stop) | add "." |
+| Practice Areas → Government & Regulatory Compliance, Data Protection & Privacy Law, Immigration & Residency Services, Alternative Dispute Resolution (ADR) | descriptions end without a full stop (the first four areas have one) | add "." for consistency |
+| About → 02 How We Can Help You | "Get matched with a qualified legal professional." (same sentence as Home step 02; looks like placeholder text) | owner to supply intended text |
+| Contact → heading | "Let's" uses a straight apostrophe; elsewhere curly ’ is used | cosmetic only |
+
+## 3. Existing layout quirks (preserve or fix? owner decision)
+
+1. **Home, desktop:** the "How it works?" heading overlaps the "01" marker of the first step card.
+2. **Contact page:** the CTA button "Contact Us" links to the Contact page itself, and the page has no form or
+   contact details. The new build adds the spec's enquiry form below the preserved copy; its field labels and privacy
+   notice are new wording marked for approval.
+3. **Home, section 2** uses a fixed "parallax" background image. Full-page screenshots show it as blank; in a normal
+   browser it displays. This will be reproduced (with a static fallback on mobile, as browsers there ignore
+   `background-attachment: fixed` anyway).
+
+## 4. Claims in current copy that the new system should match
+
+| Copy | Consideration |
+|---|---|
+| "Our secure client portal … updates you in real-time" (About) | The portal uses short-interval polling on shared hosting; messages appear within seconds while open, and email alerts can take several minutes. Owner may keep the wording or soften it. |
+| "Get matched with a qualified legal professional" | Matching is an administrator assignment, not an automatic marketplace. Consistent with the spec. |
+| "Flat Fees. Transparent Pricing" | Quotations are per-matter; the firm decides whether services carry fixed published prices. |
+| "Request a Free Consultation" | Initial consultation stays free; paid follow-ups only if configured and clearly labelled. |
+
+## 5. Content decisions needed
+
+- `/hello-world/` (WordPress sample post with a sample comment): recommend importing it as an unpublished draft and
+  returning 410 for its URL.
+- Four genuine reader comments (posts 838, 857, 870): import as an approved read-only archive shown under each post,
+  or keep them archived but hidden? Commenting on new posts: enable with moderation, or turn off?
+- New wording needed for: privacy notice, enquiry-form help text, legal-team application page, portal onboarding
+  (including the notice that daily conversation recaps are sent by email). Drafts will be supplied for approval.
+- Existing `/terms-and-conditions/` describes the old portal; review against the new portal features before launch.
