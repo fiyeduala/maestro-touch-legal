@@ -1,6 +1,6 @@
 # Build status
 
-Last updated: 28 September 2026 (end of Phase 2).
+Last updated: 28 September 2026 (end of Phase 3).
 
 ## Phase overview
 
@@ -8,12 +8,50 @@ Last updated: 28 September 2026 (end of Phase 2).
 |---|---|---|
 | 1 | Inspect project + live site, inventory/export content and assets, verify dependencies, architecture, permission matrix | **Done**, except hosting verification (blocked: needs cPanel access) |
 | 2 | Public-site mirror, editable branding/pages/blog, authentication, roles/policies, staff applications | **Done** locally, 79 automated tests passing. Pixel comparison against the reference screenshots moves to Phase 6. |
-| 3 | Enquiries, conflict checks, quotations/engagement, clients, matters, teams, tasks, documents, approvals | Not started (next) |
-| 4 | Client portal, matter chat, internal notes, consultations, SMTP notifications, daily digests | Not started |
+| 3 | Enquiries, conflict checks, quotations/engagement, clients, matters, teams, tasks, documents, approvals, portal pages | **Done** locally, 134 automated tests passing in total |
+| 4 | Portal chat, internal notes, consultations, SMTP notifications, daily digests | Not started (next) |
 | 5 | NGN/USD billing, Paystack, manual transfers, client funds, reporting, audit views | Not started |
 | 6 | Migration dry-run, visual/content comparison, security/workflow tests, staging checks, deployment package | Not started |
 
 Nothing has been deployed. The live WordPress site is untouched.
+
+## Phase 3 — completed
+
+**Intake** (decisions D15, D16, D23, D24)
+- Public enquiry form at `/legal-assistance/`: choose a service, then answer that service's published intake
+  questions. Works without JavaScript. Honeypot, 5 per minute per IP, emailed acknowledgement, and a notice that
+  sending the form creates no lawyer–client relationship. A short form sits on the Contact page below the preserved
+  live copy.
+- Enquiry inbox (staff admin): assignment, parties, conflict check with suggested matches (never automatic),
+  status history, client record creation.
+- Service catalogue: services with their own matter stages, versioned intake forms (a published version is
+  immutable), versioned engagement templates. `ServiceSeeder` adds the eight live practice areas as drafts.
+
+**Engagement** (D17)
+- Quotations: fee and expense lines in integer minor units (NGN/USD, no conversion), payment stages, validity,
+  versions, sending, client accept or decline in the portal, and offline acceptance with evidence.
+- Engagement terms from a template, sanitised HTML, sent only after conflict clearance. The client signs a specific
+  version by typing their name, and the content hash is recorded. A full administrator then approves the accepted
+  engagement and the matter opens (the conflict check is re-run at that point).
+
+**Clients and matters** (D18, D20, D21)
+- Clients (individual or organisation), invitation-only portal contacts, and removal of access with a reason.
+- Matters: team membership is the access boundary; stages, next action (optionally client-visible), manual
+  deadlines, internal assessment, client summary, events (internal and client-visible), close and reopen.
+- Tasks with assignment, start/complete, and reminders (`tasks:notify` every 15 minutes). "My work" page lists
+  your tasks and deadlines for the next 30 days.
+- Documents (D19): private storage, versioning, audited downloads, requests to the client, the deliverable workflow
+  (draft → review → lawyer approval → release → client decision). A case officer cannot give final approval.
+
+**Client portal**
+- Overview with "Needs your attention": terms to sign, quotations, drafts to review, documents requested.
+- Matter page: progress, client-visible next step and deadlines, requested documents and upload, released
+  documents and your own uploads, approve or request changes on drafts, client-visible updates. Internal drafts,
+  tasks, notes and assessment are never shown.
+- Quotation and engagement pages with version-bound accept or decline.
+
+**Tests added in Phase 3** (55): engagement lifecycle 12, matter work 10, practice admin screens 12, firm setup
+screens 8, public enquiry 6, portal 7. Full suite: **134 tests / 694 assertions, all passing** (28 Sep 2026).
 
 ## Phase 2 — completed
 
@@ -62,7 +100,9 @@ repeatability/conflicts, and application file access.
 | Contact page details (email/phone/address/WhatsApp); live page has none | Final Contact page content |
 | cPanel details (PHP CLI/web versions + extensions, SSH/terminal, document-root control, cron, MySQL version, upload limits, disk, symlinks) | Phase 6 deployment layout; hosting verification step of Phase 1 |
 | WordPress WXR export + uploads backup | Final migration coverage (drafts/private/scheduled/SEO fields) |
-| Decisions in `docs/content-gaps.md` §2–§6 (typos, layout quirks, comments, careers wording, alt text) | Final copy sign-off |
+| Decisions in `docs/content-gaps.md` §2–§7 (typos, layout quirks, comments, careers wording, alt text, new enquiry and portal wording, intake questions) | Final copy sign-off |
+| **The firm's real engagement terms** (the seeded template is an inactive outline) and approval of the seeded intake questions | Sending engagement terms in production; publishing intake forms |
+| cPanel `upload_max_filesize` ≥ 20M and `post_max_size` ≥ 25M (D19) | Uploads over the host default |
 | SMTP, Paystack sandbox/live, bank instructions, Tawk IDs, admin/digest emails | Live integration checks (build proceeds with test doubles) |
 
 ## Local environment notes
@@ -72,10 +112,10 @@ repeatability/conflicts, and application file access.
   fakes.
 - New uploads land in `public/media/` (git-ignored); back it up with the database on the server.
 
-## Next steps (Phase 3)
+## Next steps (Phase 4)
 
-1. Enquiry form on Contact (preserving the live copy), enquiry inbox, assignment, conflict-check record.
-2. Clients (individual/organisation), quotations and engagement acceptance.
-3. Matters with team membership as the access boundary, tasks, confidential documents with versioning,
-   approvals.
-4. Policies and tests for record-level access (a lawyer sees only their matters).
+1. Matter chat between the client and the team (portal and admin), with attachments on private storage.
+2. Internal notes (staff only).
+3. Consultations: availability, booking, reschedule/cancel, meeting links, outcomes.
+4. Email notifications through the configured SMTP (test doubles until the owner supplies SMTP) and the daily
+   conversation digest.

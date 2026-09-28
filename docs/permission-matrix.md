@@ -14,8 +14,11 @@ CO = Case Officer / Support · FIN = Finance Officer · CE = Content Editor · C
 | Assign/remove matter team members | A | A | — | — | — | — | — |
 | Enquiries: view / triage / update | A | A | T¹ | T¹ | — | — | O (own submissions) |
 | Conflict check: search suggestions / clear or flag | A | A | T¹ | R (T¹) | — | — | — |
-| Client profiles | A | A | T² | T² | billing fields only | — | O |
-| Matters: view / update stage, next action, deadlines | A | A | T | T | billing metadata only | — | O (client-visible fields) |
+| Client profiles | A | A | T² | T² | — (billing fields in Phase 5) | — | O |
+| Client portal contacts: invite / remove access | A | A | — | — | — | — | — |
+| Services, intake forms (publish) | A | A | — | — | — | — | — |
+| Matters: view / update stage, next action, deadlines | A | A | T | T | — (billing metadata in Phase 5) | — | O (client-visible fields) |
+| Open a matter (approve accepted engagement) | A | A | — | — | — | — | — |
 | Internal legal assessment on a matter | A | A | T | T | — | — | — |
 | Tasks, milestones, deadlines | A | A | T | T | — | — | — |
 | Client chat: read / send | A | A | T | T | — | — | O |

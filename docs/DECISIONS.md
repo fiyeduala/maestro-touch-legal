@@ -87,3 +87,63 @@ The Settings screen (full administrators only) edits a defined set of keys: site
 contact details, mail sender, admin notification recipients, Tawk.to IDs and publishing options. There is no
 free-form "custom script" field. Tawk.to takes only the property and widget IDs, which are format-checked, and the
 app builds the embed code itself, on public pages only. Changes are audited.
+
+### D15 — Representation starts only at internal approval (2026-09-28)
+A matter is opened only by a full administrator approving an accepted engagement. The engagement always starts
+from an enquiry, so the conflict check and intake history travel with it. Payment plays no part in opening a
+matter. A client accepting terms in the portal does **not** open the matter; the portal says the firm will confirm.
+
+### D16 — Conflict checks are never automatic (2026-09-28)
+A lawyer or administrator must record "cleared" with a note before engagement terms can be sent. The check is
+repeated when the matter is approved. Adding a party to the enquiry reopens the check (status back to pending,
+with an event and an audit entry). Possible matches are shown to help the reviewer; they never clear anything.
+
+### D17 — Client acceptance is bound to a version (2026-09-28)
+Quotations, engagement terms and released drafts are accepted against a specific version ID. The acceptance
+record stores a hash of that version's content, the signed name where there is one, IP and user agent. If a newer
+version exists, the old one can no longer be accepted. Acceptance recorded outside the portal (for example on
+paper) is entered by staff with an evidence file and marked as offline. Full administrators can never accept,
+approve or sign as a client.
+
+### D18 — Role boundaries in legal work (2026-09-28)
+Finance has no access to matter content, legal documents or internal notes. It sees billing metadata and
+quotations only. A case officer can prepare and submit drafts but cannot give final approval; that needs a lawyer
+on the team or an administrator. Clients see only the released version of a document and documents they uploaded
+themselves. Internal drafts, tasks, internal notes, internal events and the internal assessment are never shown
+in the portal.
+
+### D19 — Confidential uploads (2026-09-28)
+Uploads go to the private `confidential` disk and are served only through authorised, audited download routes.
+Allowed types are PDF, DOCX, JPEG, PNG and WebP (`UploadGuard::TYPES`). Legacy `.doc` files are refused because they
+can carry macros and cannot be previewed safely. The limit is 20 MB per file (`UploadGuard::MAX_KILOBYTES`).
+Livewire's temporary uploads use the private `local` disk, never public storage. **No virus scanner is
+configured**, and nothing in the app claims files are scanned. On cPanel, `upload_max_filesize` must be at least
+20M and `post_max_size` at least 25M, or large files will fail before they reach the app.
+
+### D20 — Portal contacts are invitation-only (2026-09-28)
+A client record gets portal contacts only by staff invitation (a one-time link). The contact must be a verified
+client account. Removing a contact's access needs a reason. It takes effect on their next request and is audited.
+Registering on the site never links a person to an existing client.
+
+### D21 — Deadlines are entered by hand; task reminders every 15 minutes (2026-09-28)
+The system does not calculate limitation or court deadlines; staff enter them. `tasks:notify` runs every 15 minutes
+from the scheduler, within the 5-minute cron limit.
+
+### D22 — Filament closures must name the query `$query` (2026-09-28)
+Filament resolves closure parameters by name. Always write `fn (Builder $query)`, never `$q`. A misnamed
+parameter silently receives nothing.
+
+### D23 — Service catalogue versioning (2026-09-28)
+Intake forms are versioned. A published version is never edited; saving changes starts a new draft, so answers
+already given always match the questions that were asked. An engagement template's version rises only when its
+cleaned (sanitised) body changes. Renaming or deactivating does not change the version. Services and templates
+are deactivated, never deleted. `ServiceSeeder` adds the eight practice areas from the live site with
+**unpublished** draft intake questions and an **inactive** sample engagement template. All of this is draft copy
+for owner approval (content-gaps §7).
+
+### D24 — Public enquiry form (2026-09-28)
+The main form is at `/legal-assistance/`. Step one is choosing a service, which is a plain link, so the form works
+without JavaScript. Step two holds the contact details, the service's intake questions, a summary, the
+non-representation notice and consent. The Contact page keeps its live copy and adds a short "Send Us a Message"
+form below it, recorded as a contact-form enquiry. Both forms have a honeypot and are rate-limited to 5 a minute
+per IP. Submitting never creates an account and never creates a lawyer–client relationship.

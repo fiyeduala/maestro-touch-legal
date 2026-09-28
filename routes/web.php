@@ -8,8 +8,10 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\DocumentFileController;
 use App\Http\Controllers\Portal\PortalController;
+use App\Http\Controllers\Portal\PortalWorkController;
 use App\Http\Controllers\Site\CareersController;
 use App\Http\Controllers\Site\CommentController;
+use App\Http\Controllers\Site\EnquiryController;
 use App\Http\Controllers\Site\FeedController;
 use App\Http\Controllers\Site\SiteController;
 use App\Http\Middleware\AddTrailingSlash;
@@ -41,6 +43,13 @@ Route::middleware(['auth', EnsureStaffSessionVerified::class])->prefix('preview'
 Route::middleware(['auth', 'verified', EnsureActiveClient::class])->prefix('portal')->name('portal.')->group(function () {
     Route::get('/', [PortalController::class, 'home'])->name('home');
     Route::get('/documents/{version}', [DocumentFileController::class, 'client'])->name('document-file');
+    Route::get('/matters/{matter}', [PortalWorkController::class, 'matter'])->name('matters.show');
+    Route::post('/matters/{matter}/documents', [PortalWorkController::class, 'upload'])->middleware('throttle:20,1')->name('matters.upload');
+    Route::post('/deliverables/{document}/decision', [PortalWorkController::class, 'decideDocument'])->middleware('throttle:auth-forms')->name('documents.decide');
+    Route::get('/quotations/{quotation}', [PortalWorkController::class, 'quotation'])->name('quotations.show');
+    Route::post('/quotations/{quotation}/respond', [PortalWorkController::class, 'respondQuotation'])->middleware('throttle:auth-forms')->name('quotations.respond');
+    Route::get('/engagements/{engagement}', [PortalWorkController::class, 'engagement'])->name('engagements.show');
+    Route::post('/engagements/{engagement}/respond', [PortalWorkController::class, 'respondEngagement'])->middleware('throttle:auth-forms')->name('engagements.respond');
     Route::get('/profile', [PortalController::class, 'profile'])->name('profile');
     Route::put('/profile', [PortalController::class, 'updateProfile'])->name('profile.update');
     Route::put('/profile/password', [PortalController::class, 'updatePassword'])->middleware('throttle:auth-forms')->name('password.update');
@@ -79,6 +88,11 @@ Route::middleware(AddTrailingSlash::class)->group(function () {
     Route::get('/join-our-legal-team/', [CareersController::class, 'create'])->name('careers.apply');
     Route::post('/join-our-legal-team/', [CareersController::class, 'store'])->middleware('throttle:public-forms')->name('careers.store');
     Route::get('/join-our-legal-team/thank-you/', [CareersController::class, 'thanks'])->name('careers.thanks');
+
+    Route::get('/legal-assistance/', [EnquiryController::class, 'create'])->name('enquiry.create');
+    Route::post('/legal-assistance/', [EnquiryController::class, 'store'])->middleware('throttle:public-forms')->name('enquiry.store');
+    Route::get('/legal-assistance/thank-you/', [EnquiryController::class, 'thanks'])->name('enquiry.thanks');
+    Route::post('/contact/', [EnquiryController::class, 'storeContact'])->middleware('throttle:public-forms')->name('enquiry.contact');
 
     Route::get('/feed/', [FeedController::class, 'feed'])->name('feed');
     Route::get('/blog/', [SiteController::class, 'blog'])->name('blog');

@@ -2,16 +2,19 @@
 
 namespace App\Providers;
 
+use App\Domain\Documents\UploadGuard;
 use App\Domain\Identity\Role;
 use App\Domain\Operations\Settings;
 use App\Filament\Auth\StaffLoginResponse;
 use App\Models\User;
+use App\Support\SiteUrl;
 use Filament\Auth\Http\Responses\Contracts\LoginResponse;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -27,8 +30,19 @@ class AppServiceProvider extends ServiceProvider
         Model::preventLazyLoading(! $this->app->isProduction());
         Model::preventSilentlyDiscardingAttributes(! $this->app->isProduction());
 
+        // Public link to the enquiry form in the site's trailing-slash style (route() drops the slash).
+        View::composer(['enquiries.create', 'pages.templates.contact', 'portal.home'],
+            fn ($view) => $view->with('enquiryUrl', SiteUrl::to('/legal-assistance/')));
+
         // No external breach-check call: shared hosting outbound requests are unreliable (DECISIONS D9).
         Password::defaults(fn () => Password::min(12)->letters()->numbers()->max(200));
+
+        // Admin-panel uploads (e.g. signed engagement letters) wait in private local storage, never on the
+        // public disk, and share the document size limit; UploadGuard re-checks the file when it is stored.
+        config([
+            'livewire.temporary_file_upload.disk' => 'local',
+            'livewire.temporary_file_upload.rules' => ['required', 'file', 'max:'.UploadGuard::MAX_KILOBYTES],
+        ]);
 
         Gate::define('manage-content', fn (User $user) => $user->isActive()
             && $user->hasRole(Role::TechnicalAdministrator, Role::FirmPrincipal, Role::ContentEditor));

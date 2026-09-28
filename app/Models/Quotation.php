@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Domain\Engagement\OfferStatus;
+use App\Domain\Identity\Role;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -14,6 +16,21 @@ class Quotation extends Model
     protected function casts(): array
     {
         return ['status' => OfferStatus::class];
+    }
+
+    /** Mirrors QuotationPolicy::view for lists. */
+    public function scopeVisibleTo(Builder $query, User $user): Builder
+    {
+        if ($user->isFullAdministrator() || ($user->isActive() && $user->hasRole(Role::FinanceOfficer))) {
+            return $query;
+        }
+        if (! $user->isActive() || ! $user->hasRole(Role::Lawyer, Role::CaseOfficer)) {
+            return $query->whereRaw('1 = 0');
+        }
+
+        return $query->where(fn (Builder $q) => $q
+            ->whereHas('enquiry', fn (Builder $e) => $e->where('owner_id', $user->id))
+            ->orWhereHas('matter', fn (Builder $m) => $m->whereHas('activeTeam', fn (Builder $t) => $t->where('user_id', $user->id))));
     }
 
     public function client(): BelongsTo

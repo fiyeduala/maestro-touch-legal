@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Portal;
 
 use App\Domain\Operations\Audit;
 use App\Http\Controllers\Controller;
+use App\Models\Matter;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -12,14 +13,20 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
-/** Client portal shell: landing page and profile/security. Matters, documents and billing arrive in Phase 3+. */
+/** Client portal: overview (matters and items needing attention) and profile/security. */
 class PortalController extends Controller
 {
     public function home(Request $request): View
     {
+        $user = $request->user();
+        $clients = $user->clients()->get();
+
         return view('portal.home', [
-            'user' => $request->user(),
-            'clients' => $request->user()->clients()->get(),
+            'user' => $user,
+            'clients' => $clients,
+            'matters' => Matter::whereIn('client_id', $clients->modelKeys())->with('service')
+                ->orderByRaw("status = 'closed'")->latest('opened_at')->get(),
+            'attention' => PortalWorkController::attention($user),
         ]);
     }
 

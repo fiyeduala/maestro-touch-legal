@@ -33,6 +33,25 @@
             </dl>
         @endif
     </div>
+
+    {{-- Enquiry form added below the preserved copy (docs/content-gaps.md §3.2); wording is a draft for owner approval. --}}
+    <div id="enquiry" class="site-container mt-14 max-w-[760px] scroll-mt-28">
+        <h2 class="heading-3">Send Us a Message</h2>
+        <p class="mt-2">For a detailed request about a particular area of law, use our <a class="text-brand underline" href="{{ $enquiryUrl }}">legal assistance form</a>.</p>
+        <div class="mt-6">
+            @include('partials.form-status', ['summary' => true])
+            <form method="post" action="{{ route('enquiry.contact') }}" class="space-y-6" novalidate>
+                @csrf
+                <div class="hidden" aria-hidden="true">
+                    <label for="company_website">Leave this empty</label>
+                    <input id="company_website" name="company_website" type="text" tabindex="-1" autocomplete="off">
+                </div>
+                @include('enquiries.partials.contact-fields')
+                @include('enquiries.partials.summary-consent')
+                <button type="submit" class="btn">Send Message</button>
+            </form>
+        </div>
+    </div>
 </section>
 
 @include('pages.partials.cta', ['cta' => $c['cta'] ?? []])

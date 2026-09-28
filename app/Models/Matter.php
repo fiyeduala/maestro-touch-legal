@@ -150,11 +150,15 @@ class Matter extends Model
         return $this->hasMany(Quotation::class);
     }
 
+    /** @return array<string, string> the stages of this matter's service (or the default list) */
+    public function stageOptions(): array
+    {
+        return $this->service?->stageOptions() ?? collect(Service::DEFAULT_STAGES)->pluck('label', 'key')->all();
+    }
+
     public function stageLabel(): string
     {
-        $stages = $this->service?->stageOptions() ?? collect(Service::DEFAULT_STAGES)->pluck('label', 'key')->all();
-
-        return $stages[$this->stage] ?? $this->stage;
+        return $this->stageOptions()[$this->stage] ?? $this->stage;
     }
 
     public function isClosed(): bool

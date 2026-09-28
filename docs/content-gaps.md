@@ -66,3 +66,17 @@ were retrieved and self-hosted. No placeholder logo is needed.
 | "Login/Register" menu label | Kept as on the live site; points to `/register/` (which links to sign-in). Signed-in users see "My Account" or "Staff Admin" instead | No |
 | Comments | Imported comments display under their posts; **new** public comments are switched off by default (Settings → Publishing), with moderation when on | Owner decision |
 | Author avatars | Not shown; the live site's Gravatar images are not loaded (no third-party request) | No |
+
+## 7. New wording drafted in Phase 3 (awaiting owner approval)
+
+All of the following is placeholder copy written for this build. None of it has been approved.
+
+| Where | Wording |
+|---|---|
+| `/legal-assistance/` | Page intro, the service-choice step, field help text, and the notice "Sending this form does not make Maestro Touch Legal your lawyers…" plus the consent checkbox |
+| `/legal-assistance/thank-you/` | Acknowledgement text and the "what happens next" steps |
+| Contact page | "Send Us a Message" heading and form labels (below the preserved live copy) |
+| Acknowledgement email to enquirers | Subject and body |
+| Portal | "Needs Your Attention", "Your Matters", "Send Documents", upload help text, draft approval prompts, quotation acceptance statement, engagement signing text ("Type your full name to sign", "I have read these terms and agree to them") |
+| Service catalogue | The eight practice-area services (names taken from the live Practice Areas page) and their intake questions, which are **unpublished drafts** |
+| Engagement terms | "Standard engagement terms (draft for owner approval)" is a structural outline only and **inactive**. The firm must supply the real terms. |
