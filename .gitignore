@@ -14,7 +14,10 @@
 /auth.json
 /node_modules
 /public/build
+/public/css/filament
+/public/fonts/filament
 /public/hot
+/public/js/filament
 /public/storage
 /storage/*.key
 /storage/pail
@@ -26,3 +29,6 @@ Thumbs.db
 # Local tooling
 /tools/site-audit/node_modules
 /storage/certs
+
+# CMS uploads live on the server (backed up separately), never in Git
+/public/media

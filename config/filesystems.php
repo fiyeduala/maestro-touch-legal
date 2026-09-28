@@ -33,8 +33,31 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
-            'serve' => true,
+            // Never auto-serve private files; downloads go through authorised controllers.
+            'serve' => false,
             'throw' => false,
+            'report' => false,
+        ],
+
+        // Confidential files (CVs, client and matter documents). Outside the web root,
+        // never publicly served; access only via policy-checked download routes.
+        'confidential' => [
+            'driver' => 'local',
+            'root' => env('CONFIDENTIAL_STORAGE_ROOT', storage_path('app/confidential')),
+            'visibility' => 'private',
+            'serve' => false,
+            'throw' => true,
+            'report' => false,
+        ],
+
+        // Public website media uploaded in the CMS (DECISIONS D3). Served directly from public/media,
+        // so it works on shared hosting without `storage:link`. Never used for confidential files.
+        'media' => [
+            'driver' => 'local',
+            'root' => public_path('media'),
+            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/media',
+            'visibility' => 'public',
+            'throw' => true,
             'report' => false,
         ],
 

@@ -1,3 +1,10 @@
+/* Poppins, self-hosted (DECISIONS D6). unicode-range means browsers only fetch subsets a page uses. */
+@import '@fontsource/poppins/400.css';
+@import '@fontsource/poppins/400-italic.css';
+@import '@fontsource/poppins/500.css';
+@import '@fontsource/poppins/600.css';
+@import '@fontsource/poppins/700.css';
+
 @import 'tailwindcss';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -5,7 +12,189 @@
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
+/* Brand tokens captured from the live site's global colours (Astra/Elementor kit). */
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+
+    --color-brand: #007bf8;
+    --color-brand-dark: #0063c8;
+    --color-ink: #0f172a;
+    --color-body: #364151;
+    --color-tint: #e7f6ff;
+    --color-line: #d1dae5;
+    --color-field: #f8fafc;
+
+    --container-site: 1200px;
+
+    /* Astra switches to the mobile header below 922px. */
+    --breakpoint-nav: 922px;
+}
+
+@layer base {
+    html {
+        -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+        @apply bg-white font-sans text-body antialiased;
+        font-size: 16px;
+        line-height: 1.6;
+    }
+
+    h1, h2, h3, h4 {
+        @apply text-ink;
+        font-weight: 600;
+    }
+
+    a {
+        @apply transition-colors;
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--color-brand);
+        outline-offset: 2px;
+    }
+}
+
+@layer components {
+    .site-container {
+        @apply mx-auto w-full px-6 lg:px-10;
+        max-width: calc(var(--container-site) + 5rem);
+    }
+
+    /* Primary button: 16px/600, 6px radius, 17px 26px padding (captured). */
+    .btn {
+        @apply inline-flex items-center justify-center gap-2 rounded-[6px] bg-brand px-[26px] py-[17px] text-base leading-none font-semibold text-white capitalize hover:bg-brand-dark;
+    }
+
+    .btn-outline {
+        @apply inline-flex items-center justify-center rounded-[6px] border-2 border-brand px-5 py-[11px] text-[15px] leading-none font-medium text-brand hover:bg-brand hover:text-white;
+    }
+
+    .link-arrow {
+        @apply inline-flex items-center gap-2 text-sm font-semibold text-brand hover:text-brand-dark;
+    }
+
+    /* Highlighted words in headings (the *word* convention in page content). */
+    .hl {
+        @apply text-brand;
+    }
+
+    .page-banner {
+        @apply bg-tint;
+    }
+
+    .heading-1 {
+        @apply text-[40px] leading-[1.12] font-semibold text-ink md:text-[54px];
+    }
+
+    .heading-2 {
+        @apply text-[30px] leading-[1.2] font-semibold text-ink md:text-[40px];
+    }
+
+    .heading-3 {
+        @apply text-[20px] leading-[1.3] font-semibold text-ink md:text-[24px];
+    }
+
+    .card-number {
+        @apply text-sm font-semibold text-brand;
+    }
+
+    /* Forms (log-in, register, applications): pale field, thin border, as on the live site. */
+    .form-label {
+        @apply mb-2 block text-base text-body;
+    }
+
+    .req {
+        @apply text-red-600;
+    }
+
+    .form-input {
+        @apply block w-full rounded-[2px] border border-line bg-field px-4 py-3 text-base text-ink focus:border-brand focus:bg-white focus:outline-none;
+    }
+
+    .form-error {
+        @apply mt-1 text-sm text-red-700;
+    }
+
+    .form-help {
+        @apply mt-1 text-sm text-body/80;
+    }
+
+    .alert {
+        @apply rounded-md border px-4 py-3 text-sm;
+    }
+
+    .alert-success {
+        @apply border-green-200 bg-green-50 text-green-800;
+    }
+
+    .alert-error {
+        @apply border-red-200 bg-red-50 text-red-800;
+    }
+
+    .alert-info {
+        @apply border-sky-200 bg-tint text-ink;
+    }
+
+    /* Long-form content: blog posts and legal pages. */
+    .prose-mtl {
+        @apply text-[15px] leading-[1.7] text-body;
+    }
+
+    .prose-mtl > * + * {
+        @apply mt-4;
+    }
+
+    .prose-mtl h2 {
+        @apply mt-8 text-2xl;
+    }
+
+    .prose-mtl h3 {
+        @apply mt-8 text-xl;
+    }
+
+    .prose-mtl h4 {
+        @apply mt-6 text-lg;
+    }
+
+    .prose-mtl a {
+        @apply text-brand underline-offset-2 hover:underline;
+    }
+
+    .prose-mtl strong {
+        @apply font-semibold text-ink;
+    }
+
+    .prose-mtl ul {
+        @apply list-disc pl-6;
+    }
+
+    .prose-mtl ol {
+        @apply list-decimal pl-6;
+    }
+
+    .prose-mtl li + li {
+        @apply mt-1;
+    }
+
+    .prose-mtl li > p {
+        @apply m-0;
+    }
+
+    .prose-mtl hr {
+        @apply my-8 border-line;
+    }
+
+    .prose-mtl img {
+        @apply h-auto max-w-full rounded;
+    }
+
+    .prose-mtl blockquote {
+        @apply border-l-4 border-brand pl-4 italic;
+    }
+
+    .prose-mtl figure figcaption {
+        @apply mt-2 text-sm text-body/70;
+    }
 }

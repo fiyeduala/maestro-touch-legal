@@ -17,6 +17,23 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('phone', 40)->nullable();
+            $table->string('timezone', 64)->nullable();
+            $table->timestamp('suspended_at')->nullable()->index();
+            $table->foreignId('suspended_by')->nullable();
+            $table->string('suspension_reason', 500)->nullable();
+            $table->timestamp('offboarded_at')->nullable();
+            $table->timestamp('last_login_at')->nullable();
+            $table->string('last_login_ip', 45)->nullable();
+            // Consent evidence captured at self-registration (version of the document shown).
+            $table->timestamp('terms_accepted_at')->nullable();
+            $table->string('terms_version', 40)->nullable();
+            $table->timestamp('privacy_accepted_at')->nullable();
+            $table->string('privacy_version', 40)->nullable();
+            // Staff MFA (Filament). Encrypted casts on the model.
+            $table->text('app_authentication_secret')->nullable();
+            $table->text('app_authentication_recovery_codes')->nullable();
+            $table->boolean('has_email_authentication')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });

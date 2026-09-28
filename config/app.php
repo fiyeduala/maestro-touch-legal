@@ -65,7 +65,10 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => env('APP_TIMEZONE', 'UTC'),
+
+    // The firm's business timezone (digests, office hours, displayed dates). Storage stays UTC.
+    'firm_timezone' => env('FIRM_TIMEZONE', 'Africa/Lagos'),
 
     /*
     |--------------------------------------------------------------------------
