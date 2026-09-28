@@ -1,0 +1,666 @@
+{
+    "generated_at": "2026-09-28T15:48:14+00:00",
+    "note": "local_path is where the asset is self-hosted in the Laravel app. retrieval_status reflects the file actually existing on disk.",
+    "assets": [
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2024/03/about-us.jpg",
+            "used_on": [],
+            "kinds": [
+                "media-library"
+            ],
+            "alt": "about us",
+            "width": 544,
+            "height": 560,
+            "wp_media_id": 14,
+            "mime_type": "image/jpeg",
+            "local_path": "public/media/legacy/2024/03/about-us.jpg",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2024/03/cta.jpg",
+            "used_on": [],
+            "kinds": [
+                "media-library"
+            ],
+            "alt": "cta",
+            "width": 1920,
+            "height": 506,
+            "wp_media_id": 15,
+            "mime_type": "image/jpeg",
+            "local_path": "public/media/legacy/2024/03/cta.jpg",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2024/03/features.jpg",
+            "used_on": [],
+            "kinds": [
+                "media-library"
+            ],
+            "alt": "features",
+            "width": 1200,
+            "height": 560,
+            "wp_media_id": 16,
+            "mime_type": "image/jpeg",
+            "local_path": "public/media/legacy/2024/03/features.jpg",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2024/03/hero.jpg",
+            "used_on": [],
+            "kinds": [
+                "media-library"
+            ],
+            "alt": "hero",
+            "width": 1920,
+            "height": 640,
+            "wp_media_id": 17,
+            "mime_type": "image/jpeg",
+            "local_path": "public/media/legacy/2024/03/hero.jpg",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2024/03/our-services-01.jpg",
+            "used_on": [],
+            "kinds": [
+                "media-library"
+            ],
+            "alt": "our services 01",
+            "width": 352,
+            "height": 428,
+            "wp_media_id": 18,
+            "mime_type": "image/jpeg",
+            "local_path": "public/media/legacy/2024/03/our-services-01.jpg",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2024/03/our-services-02.jpg",
+            "used_on": [],
+            "kinds": [
+                "media-library"
+            ],
+            "alt": "our services 02",
+            "width": 352,
+            "height": 428,
+            "wp_media_id": 19,
+            "mime_type": "image/jpeg",
+            "local_path": "public/media/legacy/2024/03/our-services-02.jpg",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2024/03/our-services-03.jpg",
+            "used_on": [],
+            "kinds": [
+                "media-library"
+            ],
+            "alt": "our services 03",
+            "width": 352,
+            "height": 428,
+            "wp_media_id": 20,
+            "mime_type": "image/jpeg",
+            "local_path": "public/media/legacy/2024/03/our-services-03.jpg",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2024/03/services-01.jpg",
+            "used_on": [],
+            "kinds": [
+                "media-library"
+            ],
+            "alt": "services 01",
+            "width": 420,
+            "height": 480,
+            "wp_media_id": 21,
+            "mime_type": "image/jpeg",
+            "local_path": "public/media/legacy/2024/03/services-01.jpg",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2024/03/services-02.jpg",
+            "used_on": [],
+            "kinds": [
+                "media-library"
+            ],
+            "alt": "services 02",
+            "width": 420,
+            "height": 480,
+            "wp_media_id": 22,
+            "mime_type": "image/jpeg",
+            "local_path": "public/media/legacy/2024/03/services-02.jpg",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2024/03/services-03.jpg",
+            "used_on": [],
+            "kinds": [
+                "media-library"
+            ],
+            "alt": "services 03",
+            "width": 420,
+            "height": 480,
+            "wp_media_id": 23,
+            "mime_type": "image/jpeg",
+            "local_path": "public/media/legacy/2024/03/services-03.jpg",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2024/03/services-04.jpg",
+            "used_on": [],
+            "kinds": [
+                "media-library"
+            ],
+            "alt": "services 04",
+            "width": 420,
+            "height": 480,
+            "wp_media_id": 24,
+            "mime_type": "image/jpeg",
+            "local_path": "public/media/legacy/2024/03/services-04.jpg",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2024/03/testimonial-01.jpg",
+            "used_on": [],
+            "kinds": [
+                "media-library"
+            ],
+            "alt": "testimonial 01",
+            "width": 60,
+            "height": 60,
+            "wp_media_id": 25,
+            "mime_type": "image/jpeg",
+            "local_path": "public/media/legacy/2024/03/testimonial-01.jpg",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2024/03/testimonial-02.jpg",
+            "used_on": [],
+            "kinds": [
+                "media-library"
+            ],
+            "alt": "testimonial 02",
+            "width": 60,
+            "height": 60,
+            "wp_media_id": 26,
+            "mime_type": "image/jpeg",
+            "local_path": "public/media/legacy/2024/03/testimonial-02.jpg",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2024/03/why-choose-us.jpg",
+            "used_on": [],
+            "kinds": [
+                "media-library"
+            ],
+            "alt": "why choose us",
+            "width": 420,
+            "height": 480,
+            "wp_media_id": 239,
+            "mime_type": "image/jpeg",
+            "local_path": "public/media/legacy/2024/03/why-choose-us.jpg",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2024/05/demo-screenshot.jpg",
+            "used_on": [],
+            "kinds": [
+                "media-library"
+            ],
+            "alt": "demo screenshot",
+            "width": 1200,
+            "height": 665,
+            "wp_media_id": 426,
+            "mime_type": "image/jpeg",
+            "local_path": "public/media/legacy/2024/05/demo-screenshot.jpg",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2025/08/2152004777-1.jpg",
+            "used_on": [
+                "home"
+            ],
+            "kinds": [
+                "content-image",
+                "media-library"
+            ],
+            "alt": "2152004777 (1)",
+            "width": "700",
+            "height": "1000",
+            "wp_media_id": 617,
+            "mime_type": "image/jpeg",
+            "local_path": "public/media/legacy/2025/08/2152004777-1.jpg",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2025/08/4-scaled.jpg",
+            "used_on": [
+                "css:wp-content_uploads_elementor_css_post-427.css"
+            ],
+            "kinds": [
+                "css-background",
+                "media-library"
+            ],
+            "alt": "4",
+            "width": 2560,
+            "height": 1280,
+            "wp_media_id": 466,
+            "mime_type": "image/jpeg",
+            "local_path": "public/media/legacy/2025/08/4-scaled.jpg",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2025/08/IP.png",
+            "used_on": [
+                "offering"
+            ],
+            "kinds": [
+                "content-image",
+                "media-library"
+            ],
+            "alt": "ip",
+            "width": "2560",
+            "height": "1440",
+            "wp_media_id": 541,
+            "mime_type": "image/png",
+            "local_path": "public/media/legacy/2025/08/IP.png",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2025/08/WhatsApp-Image-2023-05-21-at-23.02.28.jpg",
+            "used_on": [],
+            "kinds": [
+                "media-library"
+            ],
+            "alt": "whatsapp image 2023 05 21 at 23.02.28",
+            "width": 1080,
+            "height": 709,
+            "wp_media_id": 437,
+            "mime_type": "image/jpeg",
+            "local_path": "public/media/legacy/2025/08/WhatsApp-Image-2023-05-21-at-23.02.28.jpg",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2025/08/Zz00YWRjYTdjYzhlZDExMWVlOTVhOGJlNTYwN2JiNDhkNA.jpg",
+            "used_on": [
+                "about"
+            ],
+            "kinds": [
+                "content-image",
+                "media-library"
+            ],
+            "alt": "zz00ywrjytdjyzhlzdexmwvlotvhogjlntywn2jindhkna==",
+            "width": "1280",
+            "height": "958",
+            "wp_media_id": 605,
+            "mime_type": "image/jpeg",
+            "local_path": "public/media/legacy/2025/08/Zz00YWRjYTdjYzhlZDExMWVlOTVhOGJlNTYwN2JiNDhkNA.jpg",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2025/08/adr.png",
+            "used_on": [
+                "offering"
+            ],
+            "kinds": [
+                "content-image",
+                "media-library"
+            ],
+            "alt": "adr",
+            "width": "2560",
+            "height": "1440",
+            "wp_media_id": 535,
+            "mime_type": "image/png",
+            "local_path": "public/media/legacy/2025/08/adr.png",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2025/08/blue-1-150x150.png",
+            "used_on": [
+                "global"
+            ],
+            "kinds": [
+                "favicon"
+            ],
+            "local_path": "public/media/legacy/2025/08/blue-1-150x150.png",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2025/08/blue-1.png",
+            "used_on": [
+                "global"
+            ],
+            "kinds": [
+                "favicon",
+                "media-library"
+            ],
+            "alt": "blue",
+            "width": 203,
+            "height": 232,
+            "wp_media_id": 464,
+            "mime_type": "image/png",
+            "local_path": "public/media/legacy/2025/08/blue-1.png",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2025/08/blue-2.png",
+            "used_on": [
+                "home"
+            ],
+            "kinds": [
+                "content-image",
+                "media-library"
+            ],
+            "alt": "blue",
+            "width": "450",
+            "height": "130",
+            "wp_media_id": 481,
+            "mime_type": "image/png",
+            "local_path": "public/media/legacy/2025/08/blue-2.png",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2025/08/blue.png",
+            "used_on": [],
+            "kinds": [
+                "media-library"
+            ],
+            "width": 450,
+            "height": 130,
+            "wp_media_id": 6,
+            "mime_type": "image/png",
+            "local_path": "public/media/legacy/2025/08/blue.png",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2025/08/business-and-corporate.png",
+            "used_on": [
+                "offering"
+            ],
+            "kinds": [
+                "content-image",
+                "media-library"
+            ],
+            "alt": "business and corporate",
+            "width": "2560",
+            "height": "1440",
+            "wp_media_id": 543,
+            "mime_type": "image/png",
+            "local_path": "public/media/legacy/2025/08/business-and-corporate.png",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2025/08/contract-drafting.png",
+            "used_on": [
+                "offering"
+            ],
+            "kinds": [
+                "content-image",
+                "media-library"
+            ],
+            "alt": "contract drafting",
+            "width": "2560",
+            "height": "1440",
+            "wp_media_id": 542,
+            "mime_type": "image/png",
+            "local_path": "public/media/legacy/2025/08/contract-drafting.png",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2025/08/data-protection-.png",
+            "used_on": [
+                "offering"
+            ],
+            "kinds": [
+                "content-image",
+                "media-library"
+            ],
+            "alt": "data protection",
+            "width": "2560",
+            "height": "1440",
+            "wp_media_id": 537,
+            "mime_type": "image/png",
+            "local_path": "public/media/legacy/2025/08/data-protection-.png",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2025/08/employment.png",
+            "used_on": [
+                "offering"
+            ],
+            "kinds": [
+                "content-image",
+                "media-library"
+            ],
+            "alt": "employment",
+            "width": "2560",
+            "height": "1440",
+            "wp_media_id": 540,
+            "mime_type": "image/png",
+            "local_path": "public/media/legacy/2025/08/employment.png",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2025/08/govt.png",
+            "used_on": [
+                "offering"
+            ],
+            "kinds": [
+                "content-image",
+                "media-library"
+            ],
+            "alt": "govt",
+            "width": "2560",
+            "height": "1440",
+            "wp_media_id": 538,
+            "mime_type": "image/png",
+            "local_path": "public/media/legacy/2025/08/govt.png",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2025/08/immigration.png",
+            "used_on": [
+                "offering"
+            ],
+            "kinds": [
+                "content-image",
+                "media-library"
+            ],
+            "alt": "immigration",
+            "width": "2560",
+            "height": "1440",
+            "wp_media_id": 536,
+            "mime_type": "image/png",
+            "local_path": "public/media/legacy/2025/08/immigration.png",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2025/08/mtl-blue.png",
+            "used_on": [
+                "global"
+            ],
+            "kinds": [
+                "logo",
+                "media-library"
+            ],
+            "alt": "mtl blue",
+            "width": "450",
+            "height": "130",
+            "wp_media_id": 701,
+            "mime_type": "image/png",
+            "local_path": "public/media/legacy/2025/08/mtl-blue.png",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2025/08/offer-1.png",
+            "used_on": [
+                "home"
+            ],
+            "kinds": [
+                "content-image",
+                "media-library"
+            ],
+            "alt": "offer (1)",
+            "width": "720",
+            "height": "1080",
+            "wp_media_id": 624,
+            "mime_type": "image/png",
+            "local_path": "public/media/legacy/2025/08/offer-1.png",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2025/08/tlk.jpg",
+            "used_on": [
+                "about"
+            ],
+            "kinds": [
+                "content-image",
+                "media-library"
+            ],
+            "alt": "tlk",
+            "width": "1080",
+            "height": "847",
+            "wp_media_id": 636,
+            "mime_type": "image/jpeg",
+            "local_path": "public/media/legacy/2025/08/tlk.jpg",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2025/08/white.png",
+            "used_on": [],
+            "kinds": [
+                "media-library"
+            ],
+            "alt": "white",
+            "width": 449,
+            "height": 129,
+            "wp_media_id": 448,
+            "mime_type": "image/png",
+            "local_path": "public/media/legacy/2025/08/white.png",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2025/11/Gemini_Generated_Image_ri27kiri27kiri27-scaled.png",
+            "used_on": [
+                "i-got-it-from-google-why-that-free-contract-template-could-cost-your-nigerian-business-everything"
+            ],
+            "kinds": [
+                "content-image",
+                "media-library"
+            ],
+            "alt": "gemini generated image ri27kiri27kiri27",
+            "width": 2560,
+            "height": 1396,
+            "wp_media_id": 853,
+            "mime_type": "image/png",
+            "local_path": "public/media/legacy/2025/11/Gemini_Generated_Image_ri27kiri27kiri27-scaled.png",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2025/11/Gemini_Generated_Image_tqr63ntqr63ntqr6.png",
+            "used_on": [
+                "the-rise-of-the-virtual-law-firm-why-your-nigerian-sme-needs-a-lawyer-not-a-lawsuit"
+            ],
+            "kinds": [
+                "content-image",
+                "media-library"
+            ],
+            "alt": "gemini generated image tqr63ntqr63ntqr6",
+            "width": 1024,
+            "height": 1024,
+            "wp_media_id": 840,
+            "mime_type": "image/png",
+            "local_path": "public/media/legacy/2025/11/Gemini_Generated_Image_tqr63ntqr63ntqr6.png",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2025/12/Gemini_Generated_Image_5wp27k5wp27k5wp2-scaled.png",
+            "used_on": [
+                "is-your-side-hustle-legally-a-business-the-danger-of-unregistered-vendor-accounts"
+            ],
+            "kinds": [
+                "content-image",
+                "media-library"
+            ],
+            "alt": "Instagram hair vendor",
+            "width": 2560,
+            "height": 1396,
+            "wp_media_id": 858,
+            "mime_type": "image/png",
+            "local_path": "public/media/legacy/2025/12/Gemini_Generated_Image_5wp27k5wp27k5wp2-scaled.png",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2026/01/Gemini_Generated_Image_lxrgfzlxrgfzlxrg-scaled.png",
+            "used_on": [
+                "stop-donating-your-profit-why-your-copy-paste-tcs-are-a-legal-suicide-mission"
+            ],
+            "kinds": [
+                "content-image",
+                "media-library"
+            ],
+            "alt": "A template of Foreign T&C breaking in Lagos",
+            "width": 2560,
+            "height": 1396,
+            "wp_media_id": 871,
+            "mime_type": "image/png",
+            "local_path": "public/media/legacy/2026/01/Gemini_Generated_Image_lxrgfzlxrgfzlxrg-scaled.png",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/2026/02/Gemini_Generated_Image_aa3d1daa3d1daa3d.png",
+            "used_on": [
+                "blog",
+                "hiring-your-first-staff-the-employment-contract-mistakes-that-cost-millions"
+            ],
+            "kinds": [
+                "content-image",
+                "media-library"
+            ],
+            "alt": "Gemini Generated Image Aa3d1daa3d1daa3d",
+            "width": 1024,
+            "height": 1024,
+            "wp_media_id": 879,
+            "mime_type": "image/png",
+            "local_path": "public/media/legacy/2026/02/Gemini_Generated_Image_aa3d1daa3d1daa3d.png",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://mtouchlegal.com/wp-content/uploads/woocommerce-placeholder.webp",
+            "used_on": [],
+            "kinds": [
+                "media-library"
+            ],
+            "alt": "woocommerce placeholder",
+            "width": 1200,
+            "height": 1200,
+            "wp_media_id": 741,
+            "mime_type": "image/webp",
+            "local_path": "public/media/legacy/woocommerce-placeholder.webp",
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://secure.gravatar.com/avatar/587a24884f9a6c493741ae437005371277973ffd80c94d9f72805d23d298e77d",
+            "used_on": [
+                "hello-world"
+            ],
+            "kinds": [
+                "content-image"
+            ],
+            "local_path": null,
+            "retrieval_status": "pending"
+        },
+        {
+            "original_url": "https://secure.gravatar.com/avatar/fa3ed792e340ea5372d12648baf09d55405b1bfa8b9ff926a8c023f19bcbae4c",
+            "used_on": [
+                "hiring-your-first-staff-the-employment-contract-mistakes-that-cost-millions",
+                "stop-donating-your-profit-why-your-copy-paste-tcs-are-a-legal-suicide-mission",
+                "is-your-side-hustle-legally-a-business-the-danger-of-unregistered-vendor-accounts",
+                "i-got-it-from-google-why-that-free-contract-template-could-cost-your-nigerian-business-everything",
+                "the-rise-of-the-virtual-law-firm-why-your-nigerian-sme-needs-a-lawyer-not-a-lawsuit"
+            ],
+            "kinds": [
+                "content-image"
+            ],
+            "local_path": null,
+            "retrieval_status": "pending"
+        }
+    ]
+}

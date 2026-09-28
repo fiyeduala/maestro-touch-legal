@@ -1,0 +1,26 @@
+captured 2026-09-28T15:59:03.360Z from https://mtouchlegal.com
+200 desktop https://mtouchlegal.com/ -> docs\reference-screenshots\home-desktop.png
+200 desktop https://mtouchlegal.com/about/ -> docs\reference-screenshots\about-desktop.png
+200 desktop https://mtouchlegal.com/offering/ -> docs\reference-screenshots\offering-desktop.png
+200 desktop https://mtouchlegal.com/contact/ -> docs\reference-screenshots\contact-desktop.png
+200 desktop https://mtouchlegal.com/blog/ -> docs\reference-screenshots\blog-desktop.png
+200 desktop https://mtouchlegal.com/terms-and-conditions/ -> docs\reference-screenshots\terms-and-conditions-desktop.png
+200 desktop https://mtouchlegal.com/log-in/ -> docs\reference-screenshots\log-in-desktop.png
+200 desktop https://mtouchlegal.com/register/ -> docs\reference-screenshots\register-desktop.png
+200 desktop https://mtouchlegal.com/password-reset/ -> docs\reference-screenshots\password-reset-desktop.png
+200 desktop https://mtouchlegal.com/hiring-your-first-staff-the-employment-contract-mistakes-that-cost-millions/ -> docs\reference-screenshots\post-hiring-your-first-staff-desktop.png
+200 desktop https://mtouchlegal.com/the-rise-of-the-virtual-law-firm-why-your-nigerian-sme-needs-a-lawyer-not-a-lawsuit/ -> docs\reference-screenshots\post-virtual-law-firm-desktop.png
+200 desktop https://mtouchlegal.com/tag/sme/ -> docs\reference-screenshots\tag-archive-desktop.png
+WARN mobile home: 1 elements still animation-hidden
+200 mobile https://mtouchlegal.com/ -> docs\reference-screenshots\home-mobile.png
+200 mobile https://mtouchlegal.com/about/ -> docs\reference-screenshots\about-mobile.png
+200 mobile https://mtouchlegal.com/offering/ -> docs\reference-screenshots\offering-mobile.png
+200 mobile https://mtouchlegal.com/contact/ -> docs\reference-screenshots\contact-mobile.png
+200 mobile https://mtouchlegal.com/blog/ -> docs\reference-screenshots\blog-mobile.png
+200 mobile https://mtouchlegal.com/terms-and-conditions/ -> docs\reference-screenshots\terms-and-conditions-mobile.png
+200 mobile https://mtouchlegal.com/log-in/ -> docs\reference-screenshots\log-in-mobile.png
+200 mobile https://mtouchlegal.com/register/ -> docs\reference-screenshots\register-mobile.png
+200 mobile https://mtouchlegal.com/password-reset/ -> docs\reference-screenshots\password-reset-mobile.png
+200 mobile https://mtouchlegal.com/hiring-your-first-staff-the-employment-contract-mistakes-that-cost-millions/ -> docs\reference-screenshots\post-hiring-your-first-staff-mobile.png
+200 mobile https://mtouchlegal.com/the-rise-of-the-virtual-law-firm-why-your-nigerian-sme-needs-a-lawyer-not-a-lawsuit/ -> docs\reference-screenshots\post-virtual-law-firm-mobile.png
+200 mobile https://mtouchlegal.com/tag/sme/ -> docs\reference-screenshots\tag-archive-mobile.png
