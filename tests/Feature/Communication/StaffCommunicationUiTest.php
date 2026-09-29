@@ -168,7 +168,7 @@ class StaffCommunicationUiTest extends TestCase
         $this->assertSame(2, Settings::get('consultations.capacity'));
         $this->assertSame([24, 3], Settings::get('consultations.reminder_hours'));
         $this->assertSame('2026-12-24', Settings::get('consultations.blocked')[0]['from']);
-        $this->assertCount(5, Settings::get('consultations.hours'));
+        $this->assertCount(7, Settings::get('consultations.hours'));
     }
 
     public function test_recap_retry_is_admin_only_and_audited(): void

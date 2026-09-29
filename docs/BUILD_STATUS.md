@@ -1,6 +1,6 @@
 # Build status
 
-Last updated: 29 September 2026 (end of Phase 4).
+Last updated: 29 September 2026 (end of Phase 5).
 
 ## Phase overview
 
@@ -10,10 +10,67 @@ Last updated: 29 September 2026 (end of Phase 4).
 | 2 | Public-site mirror, editable branding/pages/blog, authentication, roles/policies, staff applications | **Done** locally, 79 automated tests passing. Pixel comparison against the reference screenshots moves to Phase 6. |
 | 3 | Enquiries, conflict checks, quotations/engagement, clients, matters, teams, tasks, documents, approvals, portal pages | **Done** locally, 134 automated tests passing in total |
 | 4 | Portal chat, internal notes, consultations, SMTP notifications, daily digests | **Done** locally, 170 automated tests passing in total |
-| 5 | NGN/USD billing, Paystack, manual transfers, client funds, reporting, audit views | Not started (next) |
-| 6 | Migration dry-run, visual/content comparison, security/workflow tests, staging checks, deployment package | Not started |
+| 5 | NGN/USD billing, Paystack, manual transfers, client funds, reporting, audit views | **Done** locally, 204 automated tests passing in total. Paystack verified in test mode for authentication only (see below) |
+| 6 | Migration dry-run, visual/content comparison, security/workflow tests, staging checks, deployment package | Not started (next) |
 
 Nothing has been deployed. The live WordPress site is untouched.
+
+## Phase 5 — completed
+
+**Invoices** (D30, D31). Admin → Billing → Invoices.
+- Invoices are in NGN or USD, never both, and amounts are stored as whole kobo or cents.
+- Drafts can be edited. Once issued, an invoice is frozen and changes go through credit notes.
+- An invoice can be raised from an accepted quotation (the whole quotation or one payment stage) and from billable
+  expenses. "New invoice" on a matter pre-fills the client and matter.
+- Clients see issued invoices under Portal → Invoices and can download a printable copy.
+
+**Payments** (D31, D32). Admin → Billing → Payments.
+- **Paystack:** the client pays from the invoice. The payment only counts once the server has checked it with
+  Paystack, whether by webhook, on the client's return, or by the 15-minute reconcile. A wrong amount or currency
+  goes to "Needs review". Refunds complete only when Paystack confirms them.
+- **Bank transfer:** the client sees the firm's account for that currency and uploads a slip. The invoice stays
+  unpaid until finance verifies the amount against the bank statement.
+- **Recorded by finance:** money already received, applied to an invoice or held as client credit. Credit can be
+  applied to a later invoice in the same currency.
+- Manual refunds need evidence. Reversals undo a payment without editing it.
+
+**Expenses.** Admin → Billing → Expenses. Expenses marked billable to the client go onto a draft invoice. Voided
+expenses stay visible.
+
+**Client funds** (D33). Admin → Billing → Client funds.
+- This is a ledger of money held for clients, such as recovered debts, kept separate from the firm's fees.
+- Outflows need a written authorisation and can never take the balance below zero.
+- Mistakes are corrected by reversal entries, never by editing.
+- Reconciling against a bank statement records any difference; the system does not adjust anything.
+- Clients see their own statement under Portal → Funds.
+
+**Reports and overview** (D34).
+- Admin → Billing → Reports gives finance figures for each currency: invoiced, received, outstanding by age,
+  credit, unverified transfers, client funds and quotations awaiting a reply. It can filter by date, service and
+  team member.
+- Full administrators also see practice figures: enquiries, time to first action, matters, tasks and
+  consultations.
+- A CSV invoice export is available; every export is audited.
+- The admin dashboard shows a live overview for full administrators.
+
+**Audit log.** You can now filter by record type and record ID. The log remains append-only in the admin screens
+(no edit or delete).
+
+**Access** (D35). Finance officers can choose any client or matter on a billing form, but still cannot open
+matters. Lawyers and case officers see billing only for their own matters. Client-funds entries and evidence files
+are for finance only; every evidence download is audited.
+
+**Fixed:** amounts of 1,000 or more pre-filled into edit forms included a thousands comma. This failed validation
+(it affected editing draft invoice lines and quotation stages). Forms now receive plain `1000.00`.
+
+**Paystack status:** the test keys in `.env` were confirmed as test-mode keys and authenticate with Paystack. Not
+yet exercised end to end:
+- a real sandbox checkout;
+- webhooks, which need a public URL. Set `https://<domain>/webhooks/paystack` in the Paystack dashboard at
+  staging;
+- the refund API payload.
+
+All provider calls are covered by automated tests with a fake Paystack.
 
 ## Phase 4 — completed
 
@@ -131,7 +188,11 @@ repeatability/conflicts, and application file access.
 | **The firm's real engagement terms**, written in Admin → Engagement templates (the seeded template is an inactive outline) | Sending engagement terms in production |
 | Upload limits ≥ 20M/25M (D19). Namecheap default is 1024M, so likely fine; owner will check at deployment | Uploads over the host default |
 | New Phase 4 wording (`docs/content-gaps.md` §8) | Final copy sign-off |
-| SMTP (owner fills `.env` on cPanel), Paystack test keys (owner supplying), NGN and USD bank details (Settings → Bank transfer), Tawk IDs, admin notification emails (Settings → Email) | Live integration checks (build proceeds with test doubles). Owner reviews everything locally before any cPanel upload |
+| New Phase 5 wording (`docs/content-gaps.md` §9) | Final copy sign-off |
+| **NGN and USD bank details** (Settings → Bank transfer, left empty for the system administrator) | Clients paying by transfer. Until then the portal shows no transfer option |
+| Which currencies the firm's Paystack account accepts (`PAYSTACK_CURRENCIES`, currently `NGN`) | USD card payments |
+| Paystack webhook URL in the Paystack dashboard, and live keys | Online payments in production |
+| SMTP (owner fills `.env` on cPanel), Tawk IDs, admin notification emails (Settings → Email) | Live integration checks (build proceeds with test doubles). Owner reviews everything locally before any cPanel upload |
 
 ## Local environment notes
 
@@ -140,10 +201,10 @@ repeatability/conflicts, and application file access.
   fakes.
 - New uploads land in `public/media/` (git-ignored); back it up with the database on the server.
 
-## Next steps (Phase 5)
+## Next steps (Phase 6)
 
-1. Invoices, credit notes and expenses in NGN and USD, stored in minor units, with no currency conversion.
-2. Paystack checkout and webhooks in test mode (once the owner supplies test keys), with signature checks.
-3. Bank transfers: the client uploads proof, then finance verifies it, using the NGN and USD accounts in Settings.
-4. Client-funds (recovered funds) ledger and client statements.
-5. Reports, dashboards and audit-log views.
+1. WordPress migration dry-run (content, media, redirects) into a staging copy.
+2. Visual and content comparison against the live site.
+3. Full test suite against MariaDB (`mtl_test`), plus security and workflow checks.
+4. Staging checks on Namecheap, including a Paystack sandbox payment and webhook on a public URL.
+5. Deployment package and cutover plan, for the owner's approval before anything touches the live site.

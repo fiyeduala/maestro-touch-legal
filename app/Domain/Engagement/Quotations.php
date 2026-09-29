@@ -258,8 +258,8 @@ class Quotations
         return [
             'scope' => $version->scope,
             'exclusions' => $version->exclusions,
-            'lines' => array_map(fn ($l) => ['kind' => $l['kind'], 'description' => $l['description'], 'quantity' => $l['quantity'], 'unit' => str_replace(',', '', Money::toDecimal($l['unit_minor']))], $version->lines ?? []),
-            'payment_stages' => array_map(fn ($s) => ['label' => $s['label'], 'amount' => str_replace(',', '', Money::toDecimal($s['amount_minor'])), 'due' => $s['due']], $version->payment_stages ?? []),
+            'lines' => array_map(fn ($l) => ['kind' => $l['kind'], 'description' => $l['description'], 'quantity' => $l['quantity'], 'unit' => Money::input($l['unit_minor'])], $version->lines ?? []),
+            'payment_stages' => array_map(fn ($s) => ['label' => $s['label'], 'amount' => Money::input($s['amount_minor']), 'due' => $s['due']], $version->payment_stages ?? []),
             'valid_until' => $version->valid_until?->toDateString(),
             'notes' => $version->notes,
         ];

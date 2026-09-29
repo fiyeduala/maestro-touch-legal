@@ -21,6 +21,10 @@
                 @foreach ($attention['engagements'] as $engagement)
                     <li><a class="font-medium text-brand hover:underline" href="{{ route('portal.engagements.show', $engagement) }}">Review and sign engagement terms: {{ $engagement->title }}</a> <span class="text-sm">({{ $engagement->reference }})</span></li>
                 @endforeach
+                @foreach ($attention['invoices'] as $invoice)
+                    <li><a class="font-medium text-brand hover:underline" href="{{ route('portal.invoices.show', $invoice) }}">Invoice {{ $invoice->reference }}: {{ \App\Support\Money::format($invoice->balanceMinor(), $invoice->currency) }} to pay</a>
+                        @if ($invoice->due_date)<span class="text-sm">({{ $invoice->isOverdue() ? 'overdue since' : 'due' }} {{ $invoice->due_date->format('j M Y') }})</span>@endif</li>
+                @endforeach
                 @foreach ($attention['quotations'] as $quotation)
                     <li><a class="font-medium text-brand hover:underline" href="{{ route('portal.quotations.show', $quotation) }}">Review quotation {{ $quotation->reference }}</a></li>
                 @endforeach

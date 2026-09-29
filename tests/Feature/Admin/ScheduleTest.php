@@ -22,7 +22,7 @@ class ScheduleTest extends TestCase
     {
         $events = $this->events();
 
-        foreach (['digests:run', 'consultations:remind', 'tasks:notify'] as $command) {
+        foreach (['digests:run', 'consultations:remind', 'tasks:notify', 'payments:reconcile'] as $command) {
             $this->assertArrayHasKey($command, $events, "{$command} is not scheduled");
             $this->assertTrue($events[$command]->withoutOverlapping, "{$command} can overlap");
         }

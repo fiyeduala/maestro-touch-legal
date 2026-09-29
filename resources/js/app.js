@@ -125,3 +125,10 @@ function initChat() {
 }
 
 document.addEventListener('DOMContentLoaded', initChat);
+
+// Print buttons on invoices, receipts and statements (no inline script; see [data-printable] in app.css).
+document.addEventListener('click', (event) => {
+    if (event.target.closest('[data-print]')) {
+        window.print();
+    }
+});

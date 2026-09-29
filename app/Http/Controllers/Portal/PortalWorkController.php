@@ -15,6 +15,7 @@ use App\Models\Consultation;
 use App\Models\Document;
 use App\Models\DocumentRequest;
 use App\Models\Engagement;
+use App\Models\Invoice;
 use App\Models\Matter;
 use App\Models\Quotation;
 use App\Models\User;
@@ -41,6 +42,7 @@ class PortalWorkController extends Controller
         $openMatter = fn (Builder $query) => $query->whereIn('client_id', $clientIds)->where('status', '!=', MatterStatus::Closed->value);
 
         return [
+            'invoices' => Invoice::whereIn('client_id', $clientIds)->open()->orderBy('due_date')->get(),
             'quotations' => Quotation::whereIn('client_id', $clientIds)->where('status', OfferStatus::Sent->value)->latest()->get(),
             'engagements' => Engagement::whereIn('client_id', $clientIds)->where('status', OfferStatus::Sent->value)->latest()->get(),
             'drafts' => Document::where('is_deliverable', true)->whereNotNull('released_version_id')->whereNull('client_decision')

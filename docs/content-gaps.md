@@ -94,3 +94,18 @@ Nothing below comes from the live site. Change any of it in the code before laun
 | Consultation emails | "Consultation request received", "Consultation confirmed", "Consultation moved", "Consultation cancelled" and "Reminder: consultation on …", including "Your request does not yet mean the firm has agreed to act for you." |
 | Portal | "Messages" and "Appointments" pages, message box help text, the booking form ("Request a Consultation", "Past and Cancelled"), and the reschedule/cancel cut-off text |
 | Consultation type | "Initial consultation", free, 30 minutes (edit in Admin → Consultation types) |
+
+## 9. New wording drafted in Phase 5 (awaiting owner approval)
+
+Nothing below comes from the live site. Change any of it before launch, or approve it as it is.
+
+| Where | Wording |
+|---|---|
+| New-invoice email (client) | Subject "A new invoice from Maestro Touch Legal", body "An invoice has been issued to you. You can view it and see the payment options in your portal." |
+| Payment email (client) | Subject "Payment received – thank you", body "We have received your payment of {amount}. Your receipt is in your portal." |
+| Transfer not verified (client) | Subject "We could not verify your bank transfer", body "We could not match your reported bank transfer to our account. Please see the reason in your portal or contact us." |
+| Client-funds email (client) | Subject "Your client-funds statement has been updated", body "A new entry has been recorded on the funds we hold for you. You can see your statement in your portal." |
+| Portal → Invoices | "Amounts are shown in the currency of each invoice. Naira and dollar invoices are separate and are not added together." |
+| Portal invoice page | "Pay this invoice"; card note "You will be charged in {currency}. Some cards issued outside Nigeria may be declined by the card issuer; if that happens, please use bank transfer."; transfer note "Please use {invoice reference} as the payment reference. Pay in {currency} only; we cannot convert between currencies."; "Already paid? Tell us about your transfer."; "Print or save as PDF" |
+| Portal → Funds | Per-currency statement of funds held for the client |
+| Staff alerts (finance) | "Bank transfer to verify", "Online payment needs review", "Refund needs review", "Refund failed", "Payment dispute" (the dispute alert says to respond in the Paystack dashboard and to reverse the payment only if the dispute is lost) |

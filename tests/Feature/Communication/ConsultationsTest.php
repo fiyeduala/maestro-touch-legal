@@ -46,8 +46,20 @@ class ConsultationsTest extends TestCase
         return Carbon::parse($lagosTime, 'Africa/Lagos')->utc();
     }
 
+    public function test_default_hours_are_24_7_up_to_midnight(): void
+    {
+        $slots = $this->bookings()->slots($this->type);
+
+        $saturday = collect($slots['2026-10-03'])->map(fn ($s) => $s->timezone('Africa/Lagos')->format('H:i'))->all();
+        $this->assertSame('00:00', $saturday[0]);
+        $this->assertSame('23:15', end($saturday)); // 45-minute steps; the last one ends by midnight
+        $this->assertArrayHasKey('2026-10-04', $slots); // Sunday
+    }
+
     public function test_slots_follow_hours_notice_buffer_and_blocked_dates(): void
     {
+        $weekdays = collect(range(1, 5))->map(fn ($d) => ['day' => (string) $d, 'start' => '09:00', 'end' => '17:00'])->all();
+        Settings::set(['consultations.hours' => $weekdays]);
         $slots = $this->bookings()->slots($this->type);
 
         $this->assertArrayNotHasKey('2026-10-01', $slots); // inside the 24-hour notice period

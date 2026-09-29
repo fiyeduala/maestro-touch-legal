@@ -176,7 +176,8 @@ class SiteSettings extends Page
                             Repeater::make('consultations.hours')->hiddenLabel()->columns(3)->maxItems(21)->defaultItems(0)->schema([
                                 Select::make('day')->required()->options(self::WEEKDAYS),
                                 TextInput::make('start')->required()->regex('/^([01]\d|2[0-3]):[0-5]\d$/')->placeholder('09:00'),
-                                TextInput::make('end')->required()->regex('/^([01]\d|2[0-3]):[0-5]\d$/')->placeholder('17:00')
+                                TextInput::make('end')->required()->regex('/^(([01]\d|2[0-3]):[0-5]\d|24:00)$/')->placeholder('17:00')
+                                    ->helperText('24:00 means midnight.')
                                     ->rule(fn (Get $get) => function (string $attribute, $value, \Closure $fail) use ($get) {
                                         if ((string) $value <= (string) $get('start')) {
                                             $fail('The end must be after the start.');

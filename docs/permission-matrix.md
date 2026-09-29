@@ -17,7 +17,7 @@ CO = Case Officer / Support · FIN = Finance Officer · CE = Content Editor · C
 | Client profiles | A | A | T² | T² | — (billing fields in Phase 5) | — | O |
 | Client portal contacts: invite / remove access | A | A | — | — | — | — | — |
 | Services, intake forms (publish) | A | A | — | — | — | — | — |
-| Matters: view / update stage, next action, deadlines | A | A | T | T | — (billing metadata in Phase 5) | — | O (client-visible fields) |
+| Matters: view / update stage, next action, deadlines | A | A | T | T | pick by reference/title on billing forms only (D35) | — | O (client-visible fields) |
 | Open a matter (approve accepted engagement) | A | A | — | — | — | — | — |
 | Internal legal assessment on a matter | A | A | T | T | — | — | — |
 | Tasks, milestones, deadlines | A | A | T | T | — | — | — |
@@ -36,8 +36,8 @@ CO = Case Officer / Support · FIN = Finance Officer · CE = Content Editor · C
 | Public pages, homepage sections, branding | A | A | — | — | — | draft (publish if granted) | — |
 | Blog posts, media, SEO | A | A | — | — | — | draft (publish if granted) | — |
 | Settings: SMTP, Paystack, bank details, Tawk, WhatsApp, recap time and recipients | A | A | — | — | bank details R | — | — |
-| Reports & dashboards | A | A | own work | own work | financial | content | — |
-| Exports | A | A | T | T | financial | content | O (own documents) |
+| Reports & dashboards (Admin → Reports: finance figures to FIN and admins, practice figures to full admins only; the dashboard overview to full admins) | A | A | — (own work via matter and task lists) | — (own work via matter and task lists) | financial | — | — |
+| Exports (invoice CSV audited, D34) | A | A | T | T | financial | content | O (own documents) |
 | Audit history (search/view) | A | A | — | — | — | — | — |
 | Audit history (edit/delete) | — | — | — | — | — | — | — |
 | System health, queue, deliveries, backups (Admin → Operations) | A | A | — | — | — | — | — |

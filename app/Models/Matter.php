@@ -41,6 +41,19 @@ class Matter extends Model
     }
 
     /**
+     * Matters a user may link a billing record to. Finance officers bill every matter but may not
+     * open them, so this only ever feeds reference/title pickers, never a matter screen.
+     */
+    public function scopeLinkableForBilling(Builder $query, User $user): Builder
+    {
+        if ($user->isActive() && $user->hasRole(Role::FinanceOfficer)) {
+            return $query;
+        }
+
+        return $query->visibleTo($user);
+    }
+
+    /**
      * The single source of truth for which matters a user may see.
      * Full administrators: all. Lawyers and case officers: active team membership only.
      * Clients: matters of clients they are an active contact for. Everyone else: none.
@@ -148,6 +161,16 @@ class Matter extends Model
     public function quotations(): HasMany
     {
         return $this->hasMany(Quotation::class);
+    }
+
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
+    public function expenses(): HasMany
+    {
+        return $this->hasMany(Expense::class);
     }
 
     public function messages(): HasMany

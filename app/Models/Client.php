@@ -65,10 +65,35 @@ class Client extends Model
         return $this->hasMany(Engagement::class);
     }
 
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function fundEntries(): HasMany
+    {
+        return $this->hasMany(ClientFundEntry::class);
+    }
+
     /**
      * Staff below full administrator see a client only through a matter they are on
      * (permission matrix note ²), or an enquiry they own.
      */
+    /** Clients a user may bill. Finance officers bill every client; this feeds billing pickers only. */
+    public function scopeLinkableForBilling(Builder $query, User $user): Builder
+    {
+        if ($user->isActive() && $user->hasRole(Role::FinanceOfficer)) {
+            return $query;
+        }
+
+        return $query->visibleTo($user);
+    }
+
     public function scopeVisibleTo(Builder $query, User $user): Builder
     {
         if ($user->isFullAdministrator()) {

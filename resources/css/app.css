@@ -198,3 +198,11 @@
         @apply mt-2 text-sm text-body/70;
     }
 }
+
+/* Printable invoices, receipts and statements: only the [data-printable] block is printed. */
+@media print {
+    body:has([data-printable]) > :not(main),
+    body:has([data-printable]) main [data-portal-chrome],
+    [data-no-print] { display: none !important; }
+    [data-printable] { color: #000; }
+}

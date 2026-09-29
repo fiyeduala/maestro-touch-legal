@@ -8,6 +8,7 @@ use App\Models\AuditEvent;
 use BackedEnum;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\CodeEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
@@ -86,6 +87,12 @@ class AuditEventResource extends Resource
                         ->map(fn ($a) => explode('.', $a)[0])->unique()->sort()->mapWithKeys(fn ($a) => [$a => str($a)->headline()->toString()])->all())
                     ->query(fn (Builder $query, array $data) => $data['value'] ? $query->where('action', 'like', $data['value'].'.%') : $query),
                 SelectFilter::make('actor_id')->label('Person')->relationship('actor', 'name')->searchable(),
+                SelectFilter::make('subject_type')->label('Record type')
+                    ->options(fn () => AuditEvent::query()->whereNotNull('subject_type')->distinct()->pluck('subject_type')
+                        ->mapWithKeys(fn ($t) => [$t => str(class_basename($t))->headline()->toString()])->sort()->all()),
+                Filter::make('subject_reference')->label('Record')
+                    ->schema([TextInput::make('subject_id')->label('Record ID')->integer()])
+                    ->query(fn (Builder $query, array $data) => $query->when($data['subject_id'] ?? null, fn ($q, $id) => $q->where('subject_id', (int) $id))),
                 Filter::make('occurred_at')->label('Date range')
                     ->schema([
                         DatePicker::make('from'),

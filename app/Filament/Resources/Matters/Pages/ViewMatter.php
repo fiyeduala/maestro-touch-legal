@@ -4,8 +4,10 @@ namespace App\Filament\Resources\Matters\Pages;
 
 use App\Domain\Communication\Conversations;
 use App\Filament\Resources\Consultations\ConsultationResource;
+use App\Filament\Resources\Invoices\InvoiceResource;
 use App\Filament\Resources\Matters\MatterResource;
 use App\Filament\Support\RefreshesRecord;
+use App\Models\Invoice;
 use Filament\Actions\Action;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
@@ -27,6 +29,9 @@ class ViewMatter extends ViewRecord
         return [
             Action::make('conversation')->label($this->conversationLabel())->icon(Heroicon::OutlinedChatBubbleLeftRight)->color('gray')
                 ->url(MatterResource::getUrl('conversation', ['record' => $this->record])),
+            Action::make('newInvoice')->label('New invoice')->icon(Heroicon::OutlinedDocumentCurrencyDollar)->color('gray')
+                ->visible(fn () => auth()->user()->can('create', Invoice::class))
+                ->url(fn () => InvoiceResource::getUrl('create', ['matter' => $this->record->id])),
             ...$this->refreshingAfter([
                 ...MatterResource::workActions(),
                 ConsultationResource::scheduleAction(matter: $this->record)->visible(! $this->record->isClosed()),

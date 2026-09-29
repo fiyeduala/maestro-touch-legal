@@ -188,3 +188,71 @@ failed emails, the mail transport (it warns while mail is only logged), and the 
 ### D29 — Tawk.to only on public pages (2026-09-29)
 The Tawk.to chat widget loads on public marketing pages only, never in the client portal, on account pages or in
 the admin panel. This keeps a third-party script away from confidential client screens.
+
+### D30 — Office hours and admin address (2026-09-29)
+The owner confirmed that the firm keeps 24/7 office hours (Settings → Consultations) and that the administrator
+address is `admin@mtouchlegal.com`. NGN and USD bank details were deliberately left empty, for the system
+administrator to enter in Settings → Bank transfer. Until they are entered, clients are not offered bank transfer.
+
+### D31 — Billing model (2026-09-29)
+- Every financial document is in one currency, NGN or USD. Amounts are whole kobo or cents in integer columns.
+  There is no currency conversion anywhere.
+- An invoice can be edited only as a draft. Once issued, corrections are made with credit notes (capped at the
+  unpaid balance) or payment reversals. Only a draft can be cancelled, and it needs a recorded reason.
+- A payment is money in one currency from one client. It can be split across invoices through allocations, and
+  anything left over becomes client credit. Credit is applied only by a finance action, never automatically.
+- Paying an invoice does not start representation (see the engagement rules from Phase 3).
+- Reports never add NGN to USD, because no exchange rate, date or source is recorded.
+- Paid consultation types still only store a fee. Staff raise an invoice for it by hand.
+
+### D32 — Paystack and bank transfers (2026-09-29)
+- The secret key lives only in `.env` and is never shown on a page, in logs or in the audit. Test and live keys
+  are kept apart by the owner in `.env`.
+- The amount charged is always the invoice's stored balance and currency.
+- Only currencies listed in `PAYSTACK_CURRENCIES` are offered for card payment. The default is `NGN`, because
+  USD needs the firm's Paystack account to be enabled for it. The page warns that foreign cards may be declined.
+- A payment is marked paid only after the server calls Paystack's verify endpoint. Webhooks are
+  signature-checked (HMAC-SHA512) and duplicates are ignored. A success message sent to the site but not confirmed
+  by that check is not trusted.
+- `payments:reconcile` runs every 15 minutes. It verifies checkouts nobody returned from, and marks them abandoned
+  after 48 hours.
+- A wrong amount or currency, or a dispute, goes to "Needs review" for finance, and no money is moved automatically.
+- Refunds are "pending" until Paystack confirms them. Manual refunds need evidence.
+- A bank-transfer slip is only a claim. Finance must verify the amount and date against the bank statement before
+  the invoice counts as paid. Slips are private files and are not virus-scanned.
+
+### D33 — Client funds (2026-09-29)
+- This ledger records money held for a client, such as recovered debts or settlement sums. It is separate from fee
+  invoices, and its figures are never counted as the firm's income.
+- Entries are receipts, remittances to the client, payments to third parties, or authorised transfers to fees.
+  Any outflow needs a written authorisation reference and cannot take the balance for that client and currency
+  below zero.
+- The system never takes fees from this ledger and never pays anything out; it only records what a person did.
+- Mistakes are corrected by a reversal entry.
+- Reconciliation records the bank statement balance against the ledger and shows any difference, without changing
+  anything.
+
+### D34 — Report definitions (2026-09-29)
+Dates are in the firm's time zone and the date range includes both ends. Every figure is shown per currency.
+- **Invoiced:** issued (not draft or cancelled) invoices, counted by issue date.
+- **Received:** verified payments, counted by the bank-statement date for manual payments or by Paystack's paid
+  date for online payments. Confirmed refunds are shown separately.
+- **Outstanding:** today's unpaid balance on open invoices, aged by days past the due date.
+- **Awaiting verification:** transfer slips not yet checked. They are not counted as received.
+- **Quotations awaiting a reply:** sent quotations. These are estimates only.
+- **Time to first action:** time from an enquiry's submission to the first change of status away from "New" by a
+  staff member.
+- A service or team filter only counts records linked to a matter.
+- Every CSV export is audited with its filters, and spreadsheet formulas in text cells are neutralised.
+
+### D35 — Finance officers and matters (2026-09-29)
+Finance officers need to bill every client but must not read matter files. On billing forms (invoices, payments,
+expenses and client funds) they can search any client and choose any matter by reference and title. They still
+cannot open matter, document or conversation screens. Lawyers and case officers only see clients and matters on
+their own teams.
+
+### D36 — Test databases (2026-09-29)
+The automated tests run on in-memory SQLite for speed. Development runs on local MariaDB (`mtl_local`), and every
+migration is applied there as it is written. Before any upload to cPanel, the full suite will also be run
+against a MariaDB test database (`mtl_test`) to catch dialect differences. Date filters use `whereDate`, which
+behaves the same on both databases.

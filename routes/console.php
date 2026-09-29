@@ -40,3 +40,12 @@ Schedule::command('tasks:notify')->everyFifteenMinutes()->withoutOverlapping();
 // Emails and other queued jobs: a short, bounded worker per cron call instead of a daemon.
 Schedule::command('queue:work --stop-when-empty --max-time=180 --tries=3 --backoff=60 --timeout=60')
     ->everyMinute()->withoutOverlapping(5);
+
+Artisan::command('payments:reconcile {--limit=50}', function (App\Domain\Billing\PaystackPayments $paystack) {
+    $checked = $paystack->reconcile((int) $this->option('limit'));
+    Cache::forever('ops.paystack_last_reconcile', now()->toIso8601String());
+    $this->info("Online payments checked with Paystack: {$checked}");
+})->purpose('Verify pending Paystack payments nobody returned from, and close abandoned ones');
+
+// Catches payments whose browser callback and webhook were both missed.
+Schedule::command('payments:reconcile')->everyFifteenMinutes()->withoutOverlapping(10);

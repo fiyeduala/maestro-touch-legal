@@ -74,13 +74,16 @@ class Settings
         'digest.enabled' => [true, false],
         'digest.time' => ['18:00', false],
         'digest.firm_recipients' => [[], false], // must be active full administrators; checked again at send time
-        // Consultation booking (spec §11). Times are in the firm timezone; weekday 1 = Monday … 7 = Sunday.
+        // Consultation booking (spec §11). Times are in the firm timezone; weekday 1 = Monday … 7 = Sunday;
+        // an end of 24:00 means midnight. The firm is open 24/7 (owner, 29 Sep 2026).
         'consultations.hours' => [[
-            ['day' => '1', 'start' => '09:00', 'end' => '17:00'],
-            ['day' => '2', 'start' => '09:00', 'end' => '17:00'],
-            ['day' => '3', 'start' => '09:00', 'end' => '17:00'],
-            ['day' => '4', 'start' => '09:00', 'end' => '17:00'],
-            ['day' => '5', 'start' => '09:00', 'end' => '17:00'],
+            ['day' => '1', 'start' => '00:00', 'end' => '24:00'],
+            ['day' => '2', 'start' => '00:00', 'end' => '24:00'],
+            ['day' => '3', 'start' => '00:00', 'end' => '24:00'],
+            ['day' => '4', 'start' => '00:00', 'end' => '24:00'],
+            ['day' => '5', 'start' => '00:00', 'end' => '24:00'],
+            ['day' => '6', 'start' => '00:00', 'end' => '24:00'],
+            ['day' => '7', 'start' => '00:00', 'end' => '24:00'],
         ], false],
         'consultations.buffer_minutes' => [15, false],
         'consultations.capacity' => [1, false], // consultations that may overlap (e.g. number of available lawyers)

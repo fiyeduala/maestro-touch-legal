@@ -2,10 +2,14 @@
 
 namespace App\Filament\Pages;
 
+use App\Domain\Billing\PaymentStatus;
+use App\Domain\Billing\PaystackGateway;
 use App\Domain\Communication\Digests;
 use App\Filament\Support\DomainActions;
 use App\Models\Delivery;
 use App\Models\Digest;
+use App\Models\Payment;
+use App\Models\PaymentEvent;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
@@ -67,6 +71,8 @@ class Operations extends Page implements HasTable
     {
         return $schema->components([
             Section::make('Background tasks and email')->schema([View::make('filament.operations-status')->viewData(fn () => $this->status())]),
+            Section::make('Paystack')->description('Online payments count only after the server verifies them with Paystack. Pending checkouts are re-checked every 15 minutes.')
+                ->schema([View::make('filament.operations-paystack')->viewData(fn () => $this->paystack())]),
             Section::make('End-of-day recaps')
                 ->description('Recaps that failed, or whose outcome is unknown, are never resent automatically. Check with the recipient before sending again, as they may already have it.')
                 ->schema([EmbeddedTable::make()]),
@@ -88,6 +94,24 @@ class Operations extends Page implements HasTable
             'failed24h' => Delivery::where('created_at', '>=', now()->subDay())->where('status', 'failed')->count(),
             'recentFailures' => Delivery::where('status', 'failed')->latest('id')->limit(10)->get(),
             'mailer' => config('mail.default'),
+        ];
+    }
+
+    /** @return array<string, mixed> never includes keys; only the mode derived from the key prefix */
+    public function paystack(): array
+    {
+        $gateway = app(PaystackGateway::class);
+        $lastWebhook = PaymentEvent::where('provider', 'paystack')->where('source', 'webhook')->where('signature_valid', true)->max('created_at');
+        $lastReconcile = Cache::get('ops.paystack_last_reconcile');
+
+        return [
+            'mode' => $gateway->mode(),
+            'currencies' => $gateway->configured() ? $gateway->currencies() : [],
+            'lastWebhook' => $lastWebhook ? Carbon::parse($lastWebhook) : null,
+            'lastReconcile' => $lastReconcile ? Carbon::parse($lastReconcile) : null,
+            'pending' => Payment::where('method', 'paystack')->where('status', PaymentStatus::Pending->value)->count(),
+            'needsReview' => Payment::where('status', PaymentStatus::NeedsReview->value)->count(),
+            'webhookUrl' => route('webhooks.paystack'),
         ];
     }
 

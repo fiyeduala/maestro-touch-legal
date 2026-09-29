@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\BillingEvidenceController;
 use App\Http\Controllers\Admin\StaffApplicationFileController;
 use App\Http\Controllers\Auth\InvitationController;
 use App\Http\Controllers\Auth\LoginController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\DocumentFileController;
 use App\Http\Controllers\Portal\PortalAppointmentController;
+use App\Http\Controllers\Portal\PortalBillingController;
 use App\Http\Controllers\Portal\PortalController;
 use App\Http\Controllers\Portal\PortalConversationController;
 use App\Http\Controllers\Portal\PortalWorkController;
@@ -16,6 +18,7 @@ use App\Http\Controllers\Site\CommentController;
 use App\Http\Controllers\Site\EnquiryController;
 use App\Http\Controllers\Site\FeedController;
 use App\Http\Controllers\Site\SiteController;
+use App\Http\Controllers\Webhooks\PaystackWebhookController;
 use App\Http\Middleware\AddTrailingSlash;
 use App\Http\Middleware\EnsureActiveClient;
 use App\Http\Middleware\EnsureStaffSessionVerified;
@@ -26,6 +29,8 @@ use Illuminate\Support\Facades\Route;
 | The "/{slug}/" catch-all (pages, then posts) must stay last.
 */
 
+// Paystack events: signature-checked in the controller; exempt from CSRF in bootstrap/app.php.
+Route::post('/webhooks/paystack', PaystackWebhookController::class)->middleware('throttle:120,1')->name('webhooks.paystack');
 Route::get('/robots.txt', [FeedController::class, 'robots']);
 Route::get('/sitemap.xml', [FeedController::class, 'sitemap'])->name('sitemap');
 
@@ -33,6 +38,8 @@ Route::get('/sitemap.xml', [FeedController::class, 'sitemap'])->name('sitemap');
 Route::middleware(['auth', EnsureStaffSessionVerified::class])->prefix('admin/download')->group(function () {
     Route::get('/application-files/{file}', StaffApplicationFileController::class)->name('admin.application-file');
     Route::get('/documents/{version}', [DocumentFileController::class, 'staff'])->name('admin.document-file');
+    Route::get('/payments/{payment}/evidence', [BillingEvidenceController::class, 'payment'])->name('admin.payment-evidence');
+    Route::get('/client-funds/{entry}/evidence', [BillingEvidenceController::class, 'fundEntry'])->name('admin.fund-evidence');
 });
 
 // Staff previews of unpublished content (never cached, noindex).
@@ -55,6 +62,13 @@ Route::middleware(['auth', 'verified', EnsureActiveClient::class])->prefix('port
     Route::get('/messages', [PortalConversationController::class, 'index'])->name('messages');
     Route::get('/matters/{matter}/messages', [PortalConversationController::class, 'poll'])->middleware('throttle:60,1')->name('matters.messages.poll');
     Route::post('/matters/{matter}/messages', [PortalConversationController::class, 'store'])->middleware('throttle:20,1')->name('matters.messages.store');
+    Route::get('/invoices', [PortalBillingController::class, 'index'])->name('invoices');
+    Route::get('/invoices/{invoice}', [PortalBillingController::class, 'show'])->name('invoices.show');
+    Route::post('/invoices/{invoice}/pay', [PortalBillingController::class, 'pay'])->middleware('throttle:10,1')->name('invoices.pay');
+    Route::post('/invoices/{invoice}/transfer', [PortalBillingController::class, 'transfer'])->middleware('throttle:10,1')->name('invoices.transfer');
+    Route::get('/payments/callback', [PortalBillingController::class, 'callback'])->middleware('throttle:30,1')->name('payments.callback');
+    Route::get('/payments/{payment}', [PortalBillingController::class, 'receipt'])->whereNumber('payment')->name('payments.show');
+    Route::get('/funds', [PortalBillingController::class, 'funds'])->name('funds');
     Route::get('/appointments', [PortalAppointmentController::class, 'index'])->name('appointments');
     Route::post('/appointments', [PortalAppointmentController::class, 'store'])->middleware('throttle:auth-forms')->name('appointments.store');
     Route::post('/appointments/{consultation}/reschedule', [PortalAppointmentController::class, 'reschedule'])->middleware('throttle:auth-forms')->name('appointments.reschedule');

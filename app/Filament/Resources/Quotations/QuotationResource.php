@@ -2,13 +2,16 @@
 
 namespace App\Filament\Resources\Quotations;
 
+use App\Domain\Billing\Invoices;
 use App\Domain\Engagement\OfferStatus;
 use App\Domain\Engagement\Quotations;
 use App\Filament\Resources\Enquiries\EnquiryResource;
+use App\Filament\Resources\Invoices\InvoiceResource;
 use App\Filament\Resources\Quotations\Pages\CreateQuotation;
 use App\Filament\Resources\Quotations\Pages\ListQuotations;
 use App\Filament\Resources\Quotations\Pages\ViewQuotation;
 use App\Filament\Support\DomainActions;
+use App\Models\Invoice;
 use App\Models\Quotation;
 use App\Support\Money;
 use BackedEnum;
@@ -192,6 +195,22 @@ class QuotationResource extends Resource
                 ->schema([Textarea::make('reason')->label('Reason (internal)')->required()->maxLength(2000)])
                 ->action(fn (Action $action, Quotation $record, array $data) => DomainActions::run($action,
                     fn () => $service()->withdraw($record, $data['reason'], auth()->user()), 'Quotation withdrawn')),
+
+            Action::make('invoice')
+                ->label('Draft invoice')
+                ->icon(Heroicon::OutlinedDocumentCurrencyDollar)
+                ->visible(fn (Quotation $record) => $record->status === OfferStatus::Accepted && auth()->user()->can('create', Invoice::class))
+                ->modalDescription('Creates a draft invoice from the accepted quotation, in the same currency. You can edit the draft before issuing it.')
+                ->schema(fn (Quotation $record) => [
+                    Select::make('stage')->label('Invoice for')->required()->default('all')
+                        ->options(['all' => 'The whole quotation'] + collect($record->loadMissing('acceptedVersion')->acceptedVersion?->payment_stages ?? [])
+                            ->mapWithKeys(fn (array $s, int $i) => [(string) $i => ($s['label'] ?: 'Stage '.($i + 1)).' · '.Money::format((int) $s['amount_minor'], $record->currency)])->all()),
+                ])
+                ->action(function (Action $action, Quotation $record, array $data) {
+                    $invoice = DomainActions::run($action, fn () => app(Invoices::class)
+                        ->draftFromQuotation($record, $data['stage'] === 'all' ? null : (int) $data['stage'], auth()->user()), 'Draft invoice created');
+                    $action->redirect(InvoiceResource::getUrl('view', ['record' => $invoice]));
+                }),
         ];
     }
 

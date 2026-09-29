@@ -51,6 +51,12 @@ final class Money
         return $sign.number_format(intdiv($minor, 100)).'.'.str_pad((string) ($minor % 100), 2, '0', STR_PAD_LEFT);
     }
 
+    /** 125050 → "1250.50": the form-field value (amount fields accept no thousands separators). */
+    public static function input(int $minor): string
+    {
+        return str_replace(',', '', self::toDecimal($minor));
+    }
+
     /** 125050, NGN → "₦1,250.50" */
     public static function format(int $minor, string $currency): string
     {
