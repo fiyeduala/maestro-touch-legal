@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\BackupDownloadController;
 use App\Http\Controllers\Admin\BillingEvidenceController;
 use App\Http\Controllers\Admin\StaffApplicationFileController;
 use App\Http\Controllers\Auth\InvitationController;
@@ -34,12 +35,17 @@ Route::post('/webhooks/paystack', PaystackWebhookController::class)->middleware(
 Route::get('/robots.txt', [FeedController::class, 'robots']);
 Route::get('/sitemap.xml', [FeedController::class, 'sitemap'])->name('sitemap');
 
+// Old image addresses (search results, other sites) move permanently to the images folder (DECISIONS D41).
+Route::get('/wp-content/uploads/{path}', fn (string $path) => redirect('/images/'.implode('/', array_map('rawurlencode', explode('/', $path))), 301))
+    ->where('path', '[A-Za-z0-9/_.\-() %]+')->name('legacy-image');
+
 // Confidential staff downloads: a verified staff-panel session plus the policy check in the controller.
 Route::middleware(['auth', EnsureStaffSessionVerified::class])->prefix('admin/download')->group(function () {
     Route::get('/application-files/{file}', StaffApplicationFileController::class)->name('admin.application-file');
     Route::get('/documents/{version}', [DocumentFileController::class, 'staff'])->name('admin.document-file');
     Route::get('/payments/{payment}/evidence', [BillingEvidenceController::class, 'payment'])->name('admin.payment-evidence');
     Route::get('/client-funds/{entry}/evidence', [BillingEvidenceController::class, 'fundEntry'])->name('admin.fund-evidence');
+    Route::get('/backups/{name}', BackupDownloadController::class)->middleware('signed')->where('name', '[A-Za-z0-9.\-]+')->name('admin.backup-download');
 });
 
 // Staff previews of unpublished content (never cached, noindex).
@@ -129,5 +135,5 @@ Route::middleware(AddTrailingSlash::class)->group(function () {
     Route::post('/{slug}/comments', [CommentController::class, 'store'])->where('slug', '[a-z0-9][a-z0-9-]*')->middleware('throttle:public-forms')->name('comments.store');
 
     // Must be last: CMS page by path, else blog post by slug.
-    Route::get('/{slug}/', [SiteController::class, 'resolve'])->where('slug', '(?!(?:admin|portal|preview|livewire|filament|up|storage|build)$)[a-z0-9][a-z0-9-]*')->name('content.show');
+    Route::get('/{slug}/', [SiteController::class, 'resolve'])->where('slug', '(?!(?:admin|portal|preview|livewire|filament|up|storage|build|images|media)$)[a-z0-9][a-z0-9-]*')->name('content.show');
 });

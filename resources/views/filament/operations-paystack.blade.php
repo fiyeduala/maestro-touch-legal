@@ -2,10 +2,10 @@
 <dl style="display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(12rem,1fr))">
     <div>
         <dt class="text-sm text-gray-500 dark:text-gray-400">Mode</dt>
-        <dd @class(['font-medium', 'text-danger-600 dark:text-danger-400' => in_array($mode, [null, 'unknown'], true)])>
+        <dd @class(['font-medium', 'text-danger-600 dark:text-danger-400' => in_array($mode, [null, 'unknown'], true) || $liveRefused])>
             @switch($mode)
                 @case('test') Test mode (no real money) @break
-                @case('live') Live @break
+                @case('live') {{ $liveRefused ? 'Live key refused – this is not the production site, so online payment is switched off' : 'Live' }} @break
                 @case('unknown') Key not recognised – check PAYSTACK_SECRET_KEY in .env @break
                 @default Not configured – online payment is switched off
             @endswitch

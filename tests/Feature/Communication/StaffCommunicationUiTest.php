@@ -146,12 +146,12 @@ class StaffCommunicationUiTest extends TestCase
         $this->actingAsStaff($this->admin);
 
         Livewire::test(SiteSettings::class)
-            ->fillForm(['digest.time' => '7pm'])
+            ->fillForm(['current_password' => 'password', 'digest.time' => '7pm'])
             ->call('save')
             ->assertHasFormErrors(['digest.time']);
 
         Livewire::test(SiteSettings::class)
-            ->fillForm([
+            ->fillForm(['current_password' => 'password', 
                 'digest.time' => '19:30',
                 'digest.firm_recipients' => [$this->admin->email],
                 'consultations.buffer_minutes' => '10',

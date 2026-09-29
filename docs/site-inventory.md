@@ -9,7 +9,7 @@ theme/Elementor CSS are kept in `docs/source-capture/`. Exact copy is in `docs/c
 
 ```
 php tools/site-audit/extract.php        # copy + asset list + CSS
-php tools/site-audit/fetch-assets.php   # self-host images into public/wp-content/uploads
+php tools/site-audit/fetch-assets.php   # self-host images into public/images
 node tools/site-audit/screenshot.mjs    # desktop 1440px + mobile 390px captures
 ```
 
@@ -70,7 +70,7 @@ Permalinks are `/%postname%/` at the site root, so Laravel must resolve root-lev
 | `/zoom-meetings/`, `/zoom-meetings/test/` | Zoom plugin test entry | 410 Gone |
 | `/hello-world/` | WordPress sample post | Owner decision: import as draft (not public) and 410, or keep |
 | `/?elementor_library=*`, `/wp-admin/*`, `/wp-login.php`, `/feed/`, `/wp-json/*` | WordPress internals | `/feed/` → new RSS feed; `wp-login.php` → `/log-in/`; others 410 |
-| `/wp-content/uploads/*` | Media URLs | Serve the same files from `public/wp-content/uploads` so old image links keep working |
+| `/wp-content/uploads/*` | Media URLs | Same files served from `/images/` (D41); old addresses redirect there (301) |
 | `/customer-area/my-account/edit-account/` | Already 404 on live site | 410 |
 
 ## Subdomains and external services to protect during cutover

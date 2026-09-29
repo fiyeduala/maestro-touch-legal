@@ -31,4 +31,11 @@ Thumbs.db
 /storage/certs
 
 # CMS uploads live on the server (backed up separately), never in Git
-/public/media
+/public/media/*
+!/public/media/.htaccess
+
+# Raw build screenshots (regenerate with tools/site-audit/screenshot.mjs); side-by-side JPGs are kept
+/docs/visual-comparison/build/*.png
+
+# Release packages (tools/deploy/package.php)
+/dist

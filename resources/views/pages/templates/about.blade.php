@@ -25,13 +25,18 @@
             <div class="mx-auto mt-12 max-w-[960px] rounded-md border border-brand px-6 py-6">
                 <h3 class="text-[22px] font-medium">{{ $c['affiliate']['title'] }}</h3>
                 <p class="mt-3 text-[15px]">{{ $c['affiliate']['text'] }}</p>
+                @if (! empty($c['affiliate']['image']))
+                    {{-- As on the old site: the affiliate's logo shows on tablets and phones only. --}}
+                    <img src="{{ Markup::safeUrl($c['affiliate']['image']) }}" alt="{{ $c['affiliate']['image_alt'] ?? '' }}"
+                         loading="lazy" class="mt-6 h-auto w-full max-w-[420px] lg:hidden">
+                @endif
             </div>
         @endif
 
         @if (! empty($c['points']))
             <div class="mt-12 grid gap-8 md:grid-cols-3">
                 @foreach ($c['points'] as $i => $point)
-                    <div @class(['md:px-10 md:py-0', 'md:border md:border-line md:pb-6' => $i === 1, 'md:pl-0' => $i === 0])>
+                    <div @class(['md:px-10 md:py-0', 'border-b border-line pb-8' => $i < count($c['points']) - 1, 'md:border-b-0' => $i !== 1, 'md:border md:border-line md:pb-6' => $i === 1, 'md:pl-0' => $i === 0])>
                         <p class="card-number">{{ $point['number'] ?? sprintf('%02d', $i + 1) }}</p>
                         <h3 class="mt-2 text-[22px] font-medium">{{ $point['title'] }}</h3>
                         <p class="mt-3 text-[15px]">{{ $point['text'] }}</p>

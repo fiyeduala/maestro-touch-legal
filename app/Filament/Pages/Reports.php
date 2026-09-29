@@ -8,6 +8,7 @@ use App\Domain\Reporting\Reports as ReportData;
 use App\Models\Service;
 use App\Models\User;
 use App\Support\Money;
+use App\Filament\Support\DomainActions;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
@@ -87,7 +88,14 @@ class Reports extends Page
                 ->label('Export invoices (CSV)')
                 ->icon(Heroicon::OutlinedArrowDownTray)
                 ->color('gray')
-                ->action(fn () => $this->exportInvoices()),
+                ->modalDescription('The export is recorded in the audit log with its filters.')
+                ->modalSubmitActionLabel('Export')
+                ->schema([DomainActions::recentPasswordField('export client and invoice data')])
+                ->action(function () {
+                    DomainActions::markConfirmed();
+
+                    return $this->exportInvoices();
+                }),
         ];
     }
 

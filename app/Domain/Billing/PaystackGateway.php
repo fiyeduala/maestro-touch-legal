@@ -14,9 +14,15 @@ use Illuminate\Support\Facades\Log;
  */
 class PaystackGateway
 {
+    /** Live keys are refused anywhere but production, so a staging or local copy can never take real money (D37). */
     public function configured(): bool
     {
-        return filled(config('services.paystack.secret_key'));
+        return filled(config('services.paystack.secret_key')) && ($this->mode() !== 'live' || app()->isProduction());
+    }
+
+    public function liveKeyRefused(): bool
+    {
+        return $this->mode() === 'live' && ! app()->isProduction();
     }
 
     /** 'test', 'live', 'unknown' (key does not look like a Paystack secret key) or null (not configured). */

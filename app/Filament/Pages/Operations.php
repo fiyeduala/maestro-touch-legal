@@ -5,6 +5,8 @@ namespace App\Filament\Pages;
 use App\Domain\Billing\PaymentStatus;
 use App\Domain\Billing\PaystackGateway;
 use App\Domain\Communication\Digests;
+use App\Domain\Identity\Role;
+use App\Domain\Operations\Backups;
 use App\Filament\Support\DomainActions;
 use App\Models\Delivery;
 use App\Models\Digest;
@@ -13,6 +15,7 @@ use App\Models\PaymentEvent;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
+use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\EmbeddedTable;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\View;
@@ -26,6 +29,7 @@ use Filament\Tables\Contracts\HasTable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 use UnitEnum;
 
 /**
@@ -73,6 +77,9 @@ class Operations extends Page implements HasTable
             Section::make('Background tasks and email')->schema([View::make('filament.operations-status')->viewData(fn () => $this->status())]),
             Section::make('Paystack')->description('Online payments count only after the server verifies them with Paystack. Pending checkouts are re-checked every 15 minutes.')
                 ->schema([View::make('filament.operations-paystack')->viewData(fn () => $this->paystack())]),
+            Section::make('Backups')->description('Encrypted nightly backups of the database and stored files. Restoring is done from the cPanel terminal (docs/BACKUP-AND-RESTORE.md).')
+                ->headerActions([$this->downloadBackupAction()])
+                ->schema([View::make('filament.operations-backups')->viewData(fn () => $this->backups())]),
             Section::make('End-of-day recaps')
                 ->description('Recaps that failed, or whose outcome is unknown, are never resent automatically. Check with the recipient before sending again, as they may already have it.')
                 ->schema([EmbeddedTable::make()]),
@@ -106,6 +113,7 @@ class Operations extends Page implements HasTable
 
         return [
             'mode' => $gateway->mode(),
+            'liveRefused' => $gateway->liveKeyRefused(),
             'currencies' => $gateway->configured() ? $gateway->currencies() : [],
             'lastWebhook' => $lastWebhook ? Carbon::parse($lastWebhook) : null,
             'lastReconcile' => $lastReconcile ? Carbon::parse($lastReconcile) : null,
@@ -113,6 +121,57 @@ class Operations extends Page implements HasTable
             'needsReview' => Payment::where('status', PaymentStatus::NeedsReview->value)->count(),
             'webhookUrl' => route('webhooks.paystack'),
         ];
+    }
+
+    /** @return array<string, mixed> */
+    public function backups(): array
+    {
+        $backups = app(Backups::class);
+        $last = $backups->lastRun();
+        $list = $backups->list();
+        $free = @disk_free_space($backups->directory()) ?: @disk_free_space(storage_path());
+        $total = @disk_total_space(storage_path());
+        $stale = $last && ($last['ok'] ?? false) && Carbon::parse($last['at'])->lt(now()->subHours(26));
+
+        return [
+            'configured' => $backups->configured(),
+            'last' => $last,
+            'stale' => $stale,
+            'problem' => ! $backups->configured() || ! $last || ! ($last['ok'] ?? false) || $stale,
+            'count' => count($list),
+            'backupSize' => $backups->human(array_sum(array_column($list, 'size'))),
+            'keep' => max(1, (int) config('backup.keep')),
+            'free' => $free !== false && $free !== null ? $backups->human((int) $free) : null,
+            'total' => $total ? $backups->human((int) $total) : null,
+            'lowDisk' => $free !== false && $free !== null && $free < 1024 ** 3,
+        ];
+    }
+
+    /**
+     * Backups hold every confidential file, so only a technical administrator may download one, after
+     * re-entering their password. The link it opens works for five minutes, for that user only, and is audited.
+     */
+    public function downloadBackupAction(): Action
+    {
+        return Action::make('downloadBackup')
+            ->label('Download a backup')
+            ->icon(Heroicon::OutlinedArrowDownTray)
+            ->color('gray')
+            ->visible(fn () => auth()->user()?->isActive() && auth()->user()->hasRole(Role::TechnicalAdministrator) && app(Backups::class)->list() !== [])
+            ->modalDescription('The file is encrypted with the backup password, which is not shown here. Keep the download somewhere safe and off this server.')
+            ->schema([
+                Select::make('name')->label('Backup')->required()
+                    ->options(fn () => collect(app(Backups::class)->list())->mapWithKeys(fn ($b) => [$b['name'] => $b['name'].' ('.app(Backups::class)->human($b['size']).')']))
+                    ->default(fn () => app(Backups::class)->list()[0]['name'] ?? null),
+                DomainActions::currentPasswordField()->helperText('Re-enter your own password to confirm this download.'),
+            ])
+            ->modalSubmitActionLabel('Download')
+            ->action(function (array $data) {
+                abort_unless(auth()->user()->isActive() && auth()->user()->hasRole(Role::TechnicalAdministrator), 403);
+                abort_unless(app(Backups::class)->find((string) $data['name']), 404);
+
+                $this->redirect(URL::temporarySignedRoute('admin.backup-download', now()->addMinutes(5), ['name' => $data['name'], 'user' => auth()->id()]));
+            });
     }
 
     public function table(Table $table): Table

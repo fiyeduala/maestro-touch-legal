@@ -14,6 +14,27 @@ use Filament\Support\Exceptions\Halt;
  */
 class DomainActions
 {
+    /** How long a password re-entry covers further settings saves and exports, in seconds. */
+    public const CONFIRM_WINDOW = 900;
+
+    public static function recentlyConfirmed(): bool
+    {
+        return now()->getTimestamp() - (int) session('auth.password_confirmed_at', 0) < self::CONFIRM_WINDOW;
+    }
+
+    public static function markConfirmed(): void
+    {
+        session()->put('auth.password_confirmed_at', now()->getTimestamp());
+    }
+
+    /** Asked only when the password has not been re-entered in the last 15 minutes (settings, exports). */
+    public static function recentPasswordField(string $purpose): TextInput
+    {
+        return self::currentPasswordField()
+            ->helperText("Re-enter your own password to {$purpose}. You will not be asked again for 15 minutes.")
+            ->visible(fn () => ! self::recentlyConfirmed());
+    }
+
     public static function currentPasswordField(): TextInput
     {
         return TextInput::make('current_password')

@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Domain\Operations\Settings;
+use App\Filament\Support\DomainActions;
 use App\Filament\Resources\Pages\PageContentForm;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -260,6 +261,8 @@ class SiteSettings extends Page
                     ]),
                 ]),
             ]),
+            // Settings include bank details, email sending and site-wide scripts, so saving needs the password.
+            DomainActions::recentPasswordField('save settings'),
         ]);
     }
 
@@ -282,6 +285,8 @@ class SiteSettings extends Page
         abort_unless(static::canAccess(), 403);
 
         $state = $this->form->getState();
+        DomainActions::markConfirmed();
+        $this->data['current_password'] = null;
         $values = [];
         foreach (self::KEYS as $key) {
             $value = data_get($state, $key);

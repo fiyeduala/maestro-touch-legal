@@ -13,6 +13,7 @@ use App\Filament\Resources\Matters\RelationManagers\DeadlinesRelationManager;
 use App\Filament\Resources\Matters\RelationManagers\DocumentRequestsRelationManager;
 use App\Filament\Resources\Matters\RelationManagers\DocumentsRelationManager;
 use App\Filament\Resources\Matters\RelationManagers\EventsRelationManager;
+use App\Filament\Resources\Matters\RelationManagers\NotarisationRelationManager;
 use App\Filament\Resources\Matters\RelationManagers\TasksRelationManager;
 use App\Filament\Resources\Matters\RelationManagers\TeamRelationManager;
 use App\Filament\Resources\Quotations\QuotationResource;
@@ -266,6 +267,7 @@ class MatterResource extends Resource
             DocumentsRelationManager::class,
             DocumentRequestsRelationManager::class,
             DeadlinesRelationManager::class,
+            NotarisationRelationManager::class,
             TeamRelationManager::class,
             EventsRelationManager::class,
         ];

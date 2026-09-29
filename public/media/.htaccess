@@ -1,0 +1,9 @@
+# CMS uploads (images for pages and posts). Nothing under here may execute.
+# Client documents never live here: they are on the private disk (storage/app/private).
+<FilesMatch "\.(php[0-9]?|phtml|phar|pl|py|cgi|sh|html?|svgz?)$">
+    Require all denied
+</FilesMatch>
+Options -Indexes -ExecCGI
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+</IfModule>

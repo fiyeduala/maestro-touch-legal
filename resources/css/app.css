@@ -41,6 +41,12 @@
         line-height: 1.6;
     }
 
+    @media (max-width: 544px) {
+        body {
+            font-size: 0.912rem;
+        }
+    }
+
     h1, h2, h3, h4 {
         @apply text-ink;
         font-weight: 600;
@@ -146,6 +152,18 @@
         @apply mt-4;
     }
 
+    /* Blog posts keep the old theme's full blank line between paragraphs. */
+    .prose-post > * + * {
+        margin-top: 1.6em;
+    }
+
+    /* The old theme drops body text to 0.912rem on phones. */
+    @media (max-width: 544px) {
+        .prose-mtl {
+            font-size: 0.912rem;
+        }
+    }
+
     .prose-mtl h2 {
         @apply mt-8 text-2xl;
     }
@@ -183,7 +201,11 @@
     }
 
     .prose-mtl hr {
-        @apply my-8 border-line;
+        @apply my-5 border-line;
+    }
+
+    .prose-mtl hr + * {
+        @apply mt-3;
     }
 
     .prose-mtl img {

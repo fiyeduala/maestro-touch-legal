@@ -21,7 +21,7 @@
     };
 @endphp
 <header class="{{ $overlay ? 'absolute inset-x-0 top-0 z-30' : 'relative z-30 '.$headerBg }}">
-    <div class="site-container flex h-[100px] items-center justify-between gap-6">
+    <div class="site-container flex h-[80px] items-center nav:h-[100px] justify-between gap-6">
         <a href="{{ url('/') }}" class="shrink-0" rel="home">
             <img src="{{ Markup::safeUrl(Settings::get('site.logo_path')) }}" alt="{{ Settings::get('site.logo_alt') }}"
                  width="450" height="130" class="h-auto w-[120px] nav:w-[122px]">
@@ -43,7 +43,7 @@
             <a href="{{ $accountUrl }}" class="btn-outline">{{ $accountLabel }}</a>
         </div>
 
-        <button type="button" class="inline-flex size-11 items-center justify-center rounded border border-dotted border-brand text-brand nav:hidden"
+        <button type="button" class="inline-flex size-11 items-center justify-center rounded text-brand nav:hidden"
                 data-menu-toggle aria-controls="mobile-menu" aria-expanded="false">
             <span class="sr-only">Menu</span>
             <x-mtl-icon name="menu" class="size-6" data-icon-open />

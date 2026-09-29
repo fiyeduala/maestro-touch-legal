@@ -138,6 +138,11 @@ class Matter extends Model
         return $this->hasMany(Task::class);
     }
 
+    public function notarisationHandoffs(): HasMany
+    {
+        return $this->hasMany(NotarisationHandoff::class)->latest('id');
+    }
+
     public function deadlines(): HasMany
     {
         return $this->hasMany(MatterDeadline::class)->orderBy('due_at');

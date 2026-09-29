@@ -209,7 +209,7 @@ class BillingAdminUiTest extends TestCase
         $this->actingAsStaff($this->finance);
         Livewire::test(Reports::class)
             ->assertSee('₦60,000.00')->assertSee('$500.00')->assertDontSee('Practice')
-            ->callAction('exportInvoices')
+            ->callAction('exportInvoices', ['current_password' => 'password'])
             ->assertFileDownloaded();
         $audit = AuditEvent::where('action', 'report.exported')->firstOrFail();
         $this->assertSame($this->finance->id, $audit->actor_id);

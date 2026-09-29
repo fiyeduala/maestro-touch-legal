@@ -1,0 +1,458 @@
+{
+  "home-desktop": {
+    "body": {
+      "text": "Skip to content\n\n    \n    \n        \n            \n        \n\n ",
+      "fontFamily": "Poppins, ui-sans-serif, system-ui, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "25.6px",
+      "color": "rgb(54, 65, 81)",
+      "background": "rgb(255, 255, 255)",
+      "backgroundImage": "none",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "textTransform": "none",
+      "letterSpacing": "normal"
+    },
+    "header": null,
+    "navLink": null,
+    "footer": null
+  },
+  "about-desktop": {
+    "body": {
+      "text": "Skip to content\n\n    \n    \n        \n            \n        \n\n ",
+      "fontFamily": "Poppins, ui-sans-serif, system-ui, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "25.6px",
+      "color": "rgb(54, 65, 81)",
+      "background": "rgb(255, 255, 255)",
+      "backgroundImage": "none",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "textTransform": "none",
+      "letterSpacing": "normal"
+    },
+    "header": null,
+    "navLink": null,
+    "footer": null
+  },
+  "offering-desktop": {
+    "body": {
+      "text": "Skip to content\n\n    \n    \n        \n            \n        \n\n ",
+      "fontFamily": "Poppins, ui-sans-serif, system-ui, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "25.6px",
+      "color": "rgb(54, 65, 81)",
+      "background": "rgb(255, 255, 255)",
+      "backgroundImage": "none",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "textTransform": "none",
+      "letterSpacing": "normal"
+    },
+    "header": null,
+    "navLink": null,
+    "footer": null
+  },
+  "contact-desktop": {
+    "body": {
+      "text": "Skip to content\n\n    \n    \n        \n            \n        \n\n ",
+      "fontFamily": "Poppins, ui-sans-serif, system-ui, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "25.6px",
+      "color": "rgb(54, 65, 81)",
+      "background": "rgb(255, 255, 255)",
+      "backgroundImage": "none",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "textTransform": "none",
+      "letterSpacing": "normal"
+    },
+    "header": null,
+    "navLink": null,
+    "footer": null
+  },
+  "blog-desktop": {
+    "body": {
+      "text": "Skip to content\n\n    \n    \n        \n            \n        \n\n ",
+      "fontFamily": "Poppins, ui-sans-serif, system-ui, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "25.6px",
+      "color": "rgb(54, 65, 81)",
+      "background": "rgb(255, 255, 255)",
+      "backgroundImage": "none",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "textTransform": "none",
+      "letterSpacing": "normal"
+    },
+    "header": null,
+    "navLink": null,
+    "footer": null
+  },
+  "terms-and-conditions-desktop": {
+    "body": {
+      "text": "Skip to content\n\n    \n    \n        \n            \n        \n\n ",
+      "fontFamily": "Poppins, ui-sans-serif, system-ui, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "25.6px",
+      "color": "rgb(54, 65, 81)",
+      "background": "rgb(255, 255, 255)",
+      "backgroundImage": "none",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "textTransform": "none",
+      "letterSpacing": "normal"
+    },
+    "header": null,
+    "navLink": null,
+    "footer": null
+  },
+  "log-in-desktop": {
+    "body": {
+      "text": "Skip to content\n\n    \n    \n        \n            \n        \n\n ",
+      "fontFamily": "Poppins, ui-sans-serif, system-ui, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "25.6px",
+      "color": "rgb(54, 65, 81)",
+      "background": "rgb(255, 255, 255)",
+      "backgroundImage": "none",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "textTransform": "none",
+      "letterSpacing": "normal"
+    },
+    "header": null,
+    "navLink": null,
+    "footer": null
+  },
+  "register-desktop": {
+    "body": {
+      "text": "Skip to content\n\n    \n    \n        \n            \n        \n\n ",
+      "fontFamily": "Poppins, ui-sans-serif, system-ui, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "25.6px",
+      "color": "rgb(54, 65, 81)",
+      "background": "rgb(255, 255, 255)",
+      "backgroundImage": "none",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "textTransform": "none",
+      "letterSpacing": "normal"
+    },
+    "header": null,
+    "navLink": null,
+    "footer": null
+  },
+  "password-reset-desktop": {
+    "body": {
+      "text": "Skip to content\n\n    \n    \n        \n            \n        \n\n ",
+      "fontFamily": "Poppins, ui-sans-serif, system-ui, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "25.6px",
+      "color": "rgb(54, 65, 81)",
+      "background": "rgb(255, 255, 255)",
+      "backgroundImage": "none",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "textTransform": "none",
+      "letterSpacing": "normal"
+    },
+    "header": null,
+    "navLink": null,
+    "footer": null
+  },
+  "post-hiring-your-first-staff-desktop": {
+    "body": {
+      "text": "Skip to content\n\n    \n    \n        \n            \n        \n\n ",
+      "fontFamily": "Poppins, ui-sans-serif, system-ui, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "25.6px",
+      "color": "rgb(54, 65, 81)",
+      "background": "rgb(255, 255, 255)",
+      "backgroundImage": "none",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "textTransform": "none",
+      "letterSpacing": "normal"
+    },
+    "header": null,
+    "navLink": null,
+    "footer": null
+  },
+  "post-virtual-law-firm-desktop": {
+    "body": {
+      "text": "Skip to content\n\n    \n    \n        \n            \n        \n\n ",
+      "fontFamily": "Poppins, ui-sans-serif, system-ui, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "25.6px",
+      "color": "rgb(54, 65, 81)",
+      "background": "rgb(255, 255, 255)",
+      "backgroundImage": "none",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "textTransform": "none",
+      "letterSpacing": "normal"
+    },
+    "header": null,
+    "navLink": null,
+    "footer": null
+  },
+  "tag-archive-desktop": {
+    "body": {
+      "text": "Skip to content\n\n    \n    \n        \n            \n        \n\n ",
+      "fontFamily": "Poppins, ui-sans-serif, system-ui, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "25.6px",
+      "color": "rgb(54, 65, 81)",
+      "background": "rgb(255, 255, 255)",
+      "backgroundImage": "none",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "textTransform": "none",
+      "letterSpacing": "normal"
+    },
+    "header": null,
+    "navLink": null,
+    "footer": null
+  },
+  "home-mobile": {
+    "body": {
+      "text": "Skip to content\n\n    \n    \n        \n            \n        \n\n ",
+      "fontFamily": "Poppins, ui-sans-serif, system-ui, sans-serif",
+      "fontSize": "14.592px",
+      "fontWeight": "400",
+      "lineHeight": "23.3472px",
+      "color": "rgb(54, 65, 81)",
+      "background": "rgb(255, 255, 255)",
+      "backgroundImage": "none",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "textTransform": "none",
+      "letterSpacing": "normal"
+    },
+    "header": null,
+    "navLink": null,
+    "footer": null
+  },
+  "about-mobile": {
+    "body": {
+      "text": "Skip to content\n\n    \n    \n        \n            \n        \n\n ",
+      "fontFamily": "Poppins, ui-sans-serif, system-ui, sans-serif",
+      "fontSize": "14.592px",
+      "fontWeight": "400",
+      "lineHeight": "23.3472px",
+      "color": "rgb(54, 65, 81)",
+      "background": "rgb(255, 255, 255)",
+      "backgroundImage": "none",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "textTransform": "none",
+      "letterSpacing": "normal"
+    },
+    "header": null,
+    "navLink": null,
+    "footer": null
+  },
+  "offering-mobile": {
+    "body": {
+      "text": "Skip to content\n\n    \n    \n        \n            \n        \n\n ",
+      "fontFamily": "Poppins, ui-sans-serif, system-ui, sans-serif",
+      "fontSize": "14.592px",
+      "fontWeight": "400",
+      "lineHeight": "23.3472px",
+      "color": "rgb(54, 65, 81)",
+      "background": "rgb(255, 255, 255)",
+      "backgroundImage": "none",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "textTransform": "none",
+      "letterSpacing": "normal"
+    },
+    "header": null,
+    "navLink": null,
+    "footer": null
+  },
+  "contact-mobile": {
+    "body": {
+      "text": "Skip to content\n\n    \n    \n        \n            \n        \n\n ",
+      "fontFamily": "Poppins, ui-sans-serif, system-ui, sans-serif",
+      "fontSize": "14.592px",
+      "fontWeight": "400",
+      "lineHeight": "23.3472px",
+      "color": "rgb(54, 65, 81)",
+      "background": "rgb(255, 255, 255)",
+      "backgroundImage": "none",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "textTransform": "none",
+      "letterSpacing": "normal"
+    },
+    "header": null,
+    "navLink": null,
+    "footer": null
+  },
+  "blog-mobile": {
+    "body": {
+      "text": "Skip to content\n\n    \n    \n        \n            \n        \n\n ",
+      "fontFamily": "Poppins, ui-sans-serif, system-ui, sans-serif",
+      "fontSize": "14.592px",
+      "fontWeight": "400",
+      "lineHeight": "23.3472px",
+      "color": "rgb(54, 65, 81)",
+      "background": "rgb(255, 255, 255)",
+      "backgroundImage": "none",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "textTransform": "none",
+      "letterSpacing": "normal"
+    },
+    "header": null,
+    "navLink": null,
+    "footer": null
+  },
+  "terms-and-conditions-mobile": {
+    "body": {
+      "text": "Skip to content\n\n    \n    \n        \n            \n        \n\n ",
+      "fontFamily": "Poppins, ui-sans-serif, system-ui, sans-serif",
+      "fontSize": "14.592px",
+      "fontWeight": "400",
+      "lineHeight": "23.3472px",
+      "color": "rgb(54, 65, 81)",
+      "background": "rgb(255, 255, 255)",
+      "backgroundImage": "none",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "textTransform": "none",
+      "letterSpacing": "normal"
+    },
+    "header": null,
+    "navLink": null,
+    "footer": null
+  },
+  "log-in-mobile": {
+    "body": {
+      "text": "Skip to content\n\n    \n    \n        \n            \n        \n\n ",
+      "fontFamily": "Poppins, ui-sans-serif, system-ui, sans-serif",
+      "fontSize": "14.592px",
+      "fontWeight": "400",
+      "lineHeight": "23.3472px",
+      "color": "rgb(54, 65, 81)",
+      "background": "rgb(255, 255, 255)",
+      "backgroundImage": "none",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "textTransform": "none",
+      "letterSpacing": "normal"
+    },
+    "header": null,
+    "navLink": null,
+    "footer": null
+  },
+  "register-mobile": {
+    "body": {
+      "text": "Skip to content\n\n    \n    \n        \n            \n        \n\n ",
+      "fontFamily": "Poppins, ui-sans-serif, system-ui, sans-serif",
+      "fontSize": "14.592px",
+      "fontWeight": "400",
+      "lineHeight": "23.3472px",
+      "color": "rgb(54, 65, 81)",
+      "background": "rgb(255, 255, 255)",
+      "backgroundImage": "none",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "textTransform": "none",
+      "letterSpacing": "normal"
+    },
+    "header": null,
+    "navLink": null,
+    "footer": null
+  },
+  "password-reset-mobile": {
+    "body": {
+      "text": "Skip to content\n\n    \n    \n        \n            \n        \n\n ",
+      "fontFamily": "Poppins, ui-sans-serif, system-ui, sans-serif",
+      "fontSize": "14.592px",
+      "fontWeight": "400",
+      "lineHeight": "23.3472px",
+      "color": "rgb(54, 65, 81)",
+      "background": "rgb(255, 255, 255)",
+      "backgroundImage": "none",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "textTransform": "none",
+      "letterSpacing": "normal"
+    },
+    "header": null,
+    "navLink": null,
+    "footer": null
+  },
+  "post-hiring-your-first-staff-mobile": {
+    "body": {
+      "text": "Skip to content\n\n    \n    \n        \n            \n        \n\n ",
+      "fontFamily": "Poppins, ui-sans-serif, system-ui, sans-serif",
+      "fontSize": "14.592px",
+      "fontWeight": "400",
+      "lineHeight": "23.3472px",
+      "color": "rgb(54, 65, 81)",
+      "background": "rgb(255, 255, 255)",
+      "backgroundImage": "none",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "textTransform": "none",
+      "letterSpacing": "normal"
+    },
+    "header": null,
+    "navLink": null,
+    "footer": null
+  },
+  "post-virtual-law-firm-mobile": {
+    "body": {
+      "text": "Skip to content\n\n    \n    \n        \n            \n        \n\n ",
+      "fontFamily": "Poppins, ui-sans-serif, system-ui, sans-serif",
+      "fontSize": "14.592px",
+      "fontWeight": "400",
+      "lineHeight": "23.3472px",
+      "color": "rgb(54, 65, 81)",
+      "background": "rgb(255, 255, 255)",
+      "backgroundImage": "none",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "textTransform": "none",
+      "letterSpacing": "normal"
+    },
+    "header": null,
+    "navLink": null,
+    "footer": null
+  },
+  "tag-archive-mobile": {
+    "body": {
+      "text": "Skip to content\n\n    \n    \n        \n            \n        \n\n ",
+      "fontFamily": "Poppins, ui-sans-serif, system-ui, sans-serif",
+      "fontSize": "14.592px",
+      "fontWeight": "400",
+      "lineHeight": "23.3472px",
+      "color": "rgb(54, 65, 81)",
+      "background": "rgb(255, 255, 255)",
+      "backgroundImage": "none",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "textTransform": "none",
+      "letterSpacing": "normal"
+    },
+    "header": null,
+    "navLink": null,
+    "footer": null
+  }
+}

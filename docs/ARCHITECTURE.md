@@ -140,7 +140,7 @@ Preferred (if the main domain's document root can point anywhere):
 Fallback when the main domain must serve from `public_html`:
 ```
 /home/<user>/mtl_app/            everything except public/
-/home/<user>/public_html/        contents of public/ only (index.php, .htaccess, build/, wp-content/uploads/, media/)
+/home/<user>/public_html/        contents of public/ only (index.php, .htaccess, build/, images/, media/)
                                  index.php points to ../mtl_app/vendor and ../mtl_app/bootstrap/app.php, and the
                                  app sets its public path to public_html
 ```

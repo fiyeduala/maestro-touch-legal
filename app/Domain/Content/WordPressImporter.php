@@ -29,16 +29,20 @@ use Throwable;
  *
  * - Idempotent: every source object is tracked in import_mappings with a checksum; unchanged objects are skipped.
  * - Never overwrites a post edited locally after its last import; that is reported as an issue instead.
- * - Media files are not downloaded: legacy uploads are served from public/wp-content/uploads (DECISIONS D3), and
+ * - Media files are not downloaded: the old site's uploads are copied to public/images, keeping their year/month
+ *   folders (/wp-content/uploads/2025/08/a.jpg becomes /images/2025/08/a.jpg; DECISIONS D3, D41), and
  *   a missing local file is reported.
  * - Dry run executes the same code inside a transaction that is rolled back, so its counts are exact.
  * - Source content is data: HTML is purified before storage and nothing in it is executed or followed.
  */
 class WordPressImporter
 {
-    private const SOURCE = 'wordpress-rest';
+    public const SOURCE = 'wordpress-rest';
 
-    private const POST_STATUS = [
+    /** Folder under public/ holding the old site's images (was wp-content/uploads). */
+    public const IMAGES_DIR = 'images';
+
+    public const POST_STATUS = [
         'publish' => 'published',
         'future' => 'scheduled',
         'draft' => 'draft',
@@ -169,6 +173,9 @@ class WordPressImporter
         $hosts = $options['site_hosts'] ?? ['mtouchlegal.com', 'www.mtouchlegal.com'];
         $draftSlugs = $options['draft_slugs'] ?? [];
         $authors = $this->resolveAuthors($data, $options['authors'] ?? []);
+        foreach ($data['notes'] ?? [] as $note) {
+            $this->issue('warning', 'source', '-', $note);
+        }
 
         $categoryIds = $this->importTerms($data['categories'] ?? [], 'category', Category::class, true);
         $tagIds = $this->importTerms($data['tags'] ?? [], 'tag', Tag::class, false);
@@ -216,10 +223,11 @@ class WordPressImporter
                 continue;
             }
 
+            $path = self::IMAGES_DIR.'/'.substr($path, strlen('wp-content/uploads/'));
             $file = public_path($path);
             $exists = is_file($file);
             if (! $exists) {
-                $this->issue('warning', 'media', (string) $source['id'], "File missing locally: /{$path}. Copy it into public/{$path}.");
+                $this->issue('warning', 'media', (string) $source['id'], "File missing locally: /{$path}. Copy it into public/{$path} (from the old site's wp-content/uploads).");
             }
             $size = $exists ? @getimagesize($file) : false;
 
@@ -316,7 +324,8 @@ class WordPressImporter
         $attributes = [
             'post_id' => $postMapping->target_id,
             'author_name' => $this->text($source['author_name'] ?? '') ?: 'Anonymous',
-            'author_email' => null, // not exposed by the public API
+            // The public API hides it; a WXR export includes it. Kept for moderation only, never shown.
+            'author_email' => filter_var($source['author_email'] ?? null, FILTER_VALIDATE_EMAIL) ? mb_strtolower($source['author_email']) : null,
             'body' => Purifier::clean((string) ($source['content']['rendered'] ?? ''), 'comment'),
             'status' => self::COMMENT_STATUS[$source['status'] ?? ''] ?? 'pending',
             'posted_at' => $this->gmt($source['date_gmt'] ?? null) ?? now(),
@@ -422,12 +431,15 @@ class WordPressImporter
     {
         $hostPattern = implode('|', array_map(fn ($h) => preg_quote($h, '#'), $hosts));
 
-        return (string) preg_replace('#https?://(?:'.$hostPattern.')(?=/)#i', '', $html);
+        $html = (string) preg_replace('#https?://(?:'.$hostPattern.')(?=/)#i', '', $html);
+
+        // Old upload addresses point at the same file in the images folder (not links to other sites).
+        return (string) preg_replace('#(?<![\w.\-])/wp-content/uploads/#', '/'.self::IMAGES_DIR.'/', $html);
     }
 
     private function checkLocalUploads(string $html, string $postId): void
     {
-        preg_match_all('#/wp-content/uploads/[^"\'\s,)<>?]+#', $html, $m);
+        preg_match_all('#/'.self::IMAGES_DIR.'/[^"\'\s,)<>?]+#', $html, $m);
         foreach (array_unique($m[0]) as $path) {
             if (! is_file(public_path(ltrim(rawurldecode($path), '/')))) {
                 $this->issue('warning', 'post', $postId, "Body references a file missing locally: {$path}");

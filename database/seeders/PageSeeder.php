@@ -15,7 +15,7 @@ use Illuminate\Database\Seeder;
  */
 class PageSeeder extends Seeder
 {
-    private const UPLOADS = '/wp-content/uploads/2025/08/';
+    private const UPLOADS = '/images/2025/08/';
 
     public function run(PageRevisions $revisions): void
     {
@@ -136,6 +136,8 @@ class PageSeeder extends Seeder
                     'affiliate' => [
                         'title' => 'Our Lead Affiliate Firm',
                         'text' => 'Tim Lebura Kip & Co. (TLK) serves as the Lead Affiliate Firm of Maestro Touch Legal. With offices in Abuja, Port Harcourt, and Calabar, TLK provides in-depth regional knowledge and on-the-ground representation when in-person legal support is required. This partnership ensures that our virtual capabilities are complemented by physical presence in key Nigerian cities.',
+                        'image' => '/images/2025/08/tlk.jpg',
+                        'image_alt' => 'Maestro Law – Tim Lebura Kip & Co. logo',
                     ],
                     'points' => [
                         ['number' => '01', 'title' => 'Why We’re Different', 'text' => 'Unlike traditional law firms, we operate entirely online — meaning no travel, no waiting rooms, and no unnecessary paperwork. Our secure client portal keeps you connected with your lawyer, updates you in real-time, and stores your legal documents safely in one place'],
@@ -193,7 +195,7 @@ class PageSeeder extends Seeder
                 'title' => 'Terms and conditions',
                 'meta_description' => 'Terms and Conditions for the Maestro Touch Legal Client Portal.',
                 'content' => [
-                    'banner' => ['heading' => 'Terms and Conditions'],
+                    'banner' => ['heading' => 'Terms *and* Conditions'],
                     // Stored as captured; rendered through the "content" purifier profile.
                     'body' => file_get_contents(__DIR__.'/content/terms-and-conditions.html'),
                 ],

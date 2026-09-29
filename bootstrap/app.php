@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Middleware\ApplyRedirects;
+use App\Http\Middleware\ProtectNonProduction;
+use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -14,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // Global, not in the web group: group middleware only runs for matched routes, and most old WordPress URLs match none.
         $middleware->prepend(ApplyRedirects::class);
+        $middleware->prepend(ProtectNonProduction::class);
+        $middleware->append(SecurityHeaders::class);
         $middleware->validateCsrfTokens(except: ['webhooks/paystack']);
         $middleware->redirectGuestsTo(fn () => route('login'));
         $middleware->redirectUsersTo(fn () => route('portal.home'));

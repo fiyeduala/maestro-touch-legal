@@ -51,7 +51,7 @@ class PostResource extends Resource
 
     /** Top-level paths the application owns; a post slug can never take one of them. */
     public const RESERVED_SLUGS = [
-        'admin', 'portal', 'preview', 'livewire', 'filament', 'up', 'storage', 'build', 'media', 'wp-content',
+        'admin', 'portal', 'preview', 'livewire', 'filament', 'up', 'storage', 'build', 'media', 'images', 'wp-content',
         'blog', 'category', 'tag', 'feed', 'sitemap', 'robots', 'invitation', 'careers', 'join-our-legal-team',
         'log-in', 'logout', 'register', 'password-reset', 'email', 'profile', 'search', 'page',
     ];

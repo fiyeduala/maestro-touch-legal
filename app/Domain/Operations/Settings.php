@@ -21,11 +21,11 @@ class Settings
     public const DEFINITIONS = [
         'site.title' => ['Maestro Touch Legal', false],
         'site.tagline' => ['Legal Solutions. Anywhere. Anytime.', false],
-        'site.logo_path' => ['/wp-content/uploads/2025/08/mtl-blue.png', false],
-        'site.logo_white_path' => ['/wp-content/uploads/2025/08/white.png', false],
+        'site.logo_path' => ['/images/2025/08/mtl-blue.png', false],
+        'site.logo_white_path' => ['/images/2025/08/white.png', false],
         'site.logo_alt' => ['Maestro Touch Legal', false],
-        'site.favicon_path' => ['/wp-content/uploads/2025/08/blue-1.png', false],
-        'site.og_image_path' => ['/wp-content/uploads/2025/08/2152004777-1.jpg', false],
+        'site.favicon_path' => ['/images/2025/08/blue-1.png', false],
+        'site.og_image_path' => ['/images/2025/08/2152004777-1.jpg', false],
         'footer.text' => ['© {year} Maestro Touch Legal', false],
         'navigation.primary' => [[
             ['label' => 'Home', 'url' => '/'],

@@ -25,6 +25,7 @@ class StaffApplicationFileController extends Controller
             'Content-Type' => $file->mime_type,
             'X-Content-Type-Options' => 'nosniff',
             'Cache-Control' => 'private, no-store',
+            'Content-Security-Policy' => "default-src 'none'; sandbox",
         ]);
     }
 }

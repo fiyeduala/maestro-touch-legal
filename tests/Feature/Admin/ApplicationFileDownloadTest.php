@@ -42,6 +42,7 @@ class ApplicationFileDownloadTest extends TestCase
             ->get(route('admin.application-file', $file))
             ->assertOk()
             ->assertHeader('X-Content-Type-Options', 'nosniff')
+            ->assertHeader('Content-Security-Policy', "default-src 'none'; sandbox")
             ->assertDownload('cv.pdf');
 
         $this->assertDatabaseHas('audit_events', ['action' => 'staff_application.file_downloaded']);

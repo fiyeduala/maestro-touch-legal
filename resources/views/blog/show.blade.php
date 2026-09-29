@@ -23,10 +23,10 @@
     @endif
 
     <div class="bg-tint py-10 md:py-16">
-        <div class="mx-auto max-w-[800px] px-4 md:px-0">
-            <article class="bg-white px-5 py-8 md:px-10 md:py-12">
+        <div class="mx-auto max-w-[710px] px-2 md:px-0">
+            <article class="bg-white px-6 py-8 md:px-10 md:py-12">
                 <header>
-                    <h1 class="text-[26px] leading-[1.3] font-semibold text-ink md:text-[30px]">{{ $post->title }}</h1>
+                    <h1 class="text-[21px] leading-[1.3] font-semibold text-ink md:text-[30px]">{{ $post->title }}</h1>
                     <p class="mt-4 text-sm">
                         By {{ $post->byline() }}
                         @if ($post->published_at)
@@ -40,7 +40,7 @@
                          @if ($post->cover->width) width="{{ $post->cover->width }}" height="{{ $post->cover->height }}" @endif>
                 @endif
 
-                <div class="prose-mtl mt-8 text-[15px]">
+                <div class="prose-mtl prose-post mt-8">
                     {!! Purifier::clean($post->body, 'content') !!}
                 </div>
 

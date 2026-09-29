@@ -49,3 +49,7 @@ Artisan::command('payments:reconcile {--limit=50}', function (App\Domain\Billing
 
 // Catches payments whose browser callback and webhook were both missed.
 Schedule::command('payments:reconcile')->everyFifteenMinutes()->withoutOverlapping(10);
+
+// Nightly encrypted backup (D38). BACKUP_AT should fall on a 5-minute mark so the cPanel cron call catches it.
+Schedule::command('mtl:backup')->dailyAt((string) config('backup.at'))->timezone((string) config('app.firm_timezone'))
+    ->withoutOverlapping(180);

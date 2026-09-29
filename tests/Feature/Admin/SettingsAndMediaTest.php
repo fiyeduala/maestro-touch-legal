@@ -26,7 +26,7 @@ class SettingsAndMediaTest extends TestCase
         $this->actingAsStaff($this->userWithRoles(Role::FirmPrincipal));
 
         Livewire::test(SiteSettings::class)
-            ->fillForm([
+            ->fillForm(['current_password' => 'password', 
                 'contact.email' => 'hello@example.com',
                 'integrations.tawk_enabled' => true,
                 'integrations.tawk_property_id' => '64f1a2b3c4d5e6f7a8b9c0d1',
@@ -41,6 +41,26 @@ class SettingsAndMediaTest extends TestCase
         $this->assertDatabaseHas('audit_events', ['action' => 'settings.updated']);
     }
 
+    public function test_saving_settings_needs_the_password_again_after_fifteen_minutes(): void
+    {
+        $this->actingAsStaff($this->userWithRoles(Role::FirmPrincipal));
+
+        Livewire::test(SiteSettings::class)
+            ->fillForm(['current_password' => 'not my password', 'contact.email' => 'changed@example.com'])
+            ->call('save')
+            ->assertHasFormErrors(['current_password']);
+        Settings::flush();
+        $this->assertNotSame('changed@example.com', Settings::get('contact.email'));
+
+        Livewire::test(SiteSettings::class)->fillForm(['current_password' => 'password'])->call('save')->assertHasNoFormErrors();
+        // Within the window the field is not shown again.
+        Livewire::test(SiteSettings::class)->assertFormFieldHidden('current_password');
+
+        $this->travel(16)->minutes();
+        Livewire::test(SiteSettings::class)->assertFormFieldVisible('current_password')
+            ->fillForm(['contact.email' => 'changed@example.com'])->call('save')->assertHasFormErrors(['current_password' => 'required']);
+    }
+
     public function test_bank_instructions_are_set_per_currency(): void
     {
         $this->actingAsStaff($this->userWithRoles(Role::FirmPrincipal));
@@ -48,12 +68,12 @@ class SettingsAndMediaTest extends TestCase
 
         // A half-filled account is refused rather than shown to clients.
         Livewire::test(SiteSettings::class)
-            ->fillForm(['bank.ngn_bank_name' => 'Example Bank', 'bank.ngn_account_number' => '12345'])
+            ->fillForm(['current_password' => 'password', 'bank.ngn_bank_name' => 'Example Bank', 'bank.ngn_account_number' => '12345'])
             ->call('save')
             ->assertHasFormErrors(['bank.ngn_account_name', 'bank.ngn_account_number']);
 
         Livewire::test(SiteSettings::class)
-            ->fillForm(['bank.ngn_bank_name' => 'Example Bank', 'bank.ngn_account_name' => 'Maestro Touch Legal', 'bank.ngn_account_number' => '0123456789'])
+            ->fillForm(['current_password' => 'password', 'bank.ngn_bank_name' => 'Example Bank', 'bank.ngn_account_name' => 'Maestro Touch Legal', 'bank.ngn_account_number' => '0123456789'])
             ->call('save')
             ->assertHasNoFormErrors();
 
@@ -68,7 +88,7 @@ class SettingsAndMediaTest extends TestCase
         $this->actingAsStaff($this->userWithRoles(Role::FirmPrincipal));
 
         Livewire::test(SiteSettings::class)
-            ->fillForm([
+            ->fillForm(['current_password' => 'password', 
                 'integrations.tawk_enabled' => true,
                 'integrations.tawk_property_id' => '"></script><script>alert(1)</script>',
                 'integrations.tawk_widget_id' => 'default',
@@ -103,7 +123,7 @@ class SettingsAndMediaTest extends TestCase
 
     public function test_legacy_media_cannot_be_deleted(): void
     {
-        $legacy = Media::create(['disk' => 'legacy', 'path' => '/wp-content/uploads/2025/08/a.png', 'original_name' => 'a.png',
+        $legacy = Media::create(['disk' => 'legacy', 'path' => 'images/2025/08/a.png', 'original_name' => 'a.png',
             'mime_type' => 'image/png', 'size' => 1, 'sha256' => str_repeat('a', 64)]);
 
         $this->assertFalse($this->userWithRoles(Role::FirmPrincipal)->can('delete', $legacy));

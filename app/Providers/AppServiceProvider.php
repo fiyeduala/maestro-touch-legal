@@ -6,6 +6,7 @@ use App\Domain\Documents\UploadGuard;
 use App\Domain\Identity\Role;
 use App\Domain\Operations\Settings;
 use App\Filament\Auth\StaffLoginResponse;
+use App\Http\Middleware\ProtectNonProduction;
 use App\Listeners\MailActivity;
 use App\Models\User;
 use App\Support\SiteUrl;
@@ -43,6 +44,9 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(MessageSending::class, [MailActivity::class, 'sending']);
         Event::listen(MessageSent::class, [MailActivity::class, 'sent']);
         Event::listen(JobFailed::class, [MailActivity::class, 'failed']);
+
+        // Staging never emails clients: everything goes to one tester address, or only to the log (D37).
+        ProtectNonProduction::configureMail();
 
         // No external breach-check call: shared hosting outbound requests are unreliable (DECISIONS D9).
         Password::defaults(fn () => Password::min(12)->letters()->numbers()->max(200));

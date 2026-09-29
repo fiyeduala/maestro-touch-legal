@@ -44,7 +44,7 @@
         <meta name="google-site-verification" content="{{ $verification }}">
     @endif
 
-    <link rel="icon" href="{{ url('/wp-content/uploads/2025/08/blue-1-150x150.png') }}" sizes="32x32">
+    <link rel="icon" href="{{ url('/images/2025/08/blue-1-150x150.png') }}" sizes="32x32">
     <link rel="icon" href="{{ Markup::safeUrl(Settings::get('site.favicon_path')) }}" sizes="192x192">
     <link rel="apple-touch-icon" href="{{ Markup::safeUrl(Settings::get('site.favicon_path')) }}">
     <link rel="alternate" type="application/rss+xml" title="{{ $siteTitle }} &raquo; Feed" href="{{ \App\Support\SiteUrl::to('/feed/') }}">

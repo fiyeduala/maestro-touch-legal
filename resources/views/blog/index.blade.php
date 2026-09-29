@@ -36,7 +36,7 @@
                                 </a>
                             @endif
                             <div class="flex flex-1 flex-col px-6 pt-6 pb-10">
-                                <h2 class="text-[26px] leading-[1.25] font-normal text-ink">
+                                <h2 class="text-[20px] leading-[1.25] font-normal text-ink md:text-[26px]">
                                     <a href="{{ $post->url() }}" class="hover:text-brand">{{ $post->title }}</a>
                                 </h2>
                                 <p class="mt-4 text-[15px] text-brand">

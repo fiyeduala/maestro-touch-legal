@@ -12,9 +12,9 @@ Frontend assets are compiled locally and uploaded; the server never needs Node. 
 `git pull`/upload + `php artisan migrate --force` + cache refresh. Composer dependency changes download on the
 server; fallback is uploading a pre-built `vendor.zip`.
 
-### D3 — Legacy media keep their original URLs (2026-09-28)
-WordPress images are self-hosted at `public/wp-content/uploads/...`, the same paths they had, so existing links in
-posts, search results and social shares keep working without redirects. New uploads use `public/media/`.
+### D3 — Old site images are self-hosted (2026-09-28; folder changed by D41)
+The old site's images are copied into this app and served as plain files, not fetched from WordPress. They
+now live at `public/images/...` (D41); new uploads use `public/media/`.
 
 ### D4 — In-app role model instead of spatie/laravel-permission (2026-09-28)
 The current spatie/laravel-permission (8.x) requires PHP 8.3; the 8.2 pin would lock an older major. Roles here are a
@@ -66,8 +66,8 @@ the role, so a session opened any other way cannot reach them. Staff sign in at 
   build assets or application-file routes. 410 Gone is supported for removed content.
 
 ### D12 — Public media storage (2026-09-28)
-New blog and brand uploads go on the `media` disk (`public/media/`, git-ignored). Legacy WordPress files stay at
-`/wp-content/uploads/` (D3). Accepted types are JPEG, PNG, WebP, GIF and PDF, up to 10 MB. SVG is refused because it
+New blog and brand uploads go on the `media` disk (`public/media/`, git-ignored). Images from the old site stay in
+`/images/` (D3, D41). Accepted types are JPEG, PNG, WebP, GIF and PDF, up to 10 MB. SVG is refused because it
 can carry scripts. The real file type is checked on the server, duplicates are rejected by SHA-256, and imported
 WordPress media cannot be deleted from the library. Uploads are public by design and the upload screen says so;
 confidential files never go here.
@@ -256,3 +256,49 @@ The automated tests run on in-memory SQLite for speed. Development runs on local
 migration is applied there as it is written. Before any upload to cPanel, the full suite will also be run
 against a MariaDB test database (`mtl_test`) to catch dialect differences. Date filters use `whereDate`, which
 behaves the same on both databases.
+
+### D37 — Staging is private and cannot email clients or take money (2026-10-02)
+Outside production every response is marked noindex. With `STAGING_PROTECT` on, every request needs the staging
+username and password (HTTP Basic over HTTPS), except the signed Paystack webhook and the health check; if the
+credentials are missing the site stays locked. On staging, mail goes only to one tester address or to the log.
+Paystack live keys are refused anywhere but production.
+
+### D38 — Backups (2026-10-02)
+`mtl:backup` writes one zip of the database and the stored files, every entry AES-256 encrypted with
+`BACKUP_PASSWORD` (set by the owner in `.env`, never in Git). Backups stay outside the web root and are
+downloadable only by a technical administrator through a signed link. A backup on the same hosting account guards
+against mistakes, not against losing the account, so copies must also be kept elsewhere (docs/BACKUP-AND-RESTORE.md).
+A restore goes only into an empty database and an empty folder; nothing live is overwritten automatically.
+The WordPress backup is kept and never deleted by this app.
+
+### D39 — Timestamp columns on MariaDB (2026-10-02)
+MariaDB before 10.10 silently gives the first NOT NULL TIMESTAMP column "ON UPDATE CURRENT_TIMESTAMP", which
+would overwrite dates such as consent times whenever a row changed. A migration removes that from every column
+except `updated_at`, and a test on MariaDB checks none remain (`App\Support\TimestampColumns`).
+
+### D40 — Naija Virtual Notary: manual handoff (2026-10-02)
+The public NVN link stays. For internal handoffs staff record the client's consent first, pass the document to
+NVN themselves, and keep NVN's reference and the status up to date on the matter. There is no NVN API: nothing is
+sent, no NVN account is created, and no files or credentials are shared from this system. If NVN later offers an
+API, a gateway can be called from `NotarisationHandoffs::record()` and a scheduled status check can call
+`updateStatus()`; consent, status rules, timeline and audit stay unchanged.
+
+### D41 — Images folder instead of wp-content (2026-09-29)
+At the owner's request the old site's images moved from `public/wp-content/uploads/` to `public/images/`, keeping
+the year/month folders (`/wp-content/uploads/2025/08/a.jpg` → `/images/2025/08/a.jpg`), so no WordPress-style path
+shows on the new site. Old image addresses (search results, other sites, shared links) are permanently redirected
+(301) to the new ones. The importer maps WordPress upload URLs to `/images/` in posts and the media library, and a
+migration updated stored paths. Links to other sites' `wp-content` folders are left alone.
+
+### D42 — Checking the WordPress import (2026-09-29)
+`mtl:verify-import` compares the imported content with the source (live REST API, a WXR export file, or the saved
+capture): titles, slugs, status, dates, body text, categories, tags, cover images, old-permalink redirects,
+comments, media files on disk, and every internal link in imported posts. It writes a Markdown report and exits
+with failure on any difference. The REST API does not show drafts, private posts or held comments, so a WXR export
+(`--wxr`) from the owner is needed for a complete import; neither path writes to WordPress.
+
+### D43 — Security headers set by the app (2026-09-29)
+`SecurityHeaders` middleware sets nosniff, Referrer-Policy, X-Frame-Options and Permissions-Policy on every
+response, so they apply even if Apache's mod_headers is off. Pages for a signed-in user are `no-store, private`.
+HSTS is sent only in production over HTTPS and without `includeSubDomains`, so the notary service, webmail and
+other subdomains are unaffected. The upload folders (`public/images`, `public/media`) refuse to run scripts.

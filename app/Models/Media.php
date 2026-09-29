@@ -12,7 +12,7 @@ class Media extends Model
 
     public function url(): string
     {
-        // Legacy WordPress uploads are served from public/wp-content/uploads (DECISIONS D3).
+        // Images brought over from the old site are plain files under public/images (DECISIONS D3, D41).
         return $this->disk === 'legacy'
             ? url($this->path)
             : Storage::disk($this->disk)->url($this->path);

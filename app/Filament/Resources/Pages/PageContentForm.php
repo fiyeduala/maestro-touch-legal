@@ -88,6 +88,8 @@ class PageContentForm
             Section::make('Lead affiliate firm')->collapsible()->collapsed()->schema([
                 self::text('affiliate.title', 'Title'),
                 self::textarea('affiliate.text', 'Text'),
+                self::image('affiliate.image', 'Logo (shown on tablets and phones)')->required(false),
+                self::alt('affiliate.image_alt'),
             ]),
             Section::make('Numbered points')->collapsible()->collapsed()->schema([
                 self::numberedItems('points', 'Point'),
@@ -224,6 +226,6 @@ class PageContentForm
             ->regex('#^(/(?!/)|https://)#i')
             ->datalist(fn () => Media::query()->where('mime_type', 'like', 'image/%')->latest('id')->limit(300)->get()
                 ->map(fn (Media $m) => parse_url($m->url(), PHP_URL_PATH))->all())
-            ->helperText('Path of an image in the media library, e.g. /media/2026/10/photo.jpg or /wp-content/uploads/...');
+            ->helperText('Path of an image in the media library, e.g. /media/2026/10/photo.jpg or /images/2025/08/photo.jpg');
     }
 }
