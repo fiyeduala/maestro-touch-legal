@@ -7,6 +7,7 @@ use App\Domain\Matters\MatterStatus;
 use App\Filament\Resources\Engagements\EngagementResource;
 use App\Filament\Resources\Enquiries\EnquiryResource;
 use App\Filament\Resources\Matters\Pages\ListMatters;
+use App\Filament\Resources\Matters\Pages\MatterConversation;
 use App\Filament\Resources\Matters\Pages\ViewMatter;
 use App\Filament\Resources\Matters\RelationManagers\DeadlinesRelationManager;
 use App\Filament\Resources\Matters\RelationManagers\DocumentRequestsRelationManager;
@@ -275,6 +276,7 @@ class MatterResource extends Resource
         return [
             'index' => ListMatters::route('/'),
             'view' => ViewMatter::route('/{record}'),
+            'conversation' => MatterConversation::route('/{record}/conversation'),
         ];
     }
 }

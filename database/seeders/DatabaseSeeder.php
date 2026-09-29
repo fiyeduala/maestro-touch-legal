@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             PageSeeder::class,
             RedirectSeeder::class,
             ServiceSeeder::class,
+            ConsultationTypeSeeder::class,
         ]);
     }
 }

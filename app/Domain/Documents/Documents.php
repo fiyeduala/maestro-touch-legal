@@ -120,7 +120,7 @@ class Documents
     }
 
     /** Shares the current version with the client. Deliverables must be approved first. */
-    public function release(Document $document, ?string $note, User $actor): void
+    public function release(Document $document, ?string $note, User $actor, bool $notifyClient = true): void
     {
         Gate::forUser($actor)->authorize('update', $document);
         if (! $document->matter) {
@@ -148,7 +148,7 @@ class Documents
             Audit::record('document.released', "{$document->matter->reference}: \"{$document->title}\" v{$document->currentVersion->version} released to client", $document, actor: $actor);
         });
 
-        $this->contacts->notify($document->matter->client, "A document is ready on {$document->matter->reference}",
+        $notifyClient && $this->contacts->notify($document->matter->client, "A document is ready on {$document->matter->reference}",
             'Maestro Touch Legal has shared a document with you.', "/portal/matters/{$document->matter_id}");
     }
 
@@ -211,7 +211,7 @@ class Documents
     }
 
     /** A client contact uploads to their own matter, optionally answering an open request. */
-    public function clientUpload(Matter $matter, UploadedFile $file, string $title, ?int $requestId, ?string $note, User $client): Document
+    public function clientUpload(Matter $matter, UploadedFile $file, string $title, ?int $requestId, ?string $note, User $client, bool $alertStaff = true): Document
     {
         Gate::forUser($client)->authorize('actAsClient', $matter);
         if ($matter->isClosed()) {
@@ -241,7 +241,7 @@ class Documents
             $this->matters->event($matter, 'client_uploaded', "You uploaded: {$document->title}", true, $client, ['document_id' => $document->id]);
         });
 
-        $this->contacts->alertStaff(null, $matter, "Client uploaded a document on {$matter->reference}", 'The client has uploaded a document.', "/admin/matters/{$matter->id}");
+        $alertStaff && $this->contacts->alertStaff(null, $matter, "Client uploaded a document on {$matter->reference}", 'The client has uploaded a document.', "/admin/matters/{$matter->id}");
 
         return $document;
     }

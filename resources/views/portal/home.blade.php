@@ -4,11 +4,20 @@
     @php($tz = config('app.firm_timezone'))
     @php($pending = collect($attention)->sum(fn ($items) => $items->count()))
     <p class="text-lg text-ink">Welcome, {{ $user->name }}.</p>
+    @if ($matters->isNotEmpty())
+        <p class="mt-2 max-w-[760px] text-sm text-body/80">You can message the firm from each matter. When there are new messages in a day, we also email you a short recap after 6:00 pm (West Africa Time). <a class="text-brand underline" href="{{ route('portal.profile') }}#recaps">Choose what the recap includes</a>.</p>
+    @endif
 
     @if ($pending)
         <section class="mt-8 rounded-md border border-brand/40 bg-tint p-6" aria-labelledby="attention-heading">
             <h2 id="attention-heading" class="heading-3">Needs Your Attention</h2>
             <ul class="mt-4 space-y-3">
+                @foreach ($attention['messages'] as $unreadMatter)
+                    <li><a class="font-medium text-brand hover:underline" href="{{ route('portal.matters.show', $unreadMatter) }}#messages">New message from the firm: {{ $unreadMatter->title }}</a> <span class="text-sm">({{ $unreadMatter->reference }})</span></li>
+                @endforeach
+                @foreach ($attention['appointments'] as $booking)
+                    <li><a class="font-medium text-brand hover:underline" href="{{ route('portal.appointments') }}">Consultation {{ $booking->status === 'requested' ? 'requested for' : 'on' }} {{ $booking->starts_at->timezone($tz)->format('D j M, g:i a') }} WAT</a></li>
+                @endforeach
                 @foreach ($attention['engagements'] as $engagement)
                     <li><a class="font-medium text-brand hover:underline" href="{{ route('portal.engagements.show', $engagement) }}">Review and sign engagement terms: {{ $engagement->title }}</a> <span class="text-sm">({{ $engagement->reference }})</span></li>
                 @endforeach

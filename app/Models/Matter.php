@@ -150,6 +150,22 @@ class Matter extends Model
         return $this->hasMany(Quotation::class);
     }
 
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Message::class);
+    }
+
+    public function consultations(): HasMany
+    {
+        return $this->hasMany(Consultation::class);
+    }
+
+    /** Digest content for this matter: full conversation text, or counts only for sensitive matters. */
+    public function digestMode(): string
+    {
+        return $this->digest_mode ?? ($this->confidentiality === 'restricted' ? 'summary' : 'full');
+    }
+
     /** @return array<string, string> the stages of this matter's service (or the default list) */
     public function stageOptions(): array
     {

@@ -70,6 +70,25 @@ class Settings
         'bank.usd_bank_address' => [null, false],
         'bank.usd_intermediary' => [null, false],
         'bank.usd_notes' => [null, false],
+        // End-of-day conversation emails (spec §8), in the firm timezone.
+        'digest.enabled' => [true, false],
+        'digest.time' => ['18:00', false],
+        'digest.firm_recipients' => [[], false], // must be active full administrators; checked again at send time
+        // Consultation booking (spec §11). Times are in the firm timezone; weekday 1 = Monday … 7 = Sunday.
+        'consultations.hours' => [[
+            ['day' => '1', 'start' => '09:00', 'end' => '17:00'],
+            ['day' => '2', 'start' => '09:00', 'end' => '17:00'],
+            ['day' => '3', 'start' => '09:00', 'end' => '17:00'],
+            ['day' => '4', 'start' => '09:00', 'end' => '17:00'],
+            ['day' => '5', 'start' => '09:00', 'end' => '17:00'],
+        ], false],
+        'consultations.buffer_minutes' => [15, false],
+        'consultations.capacity' => [1, false], // consultations that may overlap (e.g. number of available lawyers)
+        'consultations.min_notice_hours' => [24, false],
+        'consultations.max_days_ahead' => [30, false],
+        'consultations.reminder_hours' => [[24, 2], false],
+        'consultations.client_change_cutoff_hours' => [12, false],
+        'consultations.blocked' => [[], false], // [{from: Y-m-d, to: Y-m-d, reason}]
     ];
 
     private static ?array $loaded = null;

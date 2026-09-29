@@ -7,7 +7,9 @@ use App\Filament\Resources\Pages\PageContentForm;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -58,7 +60,18 @@ class SiteSettings extends Page
         'bank.ngn_bank_name', 'bank.ngn_account_name', 'bank.ngn_account_number', 'bank.ngn_notes',
         'bank.usd_bank_name', 'bank.usd_account_name', 'bank.usd_account_number', 'bank.usd_swift', 'bank.usd_routing',
         'bank.usd_bank_address', 'bank.usd_intermediary', 'bank.usd_notes',
+        'digest.enabled', 'digest.time', 'digest.firm_recipients',
+        'consultations.hours', 'consultations.buffer_minutes', 'consultations.capacity', 'consultations.min_notice_hours',
+        'consultations.max_days_ahead', 'consultations.reminder_hours', 'consultations.client_change_cutoff_hours', 'consultations.blocked',
     ];
+
+    /** Whole-number settings, stored as integers. */
+    private const INTEGERS = [
+        'consultations.buffer_minutes', 'consultations.capacity', 'consultations.min_notice_hours',
+        'consultations.max_days_ahead', 'consultations.client_change_cutoff_hours',
+    ];
+
+    public const WEEKDAYS = ['1' => 'Monday', '2' => 'Tuesday', '3' => 'Wednesday', '4' => 'Thursday', '5' => 'Friday', '6' => 'Saturday', '7' => 'Sunday'];
 
     /** @var array<string, mixed>|null */
     public ?array $data = [];
@@ -143,6 +156,50 @@ class SiteSettings extends Page
                         TagsInput::make('notifications.admin_recipients')->label('Staff notification recipients')
                             ->nestedRecursiveRules(['email'])
                             ->helperText('Addresses that receive new-enquiry and application alerts. Nothing is sent if this is empty.'),
+                    ]),
+                    Section::make('End-of-day message recap')
+                        ->description('Each client contact gets one email per client record on days with new messages from the firm. Internal notes, files and identity documents are never included. Recaps are sent by the scheduled task, so they can arrive a few minutes after the set time.')
+                        ->columns(2)->schema([
+                            Toggle::make('digest.enabled')->label('Send daily recaps')->columnSpanFull(),
+                            TextInput::make('digest.time')->label('Send after (West Africa Time)')->required()
+                                ->regex('/^([01]\d|2[0-3]):[0-5]\d$/')->placeholder('18:00')
+                                ->validationMessages(['regex' => 'Use 24-hour time, for example 18:00.']),
+                            TagsInput::make('digest.firm_recipients')->label('Firm recap recipients')
+                                ->nestedRecursiveRules(['email'])
+                                ->helperText('Full administrators who also receive a recap of all client conversations. Addresses that are not active full administrators are ignored when sending.'),
+                        ]),
+                ]),
+                Tab::make('Consultations')->schema([
+                    Section::make('Opening hours')
+                        ->description('Times clients can request, in West Africa Time. There are no per-lawyer calendars: "consultations at the same time" limits how many can overlap.')
+                        ->schema([
+                            Repeater::make('consultations.hours')->hiddenLabel()->columns(3)->maxItems(21)->defaultItems(0)->schema([
+                                Select::make('day')->required()->options(self::WEEKDAYS),
+                                TextInput::make('start')->required()->regex('/^([01]\d|2[0-3]):[0-5]\d$/')->placeholder('09:00'),
+                                TextInput::make('end')->required()->regex('/^([01]\d|2[0-3]):[0-5]\d$/')->placeholder('17:00')
+                                    ->rule(fn (Get $get) => function (string $attribute, $value, \Closure $fail) use ($get) {
+                                        if ((string) $value <= (string) $get('start')) {
+                                            $fail('The end must be after the start.');
+                                        }
+                                    }),
+                            ]),
+                        ]),
+                    Section::make('Booking rules')->columns(3)->schema([
+                        TextInput::make('consultations.buffer_minutes')->label('Gap between consultations (minutes)')->integer()->minValue(0)->maxValue(240)->required(),
+                        TextInput::make('consultations.capacity')->label('Consultations at the same time')->integer()->minValue(1)->maxValue(20)->required(),
+                        TextInput::make('consultations.min_notice_hours')->label('Minimum notice (hours)')->integer()->minValue(0)->maxValue(720)->required(),
+                        TextInput::make('consultations.max_days_ahead')->label('Bookable up to (days ahead)')->integer()->minValue(1)->maxValue(365)->required(),
+                        TextInput::make('consultations.client_change_cutoff_hours')->label('Clients may change or cancel until (hours before)')->integer()->minValue(0)->maxValue(720)->required(),
+                        TagsInput::make('consultations.reminder_hours')->label('Reminders (hours before)')
+                            ->nestedRecursiveRules(['integer', 'min:1', 'max:720'])->placeholder('e.g. 24')
+                            ->helperText('Each reminder is sent once. Leave empty to send none.'),
+                    ]),
+                    Section::make('Closed dates')->description('Holidays and other days with no consultations. Existing bookings are not cancelled automatically.')->schema([
+                        Repeater::make('consultations.blocked')->hiddenLabel()->columns(3)->maxItems(100)->defaultItems(0)->schema([
+                            DatePicker::make('from')->required()->native(false)->format('Y-m-d'),
+                            DatePicker::make('to')->required()->native(false)->format('Y-m-d')->afterOrEqual('from'),
+                            TextInput::make('reason')->maxLength(120),
+                        ]),
                     ]),
                 ]),
                 Tab::make('Bank transfer')->schema([
@@ -229,6 +286,8 @@ class SiteSettings extends Page
             $value = data_get($state, $key);
             $values[$key] = match (true) {
                 is_string($value) => trim($value) === '' ? null : trim($value),
+                in_array($key, self::INTEGERS, true) => (int) $value,
+                $key === 'consultations.reminder_hours' => array_values(array_unique(array_map('intval', (array) $value))),
                 is_array($value) => array_values($value),
                 default => $value,
             };

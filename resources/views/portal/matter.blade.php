@@ -36,6 +36,47 @@
         @endif
     </section>
 
+    {{-- Conversation with the firm (client audience only) --}}
+    <section id="messages" class="mt-10 scroll-mt-28" aria-labelledby="messages-heading"
+             data-chat data-poll-url="{{ route('portal.matters.messages.poll', $matter) }}" data-last-id="{{ $messages->last()?->id ?? 0 }}">
+        <h2 id="messages-heading" class="heading-3">Messages</h2>
+        <p class="mt-1 max-w-[760px] text-sm text-body/80">A private conversation between you and the firm about this matter. We aim to reply within one working day. For anything urgent, please call us.</p>
+
+        <div class="mt-4 max-w-[860px] rounded-md border border-line bg-tint/40 p-4">
+            @if ($older)
+                <p class="mb-3 text-center text-sm"><a class="text-brand underline" href="{{ route('portal.matters.show', ['matter' => $matter, 'before' => $older]) }}#messages">Show earlier messages</a></p>
+            @endif
+            <ol class="space-y-3" data-chat-list aria-live="polite" aria-relevant="additions">
+                @foreach ($messages as $message)
+                    @include('portal.partials.message', ['message' => $message, 'user' => auth()->user()])
+                @endforeach
+            </ol>
+            @if ($messages->isEmpty())
+                <p class="text-sm text-body/80" data-chat-empty>No messages yet. You can write to the firm below.</p>
+            @endif
+        </div>
+
+        @if ($canAct && ! $matter->isClosed())
+            <form method="post" action="{{ route('portal.matters.messages.store', $matter) }}" enctype="multipart/form-data" class="mt-4 max-w-[860px] space-y-3" data-chat-form>
+                @csrf
+                <div>
+                    <label class="form-label" for="body">Your message</label>
+                    <textarea id="body" name="body" rows="3" maxlength="{{ \App\Domain\Communication\Conversations::MAX_LENGTH }}" class="form-input">{{ old('body') }}</textarea>
+                    @error('body')<p class="form-error">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <label class="form-label" for="chat-file">Attach a file (optional)</label>
+                    <input id="chat-file" name="file" type="file" accept="{{ $accept }}" class="form-input">
+                    @error('file')<p class="form-error">{{ $message }}</p>@enderror
+                </div>
+                <p class="form-error hidden" data-chat-error role="alert"></p>
+                <button type="submit" class="btn">Send Message</button>
+            </form>
+        @elseif ($matter->isClosed())
+            <p class="mt-4 text-sm">This matter is closed, so new messages cannot be sent here. If you need more help, please start a new request.</p>
+        @endif
+    </section>
+
     {{-- Requests from the firm --}}
     @if ($requests->isNotEmpty() || $canAct)
         <section id="requests" class="mt-10 scroll-mt-28" aria-labelledby="requests-heading">

@@ -138,7 +138,7 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     public function clients(): BelongsToMany
     {
         return $this->belongsToMany(Client::class)
-            ->withPivot(['relationship', 'revoked_at'])
+            ->withPivot(['relationship', 'revoked_at', 'digest_mode'])
             ->wherePivotNull('revoked_at')
             ->withTimestamps();
     }

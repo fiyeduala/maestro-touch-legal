@@ -147,3 +147,44 @@ without JavaScript. Step two holds the contact details, the service's intake que
 non-representation notice and consent. The Contact page keeps its live copy and adds a short "Send Us a Message"
 form below it, recorded as a contact-form enquiry. Both forms have a honeypot and are rate-limited to 5 a minute
 per IP. Submitting never creates an account and never creates a lawyer–client relationship.
+
+### D25 — Matter conversations (2026-09-29)
+Each matter has two threads: the client conversation and internal notes. Internal notes are a separate pane on the
+staff screen, headed "INTERNAL — never shown to the client". They never appear in the portal, client emails,
+client exports or client recaps. Messages are never edited or deleted. A correction is a new message linked to the
+original ("Add correction"), and both stay visible. Staff can also record a phone call or meeting as a note on
+either thread. Files a staff member attaches to a client message are released to the client with that message,
+without a separate "document released" email. Files stay on private storage and download only through checked
+links. Email notices about new messages wait 10 minutes (`Conversations::NOTICE_DELAY_MINUTES`) and are skipped
+if the recipient has read the message by then, which avoids one email per message during a live exchange.
+
+### D26 — End-of-day recaps (2026-09-29)
+One recap is sent each day at the time set in Settings → Email (default 18:00, Lagos time). A client contact gets
+only their own client's matters. A client email never mixes clients and is never CC'd to anyone else. The firm
+recap goes to active full administrators whose addresses are listed in Settings → Email. No address is invented:
+if the list is empty, no firm recap is sent. Unverified or suspended users get nothing, and access is checked
+again when each recap is sent. Recaps never contain internal notes, passwords, identity-document contents or the
+attached files themselves, only a count of attachments and a portal link. Delivery is not guaranteed to happen
+exactly once. A recap that fails, or that was being sent when a run stopped ("Outcome unknown"), is never resent
+automatically. A full administrator can resend it from Admin → Operations, and this is audited.
+
+### D27 — Consultations (2026-09-29)
+There are no per-lawyer calendars. The firm sets its opening hours, closed dates, buffer between bookings, notice
+period, how far ahead clients can book, reminder times and how many consultations may run at the same time
+(Settings → Consultations, full administrators only). Clients request a time in the portal. Staff confirm it, choose
+the host, and paste the meeting link, which must start with `https://`. No video service is integrated.
+Confirmation, reschedule and reminder emails carry an .ics calendar file. Clients can reschedule or cancel until
+the cut-off set in Settings. `ConsultationTypeSeeder` adds one free 30-minute "Initial consultation" type. Paid
+types store their fee in minor units, but taking payment for consultations is left to Phase 5. A consultation
+never starts representation by itself.
+
+### D28 — Background work on shared hosting (2026-09-29)
+Namecheap allows cron no more often than every 5 minutes, so one cPanel cron runs `schedule:run` every 5 minutes.
+Every scheduled task is locked (`withoutOverlapping`). The queue is processed by a bounded
+`queue:work --stop-when-empty --max-time=180`, never a long-running daemon. Each run records a heartbeat. Admin →
+Operations shows when the scheduler last ran and warns after 15 minutes without a run. It also shows the queue,
+failed emails, the mail transport (it warns while mail is only logged), and the recaps.
+
+### D29 — Tawk.to only on public pages (2026-09-29)
+The Tawk.to chat widget loads on public marketing pages only, never in the client portal, on account pages or in
+the admin panel. This keeps a third-party script away from confidential client screens.

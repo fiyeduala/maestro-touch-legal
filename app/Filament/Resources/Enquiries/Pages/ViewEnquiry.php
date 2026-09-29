@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Enquiries\Pages;
 
+use App\Filament\Resources\Consultations\ConsultationResource;
 use App\Filament\Resources\Enquiries\EnquiryResource;
 use App\Filament\Support\RefreshesRecord;
 use Filament\Resources\Pages\ViewRecord;
@@ -23,6 +24,9 @@ class ViewEnquiry extends ViewRecord
 
     protected function getHeaderActions(): array
     {
-        return $this->refreshingAfter(EnquiryResource::workActions());
+        return $this->refreshingAfter([
+            ...EnquiryResource::workActions(),
+            ConsultationResource::scheduleAction(enquiry: $this->record)->visible($this->record->status->isOpen()),
+        ]);
     }
 }

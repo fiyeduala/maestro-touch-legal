@@ -80,3 +80,17 @@ The owner approved all of the wording below on 28 Sep 2026, except the engagemen
 | Portal | "Needs Your Attention", "Your Matters", "Send Documents", upload help text, draft approval prompts, quotation acceptance statement, engagement signing text ("Type your full name to sign", "I have read these terms and agree to them") |
 | Service catalogue | The eight practice-area services (names taken from the live Practice Areas page) and their intake questions, seeded as **published** version 1 |
 | Engagement terms | "Standard engagement terms (draft for owner approval)" is a structural outline only and **inactive**. The firm must supply the real terms. |
+
+## 8. New wording drafted in Phase 4 (awaiting owner approval)
+
+Nothing below comes from the live site. Change any of it in the code before launch, or approve it as it is.
+
+| Where | Wording |
+|---|---|
+| New-message email (client) | Subject "You have a new message from Maestro Touch Legal", body "There is a new message for you in your client portal." The message text itself is not included |
+| New-message email (staff) | Subject "New client message on {matter reference}", body "The client has sent a message in the matter conversation." |
+| End-of-day recap email (clients) | Subject "Your conversation with Maestro Touch Legal: {date}", new messages per matter, attachment counts, and a portal link |
+| End-of-day recap email (firm) | Subject "Client conversations: daily recap for {date}", client messages per matter, for the listed full administrators only |
+| Consultation emails | "Consultation request received", "Consultation confirmed", "Consultation moved", "Consultation cancelled" and "Reminder: consultation on …", including "Your request does not yet mean the firm has agreed to act for you." |
+| Portal | "Messages" and "Appointments" pages, message box help text, the booking form ("Request a Consultation", "Past and Cancelled"), and the reschedule/cancel cut-off text |
+| Consultation type | "Initial consultation", free, 30 minutes (edit in Admin → Consultation types) |

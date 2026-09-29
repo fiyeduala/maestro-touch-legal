@@ -31,16 +31,17 @@ CO = Case Officer / Support · FIN = Finance Officer · CE = Content Editor · C
 | Invoices, payments, credit notes, expenses | A | A | R (T) | R (T) | A | — | O (view, pay) |
 | Verify bank-transfer payments, refunds, reversals | A | A | — | — | A | — | — |
 | Client-funds ledger (recovered funds) | A | A | R (T) | — | A | — | O (statement) |
-| Consultations: availability settings | A | A | own calendar | A | — | — | — |
-| Consultations: bookings, meeting links, outcomes | A | A | T / own | A | — | — | O (book/reschedule/cancel) |
+| Consultations: firm hours, closed dates, rules, consultation types (no per-lawyer calendars, D27) | A | A | — | — | — | — | — |
+| Consultations: bookings, meeting links, outcomes | A | A | T / host / enquiry owner | T / host / enquiry owner | — | — | O (book/reschedule/cancel) |
 | Public pages, homepage sections, branding | A | A | — | — | — | draft (publish if granted) | — |
 | Blog posts, media, SEO | A | A | — | — | — | draft (publish if granted) | — |
-| Settings: SMTP, Paystack, bank details, Tawk, WhatsApp, digest time | A | A | — | — | bank details R | — | — |
+| Settings: SMTP, Paystack, bank details, Tawk, WhatsApp, recap time and recipients | A | A | — | — | bank details R | — | — |
 | Reports & dashboards | A | A | own work | own work | financial | content | — |
 | Exports | A | A | T | T | financial | content | O (own documents) |
 | Audit history (search/view) | A | A | — | — | — | — | — |
 | Audit history (edit/delete) | — | — | — | — | — | — | — |
-| System health, queue, deliveries, backups | A | A | — | — | — | — | — |
+| System health, queue, deliveries, backups (Admin → Operations) | A | A | — | — | — | — | — |
+| Resend a failed or uncertain end-of-day recap (audited) | A | A | — | — | — | — | — |
 | NVN handoff records | A | A | T | T | — | — | O (consent, status) |
 | "View client portal" read-only preview | A (audited) | A (audited) | — | — | — | — | — |
 

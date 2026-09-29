@@ -41,7 +41,23 @@ class PortalController extends Controller
                 'last_active' => Carbon::createFromTimestamp($s->last_activity),
             ]);
 
-        return view('portal.profile', ['user' => $request->user(), 'sessions' => $sessions]);
+        return view('portal.profile', ['user' => $request->user(), 'sessions' => $sessions, 'clients' => $request->user()->clients()->orderBy('display_name')->get()]);
+    }
+
+    /** Daily recap email: the full messages, or only a count with a sign-in link. Set per client record. */
+    public function updateRecaps(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+        $data = $request->validate(['recaps' => ['required', 'array'], 'recaps.*' => ['in:full,summary']]);
+        foreach ($user->clients()->get() as $client) {
+            $mode = $data['recaps'][$client->id] ?? null;
+            if ($mode && $mode !== $client->pivot->digest_mode) {
+                $user->clients()->updateExistingPivot($client->id, ['digest_mode' => $mode]);
+                Audit::record('user.recap_preference', "Daily recap for {$client->reference} set to {$mode}", $user, actor: $user);
+            }
+        }
+
+        return back()->with('status', 'Your email preference has been saved.');
     }
 
     public function updateProfile(Request $request): RedirectResponse

@@ -6,12 +6,17 @@ use App\Domain\Documents\UploadGuard;
 use App\Domain\Identity\Role;
 use App\Domain\Operations\Settings;
 use App\Filament\Auth\StaffLoginResponse;
+use App\Listeners\MailActivity;
 use App\Models\User;
 use App\Support\SiteUrl;
 use Filament\Auth\Http\Responses\Contracts\LoginResponse;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Mail\Events\MessageSending;
+use Illuminate\Mail\Events\MessageSent;
+use Illuminate\Queue\Events\JobFailed;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\View;
@@ -31,8 +36,13 @@ class AppServiceProvider extends ServiceProvider
         Model::preventSilentlyDiscardingAttributes(! $this->app->isProduction());
 
         // Public link to the enquiry form in the site's trailing-slash style (route() drops the slash).
-        View::composer(['enquiries.create', 'pages.templates.contact', 'portal.home'],
+        View::composer(['enquiries.create', 'pages.templates.contact', 'portal.*'],
             fn ($view) => $view->with('enquiryUrl', SiteUrl::to('/legal-assistance/')));
+
+        // Sender identity from Settings → Email, and the metadata-only delivery log.
+        Event::listen(MessageSending::class, [MailActivity::class, 'sending']);
+        Event::listen(MessageSent::class, [MailActivity::class, 'sent']);
+        Event::listen(JobFailed::class, [MailActivity::class, 'failed']);
 
         // No external breach-check call: shared hosting outbound requests are unreliable (DECISIONS D9).
         Password::defaults(fn () => Password::min(12)->letters()->numbers()->max(200));

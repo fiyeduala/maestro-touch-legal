@@ -1,6 +1,6 @@
 # Build status
 
-Last updated: 28 September 2026 (end of Phase 3).
+Last updated: 29 September 2026 (end of Phase 4).
 
 ## Phase overview
 
@@ -9,11 +9,38 @@ Last updated: 28 September 2026 (end of Phase 3).
 | 1 | Inspect project + live site, inventory/export content and assets, verify dependencies, architecture, permission matrix | **Done**, except hosting verification (blocked: needs cPanel access) |
 | 2 | Public-site mirror, editable branding/pages/blog, authentication, roles/policies, staff applications | **Done** locally, 79 automated tests passing. Pixel comparison against the reference screenshots moves to Phase 6. |
 | 3 | Enquiries, conflict checks, quotations/engagement, clients, matters, teams, tasks, documents, approvals, portal pages | **Done** locally, 134 automated tests passing in total |
-| 4 | Portal chat, internal notes, consultations, SMTP notifications, daily digests | Not started (next) |
-| 5 | NGN/USD billing, Paystack, manual transfers, client funds, reporting, audit views | Not started |
+| 4 | Portal chat, internal notes, consultations, SMTP notifications, daily digests | **Done** locally, 170 automated tests passing in total |
+| 5 | NGN/USD billing, Paystack, manual transfers, client funds, reporting, audit views | Not started (next) |
 | 6 | Migration dry-run, visual/content comparison, security/workflow tests, staging checks, deployment package | Not started |
 
 Nothing has been deployed. The live WordPress site is untouched.
+
+## Phase 4 — completed
+
+**Conversations** (D25)
+- Portal → Messages: the client's conversation for each matter, with file attachments on private storage.
+- Admin → Messages: every conversation the staff member can open, with unread counts. The conversation screen
+  (also linked from each matter) shows the client thread and the internal notes side by side. It supports read
+  receipts, corrections, and call/meeting notes.
+- New-message emails wait 10 minutes and are skipped if the message has already been read.
+
+**End-of-day recaps** (D26)
+- Settings → Email: switch on or off, the send time, and the firm recipients.
+- Admin → Operations: recap status, with an audited "Send again".
+
+**Consultations** (D27)
+- Portal → Appointments: request, reschedule and cancel within the firm's rules.
+- Admin → Consultations: book for an enquiry or matter, confirm with host and https link, reschedule, cancel,
+  record outcome. Also available from each enquiry and matter.
+- Admin → Consultation types; Settings → Consultations (hours, closed dates, rules, reminders).
+- Calendar (.ics) files on confirmation and changes; reminders sent by the scheduler.
+
+**Operations** (D28, D29)
+- The scheduler, queue and heartbeat are set up for a 5-minute cPanel cron. Admin → Operations shows their health.
+- Tawk.to is removed from portal and account pages.
+
+**Emails** use Laravel's mailer. Locally they go to the log (`MAIL_MAILER=log`). SMTP is set in `.env` on the
+server. Every email is recorded in the delivery log.
 
 ## Phase 3 — completed
 
@@ -103,6 +130,7 @@ repeatability/conflicts, and application file access.
 | Decisions in `docs/content-gaps.md` §2–§6 (typos, layout quirks, comments, careers wording, alt text). §7 new wording approved 28 Sep | Final copy sign-off |
 | **The firm's real engagement terms**, written in Admin → Engagement templates (the seeded template is an inactive outline) | Sending engagement terms in production |
 | Upload limits ≥ 20M/25M (D19). Namecheap default is 1024M, so likely fine; owner will check at deployment | Uploads over the host default |
+| New Phase 4 wording (`docs/content-gaps.md` §8) | Final copy sign-off |
 | SMTP (owner fills `.env` on cPanel), Paystack test keys (owner supplying), NGN and USD bank details (Settings → Bank transfer), Tawk IDs, admin notification emails (Settings → Email) | Live integration checks (build proceeds with test doubles). Owner reviews everything locally before any cPanel upload |
 
 ## Local environment notes
@@ -112,10 +140,10 @@ repeatability/conflicts, and application file access.
   fakes.
 - New uploads land in `public/media/` (git-ignored); back it up with the database on the server.
 
-## Next steps (Phase 4)
+## Next steps (Phase 5)
 
-1. Matter chat between the client and the team (portal and admin), with attachments on private storage.
-2. Internal notes (staff only).
-3. Consultations: availability, booking, reschedule/cancel, meeting links, outcomes.
-4. Email notifications through the configured SMTP (test doubles until the owner supplies SMTP) and the daily
-   conversation digest.
+1. Invoices, credit notes and expenses in NGN and USD, stored in minor units, with no currency conversion.
+2. Paystack checkout and webhooks in test mode (once the owner supplies test keys), with signature checks.
+3. Bank transfers: the client uploads proof, then finance verifies it, using the NGN and USD accounts in Settings.
+4. Client-funds (recovered funds) ledger and client statements.
+5. Reports, dashboards and audit-log views.

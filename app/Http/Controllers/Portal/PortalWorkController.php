@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Portal;
 
+use App\Domain\Communication\Conversations;
 use App\Domain\Documents\Documents;
 use App\Domain\Documents\UploadGuard;
 use App\Domain\Engagement\Engagements;
@@ -10,6 +11,7 @@ use App\Domain\Engagement\Quotations;
 use App\Domain\Matters\MatterStatus;
 use App\Domain\RuleViolation;
 use App\Http\Controllers\Controller;
+use App\Models\Consultation;
 use App\Models\Document;
 use App\Models\DocumentRequest;
 use App\Models\Engagement;
@@ -44,15 +46,18 @@ class PortalWorkController extends Controller
             'drafts' => Document::where('is_deliverable', true)->whereNotNull('released_version_id')->whereNull('client_decision')
                 ->whereHas('matter', $openMatter)->with('matter:id,reference,title')->latest('released_at')->get(),
             'requests' => DocumentRequest::open()->whereHas('matter', $openMatter)->with('matter:id,reference,title')->orderBy('due_on')->get(),
+            'messages' => Matter::whereKey(array_keys(app(Conversations::class)->clientUnread($user)))->get(['id', 'reference', 'title']),
+            'appointments' => Consultation::whereIn('client_id', $clientIds)->active()->where('starts_at', '>', now())
+                ->where('starts_at', '<=', now()->addDays(7))->orderBy('starts_at')->get(),
         ];
     }
 
-    public function matter(Request $request, Matter $matter): View
+    public function matter(Request $request, Matter $matter, PortalConversationController $chat): View
     {
         Gate::authorize('viewAsClient', $matter);
         $matter->load('service');
 
-        return view('portal.matter', [
+        return view('portal.matter', $chat->forMatterPage($matter, $request) + [
             'matter' => $matter,
             'canAct' => Gate::allows('actAsClient', $matter),
             'events' => $matter->events()->clientVisible()->latest('created_at')->limit(100)->get(),

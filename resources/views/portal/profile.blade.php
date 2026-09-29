@@ -53,6 +53,31 @@
         </section>
     </div>
 
+    @if ($clients->isNotEmpty())
+        <section id="recaps" aria-labelledby="recaps-heading" class="mt-14 scroll-mt-28">
+            <h2 id="recaps-heading" class="heading-3">Daily Message Recap</h2>
+            <p class="mt-2 max-w-[760px]">When there are new messages in a day, we email you a recap after 6:00 pm (West Africa Time). Files are never attached, and some sensitive matters are always summarised.</p>
+            <form method="post" action="{{ route('portal.profile.recaps') }}" class="mt-4 max-w-[760px] space-y-4">
+                @csrf
+                @method('put')
+                @foreach ($clients as $client)
+                    <fieldset class="rounded-md border border-line p-4">
+                        <legend class="px-1 font-medium text-ink">{{ $client->display_name }}</legend>
+                        <label class="mt-1 flex items-start gap-2">
+                            <input type="radio" name="recaps[{{ $client->id }}]" value="full" @checked(($client->pivot->digest_mode ?? 'full') === 'full')>
+                            <span>Include the messages</span>
+                        </label>
+                        <label class="mt-1 flex items-start gap-2">
+                            <input type="radio" name="recaps[{{ $client->id }}]" value="summary" @checked($client->pivot->digest_mode === 'summary')>
+                            <span>Only tell me how many new messages there are (read them after signing in)</span>
+                        </label>
+                    </fieldset>
+                @endforeach
+                <button type="submit" class="btn py-3">Save Preference</button>
+            </form>
+        </section>
+    @endif
+
     <section aria-labelledby="sessions-heading" class="mt-14">
         <h2 id="sessions-heading" class="heading-3">Where You’re Signed In</h2>
         <ul class="mt-4 divide-y divide-line rounded-md border border-line">

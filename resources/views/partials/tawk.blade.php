@@ -2,11 +2,12 @@
     use App\Domain\Operations\Settings;
 
     // Only the two Tawk.to identifiers are configurable, each format-checked; there is
-    // no free-form script field. Rendered on public pages only (this partial is not
-    // included by the portal or admin layouts).
+    // no free-form script field. Public pages only: the portal layout extends the public
+    // layout, so the client area and private one-time-link pages are excluded here.
+    $private = request()->is('portal', 'portal/*', 'invitation/*', 'careers/application/*', 'email/*', 'preview/*');
     $property = (string) Settings::get('integrations.tawk_property_id');
     $widget = (string) Settings::get('integrations.tawk_widget_id');
-    $enabled = Settings::get('integrations.tawk_enabled')
+    $enabled = ! $private && Settings::get('integrations.tawk_enabled')
         && preg_match('/^[a-f0-9]{24}$/', $property)
         && preg_match('/^[a-z0-9]{6,20}$/i', $widget);
 @endphp
