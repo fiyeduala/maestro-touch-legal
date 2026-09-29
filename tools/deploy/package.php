@@ -56,6 +56,16 @@ function addTree(ZipArchive $zip, string $dir, string $prefix): int
     return $count;
 }
 
+function copyTree(string $from, string $to): void
+{
+    $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($from, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::SELF_FIRST);
+    @mkdir($to, 0777, true);
+    foreach ($it as $file) {
+        $target = $to.DIRECTORY_SEPARATOR.substr($file->getPathname(), strlen($from) + 1);
+        $file->isDir() ? @mkdir($target, 0777, true) : copy($file->getPathname(), $target);
+    }
+}
+
 function removeTree(string $dir): void
 {
     if (! is_dir($dir)) {
@@ -121,8 +131,14 @@ if (! $skipVendor) {
     $extract->open($appZip);
     $extract->extractTo($work);
     $extract->close();
-    echo "Installing PHP libraries (composer install --no-dev)...\n";
-    run('composer install --no-dev --prefer-dist --no-interaction --no-progress --no-scripts --optimize-autoloader', $work);
+    // Start from the local vendor folder (same composer.lock) so nothing is downloaded; Composer then
+    // removes the development packages and rebuilds the autoloader for production.
+    if (! is_dir("{$root}/vendor")) {
+        fail('vendor/ is missing. Run `composer install` first.');
+    }
+    echo "Copying vendor/ and removing development packages...\n";
+    copyTree("{$root}/vendor", "{$work}/vendor");
+    run('composer install --no-dev --no-interaction --no-progress --no-scripts --optimize-autoloader', $work);
     $vendorZip = "dist/mtl-vendor-{$stamp}-{$commit}.zip";
     $vz = new ZipArchive;
     $vz->open($vendorZip, ZipArchive::CREATE | ZipArchive::OVERWRITE);

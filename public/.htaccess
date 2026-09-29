@@ -24,7 +24,7 @@
 </IfModule>
 
 # Never serve dotfiles (e.g. a stray .env) or backup/SQL dumps.
-<FilesMatch "^\.|\.(sql|bak|zip|log|env)$">
+<FilesMatch "^\.|\.(sql|bak|zip|log|env)$|^app-path\.php$">
     Require all denied
 </FilesMatch>
 

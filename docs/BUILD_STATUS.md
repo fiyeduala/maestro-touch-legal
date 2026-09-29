@@ -1,6 +1,6 @@
 # Build status
 
-Last updated: 29 September 2026 (end of Phase 5).
+Last updated: 29 September 2026 (end of Phase 6: the build is complete locally).
 
 ## Phase overview
 
@@ -11,9 +11,32 @@ Last updated: 29 September 2026 (end of Phase 5).
 | 3 | Enquiries, conflict checks, quotations/engagement, clients, matters, teams, tasks, documents, approvals, portal pages | **Done** locally, 134 automated tests passing in total |
 | 4 | Portal chat, internal notes, consultations, SMTP notifications, daily digests | **Done** locally, 170 automated tests passing in total |
 | 5 | NGN/USD billing, Paystack, manual transfers, client funds, reporting, audit views | **Done** locally, 204 automated tests passing in total. Paystack verified in test mode for authentication only (see below) |
-| 6 | Migration dry-run, visual/content comparison, security/workflow tests, staging checks, deployment package | Not started (next) |
+| 6 | Migration dry-run, visual/content comparison, security/workflow tests, staging checks, deployment package | **Done** locally: 232 automated tests passing on SQLite and on MariaDB. Staging on the hosting account is waiting on cPanel access ([OUTSTANDING.md](OUTSTANDING.md)) |
 
 Nothing has been deployed. The live WordPress site is untouched.
+
+## Phase 6 — completed
+
+**Where to start:** [OUTSTANDING.md](OUTSTANDING.md) (what the owner needs to supply), [TEST-REPORT.md](TEST-REPORT.md)
+(what was tested, and how), [DEPLOYMENT.md](DEPLOYMENT.md), [ROLLBACK.md](ROLLBACK.md),
+[BACKUP-AND-RESTORE.md](BACKUP-AND-RESTORE.md), [OWNER-QUICKSTART.md](OWNER-QUICKSTART.md),
+[STAFF-QUICKSTART.md](STAFF-QUICKSTART.md), [UPGRADE-PATH.md](UPGRADE-PATH.md).
+
+- **Migration.** `mtl:import-wordpress` now also reads a WordPress export file (`--wxr`), and `mtl:verify-import`
+  compares the result with the source. Against the live site: no differences (6 posts, 40 images, 30 tags,
+  5 comments). The reports are in [migration-reports/](migration-reports/).
+- **Images** moved from `wp-content/uploads` to `/images/`. Old addresses redirect permanently (D41).
+- **Visual comparison.** 24 page views compared with the live site; fixes made, and the remaining differences are
+  listed for the owner ([visual-comparison/README.md](visual-comparison/README.md)).
+- **Staging mode:** password prompt, noindex, test payments only, emails redirected (D37).
+- **Backups:** nightly encrypted backup, download for technical administrators, and restore into an empty
+  database (D38).
+- **Naija Virtual Notary:** manual handoff on each matter (consent, NVN reference, status). Nothing is sent to NVN
+  (D40).
+- **Security:** security headers, locked-down public folders, and automated checks for open routes and files
+  (D43).
+- **Package:** `php tools/deploy/package.php` builds the upload zips with a checksum manifest. The server can run
+  from its own document root, or from `public_html` using `app-path.php`.
 
 ## Phase 5 — completed
 
@@ -201,10 +224,7 @@ repeatability/conflicts, and application file access.
   fakes.
 - New uploads land in `public/media/` (git-ignored); back it up with the database on the server.
 
-## Next steps (Phase 6)
+## Next steps
 
-1. WordPress migration dry-run (content, media, redirects) into a staging copy.
-2. Visual and content comparison against the live site.
-3. Full test suite against MariaDB (`mtl_test`), plus security and workflow checks.
-4. Staging checks on Namecheap, including a Paystack sandbox payment and webhook on a public URL.
-5. Deployment package and cutover plan, for the owner's approval before anything touches the live site.
+All of them are in [OUTSTANDING.md](OUTSTANDING.md): staging on the hosting account (cPanel access), the WordPress
+export, the owner's approvals, and then cutover, which only happens with the owner's approval.

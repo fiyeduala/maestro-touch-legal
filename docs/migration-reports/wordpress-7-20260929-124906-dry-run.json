@@ -1,0 +1,20 @@
+{
+    "run": 7,
+    "status": "completed",
+    "dry_run": true,
+    "stats": {
+        "category.unchanged": 1,
+        "tag.unchanged": 30,
+        "media.unchanged": 40,
+        "post.unchanged": 6,
+        "comment.unchanged": 5
+    },
+    "issues": [
+        {
+            "level": "info",
+            "type": "post",
+            "id": "1",
+            "message": "'hello-world' imported as a draft (not public) pending owner decision."
+        }
+    ]
+}

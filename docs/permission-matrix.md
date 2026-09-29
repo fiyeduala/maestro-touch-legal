@@ -41,6 +41,7 @@ CO = Case Officer / Support · FIN = Finance Officer · CE = Content Editor · C
 | Audit history (search/view) | A | A | — | — | — | — | — |
 | Audit history (edit/delete) | — | — | — | — | — | — | — |
 | System health, queue, deliveries, backups (Admin → Operations) | A | A | — | — | — | — | — |
+| Download a backup (holds every confidential file; password re-entry, audited) | A | — | — | — | — | — | — |
 | Resend a failed or uncertain end-of-day recap (audited) | A | A | — | — | — | — | — |
 | NVN handoff records | A | A | T | T | — | — | O (consent, status) |
 | "View client portal" read-only preview | A (audited) | A (audited) | — | — | — | — | — |

@@ -124,13 +124,15 @@ slugs of published posts or recorded redirects; every fixed route wins first.
 | Integration | Approach | Live status |
 |---|---|---|
 | SMTP | Laravel mail, sender identity from settings; each send logged in `deliveries` with status/attempts | Needs credentials |
-| Paystack | Server-initialised hosted checkout from stored invoice amount; callback → server verify; signed webhook (HMAC-SHA512 of raw body) → idempotent event log keyed by event+reference; reconciliation job for stale pending references | Built against test doubles until sandbox keys arrive |
+| Paystack | Server-initialised hosted checkout from stored invoice amount; callback → server verify; signed webhook (HMAC-SHA512 of raw body) → idempotent event log keyed by event+reference; reconciliation job for stale pending references | Test keys authenticate; sandbox checkout and webhooks not yet exercised end to end (need staging) |
 | Bank transfer | Per-currency instructions in settings; option shown only when instructions exist; client evidence → pending verification → staff verify/allocate/reject | Needs real instructions |
 | Tawk.to | Public pages only; property ID + widget ID validated as `[a-f0-9]{24}` / `[a-z0-9]+`; script built from the IDs, never pasted | Needs IDs (existing site already uses Tawk) |
 | WhatsApp | `https://wa.me/{E.164 digits}?text={generic text}` link only | Needs number |
-| Naija Virtual Notary | Public link kept; internal manual handoff records (consent, external reference, status); adapter interface for a future API | Manual only |
+| Naija Virtual Notary | Public link kept; internal manual handoff records (consent, external reference, status). Nothing is sent to NVN; the adapter boundary for a future authorised integration is described in DECISIONS D40 | Manual only |
 
-## 8. Deployment layout (to be confirmed against the real cPanel account)
+## 8. Deployment layout
+
+Step-by-step instructions are in [DEPLOYMENT.md](DEPLOYMENT.md). Hosting details are still to be confirmed on the real account.
 
 Preferred (if the main domain's document root can point anywhere):
 ```
@@ -141,7 +143,19 @@ Fallback when the main domain must serve from `public_html`:
 ```
 /home/<user>/mtl_app/            everything except public/
 /home/<user>/public_html/        contents of public/ only (index.php, .htaccess, build/, images/, media/)
-                                 index.php points to ../mtl_app/vendor and ../mtl_app/bootstrap/app.php, and the
-                                 app sets its public path to public_html
+                                 plus app-path.php returning '/home/<user>/mtl_app'; index.php loads the app
+                                 from there and sets the public path to public_html (blocked from direct access
+                                 by .htaccess)
 ```
 Never copy the whole application into `public_html`. Private uploads, backups and logs stay under `mtl_app/storage`.
+
+## 9. Added in Phase 6
+
+| Area | What |
+|---|---|
+| Security headers | `SecurityHeaders` middleware on every response: nosniff, `Referrer-Policy`, `X-Frame-Options: SAMEORIGIN`, a restrictive `Permissions-Policy`; HSTS only in production over HTTPS and without `includeSubDomains` (so NVN and other subdomains are unaffected); `Cache-Control: no-store, private` on signed-in pages (D43) |
+| Public folders | Old-site images in `public/images` (old `/wp-content/uploads/...` addresses 301 there, D41) and uploads in `public/media`; both refuse scripts and HTML via `.htaccess`. `index.php` is the only PHP file under `public/` |
+| Backups | `mtl:backup` (nightly via the scheduler): database dump plus the `local`, `confidential`, `media` and `public` disks, AES-256 encrypted with `BACKUP_PASSWORD`, kept outside the web root, rotated. `mtl:restore` restores only into an empty database and folder (D38, [BACKUP-AND-RESTORE.md](BACKUP-AND-RESTORE.md)) |
+| Migration | `mtl:import-wordpress` from the live REST API or a WXR export (read-only against WordPress; change detection by checksum in `import_mappings`), and `mtl:verify-import`, which compares counts, posts, image files and internal links (D42). Reports in `storage/app/private/import-reports` |
+| Staging | Password prompt (`STAGING_USER` / `STAGING_PASSWORD_HASH`), noindex, live Paystack keys refused, emails redirected (D37) |
+| Packaging | `tools/deploy/package.php` builds the app zip from the committed tree, plus compiled assets, and an optional libraries zip, with a checksum manifest |

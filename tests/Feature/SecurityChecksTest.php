@@ -119,6 +119,7 @@ class SecurityChecksTest extends TestCase
         $root = file_get_contents(public_path('.htaccess'));
         $this->assertStringContainsString('-Indexes', $root);
         $this->assertMatchesRegularExpression('/env/', $root); // dotfiles and backups are refused
+        $this->assertStringContainsString('app-path', $root); // the cPanel layout-B pointer is never served
 
         foreach (['images', 'media'] as $dir) {
             $rules = file_get_contents(public_path("{$dir}/.htaccess"));
