@@ -3,15 +3,10 @@
 Captured 28 September 2026 from the live WordPress site (WordPress 7.1.2, Astra theme, Elementor 4.3.2,
 Header Footer Elementor, WooCommerce 11.1.2, WP Customer Area, WP 2FA, a Zoom meetings plugin, Tawk.to).
 
-Sources: every URL in `/sitemap_index.xml` plus the public REST API (`/wp-json/wp/v2/*`). Raw HTML, REST JSON and
-theme/Elementor CSS are kept in `docs/source-capture/`. Exact copy is in `docs/content-manifest.json`; images in
-`docs/asset-manifest.json`; screenshots in `docs/reference-screenshots/`. Re-run with:
-
-```
-php tools/site-audit/extract.php        # copy + asset list + CSS
-php tools/site-audit/fetch-assets.php   # self-host images into public/images
-node tools/site-audit/screenshot.mjs    # desktop 1440px + mobile 390px captures
-```
+Sources: every URL in `/sitemap_index.xml` plus the public REST API (`/wp-json/wp/v2/*`). The blog data the importer
+and tests use is in `database/wordpress-capture/`. The rest of the capture (raw pages, theme CSS, screenshots, copy
+and image lists) and the capture scripts were removed from the code on 30 Sep 2026. They are kept in Git under the tag
+`before-cleanup-2026-09-30`.
 
 Canonical host: `https://mtouchlegal.com/` (no `www`), trailing slash on every path. Keep both.
 

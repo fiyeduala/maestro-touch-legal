@@ -14,10 +14,10 @@ use Illuminate\Console\Command;
 class ImportWordPress extends Command
 {
     protected $signature = 'mtl:import-wordpress
-        {--path=docs/source-capture/rest : Directory of captured REST JSON (posts, media, categories, tags, comments[, users])}
+        {--path=database/wordpress-capture/rest : Directory of captured REST JSON (posts, media, categories, tags, comments[, users])}
         {--live= : Read from a live site instead, e.g. https://mtouchlegal.com}
         {--wxr= : Read a WordPress export (WXR .xml) file instead}
-        {--html-path=docs/source-capture/html : Captured post pages, used to find author names when users.json is absent}
+        {--html-path=database/wordpress-capture/html : Captured post pages, used to find author names when users.json is absent}
         {--author=* : Author name override as WP_USER_ID=Name}
         {--draft=* : Post slugs to import as drafts (default: hello-world)}
         {--dry-run : Report what would change without saving anything}';

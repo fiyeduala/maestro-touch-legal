@@ -11,9 +11,18 @@ Last updated: 29 September 2026 (end of Phase 6: the build is complete locally).
 | 3 | Enquiries, conflict checks, quotations/engagement, clients, matters, teams, tasks, documents, approvals, portal pages | **Done** locally, 134 automated tests passing in total |
 | 4 | Portal chat, internal notes, consultations, SMTP notifications, daily digests | **Done** locally, 170 automated tests passing in total |
 | 5 | NGN/USD billing, Paystack, manual transfers, client funds, reporting, audit views | **Done** locally, 204 automated tests passing in total. Paystack verified in test mode for authentication only (see below) |
-| 6 | Migration dry-run, visual/content comparison, security/workflow tests, staging checks, deployment package | **Done** locally: 232 automated tests passing on SQLite and on MariaDB. Staging on the hosting account is waiting on cPanel access ([OUTSTANDING.md](OUTSTANDING.md)) |
+| 6 | Migration dry-run, visual/content comparison, security/workflow tests, staging checks, deployment package | **Done** locally: 231 automated tests passing (see [TEST-REPORT.md](TEST-REPORT.md)). Staging on the hosting account is waiting on cPanel access ([OUTSTANDING.md](OUTSTANDING.md)) |
 
 Nothing has been deployed. The live WordPress site is untouched.
+
+## Clean-up (30 September 2026)
+
+Build-time material that the running site does not need was removed from the repository: the raw capture of the
+old WordPress site and its theme CSS, the live-site screenshots, the one-off capture scripts and their manifests,
+Laravel's sample page, test and README, the unused axios and concurrently packages, and settings for services the
+site does not use (Redis, Memcached, Amazon S3/SES/SQS, Postmark, Resend, Slack, Papertrail, PostgreSQL, SQL Server).
+The captured WordPress data that the import and verify commands and their tests use moved to
+`database/wordpress-capture/`. Everything removed is still in Git under the tag `before-cleanup-2026-09-30`.
 
 ## Phase 6 — completed
 
@@ -165,7 +174,7 @@ screens 8, public enquiry 6, portal 7. Full suite: **134 tests / 694 assertions,
 **Public site** (all addresses keep the WordPress form with a trailing slash; bare forms 301, see D8)
 - Home, About, Offering, Contact, Terms, Blog (with pagination), category and tag archives, post pages at the
   legacy `/{slug}/` permalinks, RSS `/feed/`, `sitemap.xml`, and `robots.txt`, which blocks everything outside
-  production. Verbatim copy from `content-manifest.json`, Poppins self-hosted, legacy images at their original URLs.
+  production. Verbatim copy from the live pages, Poppins self-hosted, legacy images at their original URLs.
 - Canonical links, Google site verification tag, Tawk.to on public pages only when configured (IDs only).
 - Managed redirects (301/302/410) with hit counts, seeded with the old WordPress account/login addresses.
 - `/privacy-policy/` exists as an **unpublished draft** awaiting the owner (404 until published).

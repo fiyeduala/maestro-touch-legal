@@ -16,8 +16,8 @@ Nothing in this report has been run on the hosting account. Nothing has been dep
 
 | Area | Result |
 |---|---|
-| Automated suite, SQLite (the normal local run) | **Passed**: 231 tests, 1,765 checks; 1 skipped (the MariaDB-only column check) |
-| Automated suite, MariaDB 10.4 (the same database family as cPanel) | **Passed**: 232 tests, 1,766 checks, none skipped |
+| Automated suite, SQLite (the normal local run) | **Passed**: 230 tests, 1,764 checks; 1 skipped (the MariaDB-only column check). Re-run after the 30 September clean-up, which removed Laravel's sample test |
+| Automated suite, MariaDB 10.4 (the same database family as cPanel) | **Passed**: 232 tests, 1,766 checks, none skipped. Run before the clean-up, so it includes the sample test since removed; the clean-up changed only file locations and unused settings, not how the site behaves |
 | WordPress import dry-run and check against the live site | **Passed**: no differences |
 | Visual comparison with the live site (24 page/phone/desktop views) | **Passed**, with listed differences for the owner to review |
 | Security checks | **Passed** (automated), see below |
@@ -68,7 +68,7 @@ reports are in [migration-reports/](migration-reports/). They contain no email a
 **Passed**, with differences for review. There are 24 screenshots, of 12 pages on desktop and phone, taken of the
 live site and of the build, and compared by eye. The fixes and the remaining differences are listed in
 [visual-comparison/README.md](visual-comparison/README.md). The page text is copied word for word from the live
-site ([content-manifest.json](content-manifest.json)); new wording is listed in
+site (seeded by `database/seeders/PageSeeder.php`); new wording is listed in
 [content-gaps.md](content-gaps.md) for approval.
 
 **Not run:** the phone menu opened on the build. Open it on a phone during the staging review.

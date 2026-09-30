@@ -9,7 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
-/** Runs against the REST capture of the live site in docs/source-capture/rest. */
+/** Runs against the REST capture of the live site in database/wordpress-capture/rest. */
 class WordPressImportTest extends TestCase
 {
     use RefreshDatabase;
@@ -20,14 +20,14 @@ class WordPressImportTest extends TestCase
     {
         parent::setUp();
         Storage::fake('local');
-        $this->data = WordPressImporter::readDirectory(base_path('docs/source-capture/rest'));
+        $this->data = WordPressImporter::readDirectory(base_path('database/wordpress-capture/rest'));
     }
 
     private function import(array $overrides = []): array
     {
         $run = app(WordPressImporter::class)->import($overrides + [
             'data' => $this->data,
-            'html_path' => base_path('docs/source-capture/html'),
+            'html_path' => base_path('database/wordpress-capture/html'),
             'draft_slugs' => ['hello-world'],
         ]);
 

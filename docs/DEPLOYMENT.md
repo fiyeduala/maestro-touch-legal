@@ -54,10 +54,7 @@ not in Git.
 2. **Tell SSH to use that key** for GitHub:
 
    ```
-   printf 'Host github.com
-  IdentityFile ~/.ssh/mtl_deploy
-  IdentitiesOnly yes
-' >> ~/.ssh/config
+   printf 'Host github.com\n  IdentityFile ~/.ssh/mtl_deploy\n  IdentitiesOnly yes\n' >> ~/.ssh/config
    chmod 600 ~/.ssh/config
    ssh -T git@github.com          (answer yes; it should say "successfully authenticated")
    ```
@@ -68,8 +65,10 @@ not in Git.
 
    ```
    cd ~
-   git clone git@github.com:OWNER/REPOSITORY.git mtl_staging
+   git clone --depth 1 git@github.com:fiyeduala/maestro-touch-legal.git mtl_staging
    ```
+
+   `--depth 1` downloads only the current code, not the project's full history, so the download stays small.
 
    Then continue with section 4, from step 3's library step.
 

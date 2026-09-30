@@ -7,7 +7,7 @@ use App\Models\Page;
 use Illuminate\Database\Seeder;
 
 /**
- * Mirrored pages from the live WordPress site (docs/content-manifest.json, captured 28 Sep 2026).
+ * Mirrored pages from the live WordPress site (copy captured 28 Sep 2026).
  * Copy is verbatim, including suspected typos, which wait for owner approval (docs/content-gaps.md §2).
  * *word* marks the words the live site shows in blue.
  *

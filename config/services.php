@@ -14,20 +14,6 @@ return [
     |
     */
 
-    'postmark' => [
-        'key' => env('POSTMARK_API_KEY'),
-    ],
-
-    'resend' => [
-        'key' => env('RESEND_API_KEY'),
-    ],
-
-    'ses' => [
-        'key' => env('AWS_ACCESS_KEY_ID'),
-        'secret' => env('AWS_SECRET_ACCESS_KEY'),
-        'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
-    ],
-
     // Paystack (spec §10). The secret key lives only in .env; it is never stored in the database, shown in the
     // admin panel or written to logs. Paystack signs webhooks with the same secret key (HMAC-SHA512).
     // Test keys start sk_test_, live keys sk_live_; use a separate .env per environment.
@@ -39,13 +25,6 @@ return [
         'currencies' => array_values(array_filter(array_map('trim', explode(',', (string) env('PAYSTACK_CURRENCIES', 'NGN'))))),
         // Optional CA bundle for PHP builds without one (DECISIONS D7). Certificate checks are never disabled.
         'ca_bundle' => env('PAYSTACK_CA_BUNDLE'),
-    ],
-
-    'slack' => [
-        'notifications' => [
-            'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
-            'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
-        ],
     ],
 
 ];

@@ -11,7 +11,7 @@ use Illuminate\Console\Command;
 class VerifyWordPressImport extends Command
 {
     protected $signature = 'mtl:verify-import
-        {--path=docs/source-capture/rest : Directory of captured REST JSON}
+        {--path=database/wordpress-capture/rest : Directory of captured REST JSON}
         {--live= : Compare against a live site instead, e.g. https://mtouchlegal.com}
         {--wxr= : Compare against a WordPress export (WXR .xml) file}
         {--draft=* : Post slugs deliberately imported as drafts (default: hello-world)}';

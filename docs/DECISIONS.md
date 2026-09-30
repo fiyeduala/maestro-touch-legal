@@ -73,7 +73,7 @@ WordPress media cannot be deleted from the library. Uploads are public by design
 confidential files never go here.
 
 ### D13 — WordPress import is repeatable and never overwrites local edits (2026-09-28)
-`php artisan mtl:import-wordpress` reads the REST capture (`docs/source-capture/rest`) or, with `--live=`, the live
+`php artisan mtl:import-wordpress` reads the REST capture (`database/wordpress-capture/rest`) or, with `--live=`, the live
 site read-only. Each record is mapped by its WordPress ID with a checksum of the source:
 - re-running with WordPress unchanged changes nothing;
 - if WordPress changed but the post was also edited here, the local version is kept and the run reports a conflict;

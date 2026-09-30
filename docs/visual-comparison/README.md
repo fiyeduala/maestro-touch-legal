@@ -3,10 +3,9 @@
 Run on 29 Sep 2026 against the local build (http://127.0.0.1:8765, seeded pages + imported posts), using the same
 tool and viewports that captured the live site on 28 Sep 2026 (desktop 1440×900; phone 390×844 at 2×).
 
-    node tools/site-audit/screenshot.mjs http://127.0.0.1:8765 docs/visual-comparison/build
-    php -d memory_limit=2G tools/site-audit/compare.php
+The capture and comparison scripts were removed from the code on 30 Sep 2026. They are kept in Git under the tag
+`before-cleanup-2026-09-30`.
 
-- `build/` – screenshots of the new build.
 - `*-side-by-side.jpg` – live site left, new build right (top of each page).
 - `comparison.md` – page heights and a first-screen difference score. The score only points at pages worth
   looking at: a few pixels of vertical shift over a photo gives a high score even when the page looks the same.

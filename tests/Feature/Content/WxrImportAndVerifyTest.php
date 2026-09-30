@@ -96,8 +96,8 @@ class WxrImportAndVerifyTest extends TestCase
     public function test_the_verification_passes_after_importing_the_capture_and_catches_later_differences(): void
     {
         $this->seed(\Database\Seeders\PageSeeder::class); // posts link to the rebuilt pages, e.g. /contact/
-        $data = WordPressImporter::readDirectory(base_path('docs/source-capture/rest'));
-        app(WordPressImporter::class)->import(['data' => $data, 'html_path' => base_path('docs/source-capture/html'), 'draft_slugs' => ['hello-world']]);
+        $data = WordPressImporter::readDirectory(base_path('database/wordpress-capture/rest'));
+        app(WordPressImporter::class)->import(['data' => $data, 'html_path' => base_path('database/wordpress-capture/html'), 'draft_slugs' => ['hello-world']]);
 
         $result = app(ImportVerifier::class)->verify($data, ['hello-world']);
         $this->assertTrue($result['ok'], collect($result['findings'])->where('level', 'fail')->pluck('message', 'item')->toJson());

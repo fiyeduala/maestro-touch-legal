@@ -6,7 +6,7 @@ use App\Models\Redirect;
 use Illuminate\Database\Seeder;
 
 /**
- * Redirects for WordPress URLs that have no equivalent page in the new site (docs/source-capture/urls.txt).
+ * Redirects for WordPress URLs that have no equivalent page in the new site (from the live sitemap, captured 28 Sep 2026).
  * Existing rows are left alone so admin edits to a redirect survive a re-seed.
  */
 class RedirectSeeder extends Seeder
