@@ -31,7 +31,49 @@ the server. This is the owner's safety net for everything above.
 - One cron job (section 4). No long-running processes are needed.
 - Composer is optional: the `vendor` zip replaces it.
 
-## 2. Build the upload packages (on the local computer)
+## 2. Two ways to get the code onto the server
+
+- **Git (preferred).** The server downloads the code from the firm's private GitHub repository, and later updates
+  are one command (section 2A). This needs cPanel Terminal.
+- **Zip files.** Upload and extract zips with File Manager (section 2B). Use this if Git is not possible.
+
+Either way, the PHP libraries (`vendor/`) come from Composer on the server or from the `mtl-vendor` zip. They are
+not in Git.
+
+### 2A. Git: one-time setup on the server
+
+1. **A read-only key for the server.** In Terminal:
+
+   ```
+   ssh-keygen -t ed25519 -f ~/.ssh/mtl_deploy -N "" -C "mtouchlegal server"
+   cat ~/.ssh/mtl_deploy.pub
+   ```
+
+   Copy the line it prints. On GitHub, open the repository → Settings → Deploy keys → Add deploy key, paste it,
+   and leave **Allow write access unticked**. The server can then download the code but never change it.
+2. **Tell SSH to use that key** for GitHub:
+
+   ```
+   printf 'Host github.com
+  IdentityFile ~/.ssh/mtl_deploy
+  IdentitiesOnly yes
+' >> ~/.ssh/config
+   chmod 600 ~/.ssh/config
+   ssh -T git@github.com          (answer yes; it should say "successfully authenticated")
+   ```
+
+   If the host blocks this connection, use an HTTPS address with a read-only fine-grained GitHub token instead.
+   Never paste the token into a document.
+3. **Download the code** into the app folder. It must not exist yet:
+
+   ```
+   cd ~
+   git clone git@github.com:OWNER/REPOSITORY.git mtl_staging
+   ```
+
+   Then continue with section 4, from step 3's library step.
+
+### 2B. Zip files: build the upload packages (on the local computer)
 
 ```
 npm run build
@@ -67,6 +109,9 @@ The app folder is **not** web-accessible. Only its `public/` folder is.
                              plus app-path.php containing:  <?php return '/home/USER/mtl_app';
 ```
 
+Git updates (section 6) work directly with layout A. With layout B, after each update, copy the contents of
+`mtl_app/public/` into `public_html` again, except `media/` and `app-path.php`.
+
 Never put the whole app inside `public_html`. Client documents, backups and logs stay in `mtl_app/storage`, which
 is outside the web root.
 
@@ -77,8 +122,8 @@ is outside the web root.
 2. **Database.** cPanel → MySQL Databases:
    - Create a database, e.g. `USER_mtlstaging`, and a user with a long generated password.
    - Add the user to the database with **All Privileges**.
-3. **Files.** Upload `mtl-app-….zip` to `/home/USER/` and extract it into `mtl_staging` with File Manager
-   (Extract). Then either:
+3. **Files.** With Git, the code is already in `mtl_staging` (section 2A). With zips, upload `mtl-app-….zip` to
+   `/home/USER/` and extract it into `mtl_staging` with File Manager (Extract). Then, for the libraries, either:
    - extract `mtl-vendor-….zip` into the same folder, which creates `mtl_staging/vendor/`; or
    - in Terminal, run `cd ~/mtl_staging && composer install --no-dev --optimize-autoloader`.
 4. **Settings.** Copy `.env.example` to `.env` (File Manager → Copy; show hidden files via Settings) and fill in:
@@ -159,7 +204,26 @@ Leave `STAGING_*` empty. Then, in the Paystack dashboard, set the webhook URL to
 
 ## 6. Updating the site later
 
-For each update:
+**With Git.** On the local computer, run `npm run build` if the design changed, run the tests, commit and push to
+`main`. Then in cPanel Terminal:
+
+```
+cd ~/mtl_staging          (or ~/mtl_app for the live site)
+sh tools/deploy/server-update.sh
+```
+
+The script:
+
+- downloads only what changed;
+- takes a backup, and asks before continuing without one;
+- shows the maintenance page while it updates the database;
+- clears and rebuilds the caches, then brings the site back.
+
+It stops without changing anything if files were edited by hand on the server. It also stops if the libraries
+changed and Composer is not available; it then says which vendor zip to extract. Update staging first, check it,
+then update the live site.
+
+**With zip files**, for each update:
 
 1. Upload and extract the new `mtl-app` zip over `mtl_app`. `.env`, `storage/` and `public/media/` are not in
    the zip, so they are kept.

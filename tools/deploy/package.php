@@ -112,7 +112,8 @@ for ($i = $zip->numFiles - 1; $i >= 0; $i--) {
         }
     }
 }
-// 2. Compiled CSS/JS (git-ignored, so added here) and the published Filament assets.
+// 2. Compiled CSS/JS (committed, and re-added here from the working tree in case an old commit predates that) and
+//    the published Filament assets. addFile overwrites an entry of the same name.
 $assets = addTree($zip, "{$root}/public/build", 'public/build/');
 foreach (['public/css/filament', 'public/js/filament', 'public/fonts/filament'] as $dir) {
     if (is_dir($dir)) {

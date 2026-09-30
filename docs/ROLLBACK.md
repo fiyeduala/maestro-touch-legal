@@ -21,8 +21,12 @@ before switching back.
 ## B. A bad update: go back to the previous release
 
 1. `php artisan down`
-2. Extract the **previous** `mtl-app` zip (and its matching vendor zip, if the libraries changed) over the app
-   folder. `.env`, `storage/` and uploads are not in the zips, so they are untouched.
+2. Put the previous code back.
+   - **With Git:** `git checkout <previous commit>`. The update script prints it at the end ("Previous
+     version: …"), and `git log --oneline` lists them all. When the fix is pushed later, run
+     `git checkout main`, then the update script.
+   - **With zips:** extract the **previous** `mtl-app` zip (and its matching vendor zip, if the libraries changed) over the app
+     folder. `.env`, `storage/` and uploads are not in the zips, so they are untouched.
 3. If the bad update changed the database (its release notes, or `php artisan migrate:status`, show new
    migrations):
    - Normally, restore the backup taken just before the update. See
