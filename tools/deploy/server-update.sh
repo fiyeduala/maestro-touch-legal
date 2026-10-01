@@ -61,6 +61,11 @@ if [ "$LIBRARIES_CHANGED" = "yes" ] && [ "${SKIP_COMPOSER:-0}" != "1" ]; then
     composer install --no-dev --optimize-autoloader --no-interaction --no-progress
 fi
 
+# Layout B: the website is served from another folder (public_html), so copy the new web files there.
+if [ -f public-path.php ]; then
+    sh tools/deploy/copy-public.sh
+fi
+
 php artisan migrate --force
 php artisan filament:assets
 php artisan optimize:clear

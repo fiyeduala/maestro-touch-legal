@@ -108,8 +108,10 @@ The app folder is **not** web-accessible. Only its `public/` folder is.
                              plus app-path.php containing:  <?php return '/home/USER/mtl_app';
 ```
 
-Git updates (section 6) work directly with layout A. With layout B, after each update, copy the contents of
-`mtl_app/public/` into `public_html` again, except `media/` and `app-path.php`.
+With layout B, set up the copy once from the app folder: `sh tools/deploy/copy-public.sh ~/public_html`. It copies
+the web files, writes `app-path.php`, and records the web folder in `mtl_app/public-path.php` so Terminal commands
+use it too (DECISIONS D45). After that, `server-update.sh` (section 6) copies the new web files on every update.
+The copy never deletes anything, so uploads in `media/` are kept.
 
 Never put the whole app inside `public_html`. Client documents, backups and logs stay in `mtl_app/storage`, which
 is outside the web root.

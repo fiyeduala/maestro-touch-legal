@@ -11,7 +11,7 @@ Last updated: 29 September 2026 (end of Phase 6: the build is complete locally).
 | 3 | Enquiries, conflict checks, quotations/engagement, clients, matters, teams, tasks, documents, approvals, portal pages | **Done** locally, 134 automated tests passing in total |
 | 4 | Portal chat, internal notes, consultations, SMTP notifications, daily digests | **Done** locally, 170 automated tests passing in total |
 | 5 | NGN/USD billing, Paystack, manual transfers, client funds, reporting, audit views | **Done** locally, 204 automated tests passing in total. Paystack verified in test mode for authentication only (see below) |
-| 6 | Migration dry-run, visual/content comparison, security/workflow tests, staging checks, deployment package | **Done** locally: 231 automated tests passing (see [TEST-REPORT.md](TEST-REPORT.md)). Staging on the hosting account is waiting on cPanel access ([OUTSTANDING.md](OUTSTANDING.md)) |
+| 6 | Migration dry-run, visual/content comparison, security/workflow tests, staging checks, deployment package | **Done** locally: 233 automated tests passing (see [TEST-REPORT.md](TEST-REPORT.md)). Staging on the hosting account is waiting on cPanel access ([OUTSTANDING.md](OUTSTANDING.md)) |
 
 Nothing has been deployed. The live WordPress site is untouched.
 

@@ -16,7 +16,7 @@ Nothing in this report has been run on the hosting account. Nothing has been dep
 
 | Area | Result |
 |---|---|
-| Automated suite, SQLite (the normal local run) | **Passed**: 230 tests, 1,764 checks; 1 skipped (the MariaDB-only column check). Re-run after the 30 September clean-up, which removed Laravel's sample test |
+| Automated suite, SQLite (the normal local run) | **Passed**: 232 tests, 1,766 checks; 1 skipped (the MariaDB-only column check). Run on 1 October 2026, after the clean-up and the Cloudflare tests |
 | Automated suite, MariaDB 10.4 (the same database family as cPanel) | **Passed**: 232 tests, 1,766 checks, none skipped. Run before the clean-up, so it includes the sample test since removed; the clean-up changed only file locations and unused settings, not how the site behaves |
 | WordPress import dry-run and check against the live site | **Passed**: no differences |
 | Visual comparison with the live site (24 page/phone/desktop views) | **Passed**, with listed differences for the owner to review |

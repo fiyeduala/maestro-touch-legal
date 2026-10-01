@@ -302,3 +302,24 @@ with failure on any difference. The REST API does not show drafts, private posts
 response, so they apply even if Apache's mod_headers is off. Pages for a signed-in user are `no-store, private`.
 HSTS is sent only in production over HTTPS and without `includeSubDomains`, so the notary service, webmail and
 other subdomains are unaffected. The upload folders (`public/images`, `public/media`) refuse to run scripts.
+
+### D44 — Behind Cloudflare (2026-10-01)
+mtouchlegal.com is served through Cloudflare, so requests reach the server from Cloudflare's addresses. The app
+trusts `X-Forwarded-For` and `X-Forwarded-Proto` only from Cloudflare's published ranges (`App\Support\Cloudflare`),
+so login rate limits and the audit log see the visitor's real address and https is recognised. A visitor connecting
+directly cannot fake these headers. The list is checked against cloudflare.com/ips at each routine update. Cloudflare
+SSL mode should be Full (strict); Flexible also works because the scheme header is trusted.
+
+### D45 — Fallback when the document root cannot be changed (2026-10-01)
+mtouchlegal.com is an addon domain, so its document root can point straight at the app's `public/` (layout A) and
+updates need no copying. For a host or domain where the web folder is fixed (layout B), `tools/deploy/copy-public.sh`
+copies `public/` into it and writes `public-path.php` in the app folder (server-only, git-ignored), so Terminal
+commands use the same web folder as the website: otherwise cached config, backups, imports and Filament assets would
+point at the app's own `public/` and miss uploads. The copy only adds and replaces files, keeps cPanel's PHP-version
+lines in `.htaccess`, and `server-update.sh` runs it on every update when `public-path.php` exists.
+
+### D46 — Launch without a staging site (2026-10-01, owner's decision)
+The owner chose to install directly on mtouchlegal.com instead of a staging subdomain first, as no clients, accounts
+or client files exist yet and the site had been checked locally. The owner removed the WordPress files and cloned the
+app into the addon domain's folder (`~/mtouchlegal.com`); its document root points at `mtouchlegal.com/public`.
+The old pages, posts and images are in this repository, so the blog is restored from `database/wordpress-capture/`.

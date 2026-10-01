@@ -32,5 +32,8 @@ Thumbs.db
 /public/media/*
 !/public/media/.htaccess
 
+# Server-only: where the web files are served from (docs/DEPLOYMENT.md, layout B)
+/public-path.php
+
 # Release packages (tools/deploy/package.php)
 /dist
