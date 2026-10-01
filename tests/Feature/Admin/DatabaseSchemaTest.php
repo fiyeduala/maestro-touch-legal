@@ -21,4 +21,17 @@ class DatabaseSchemaTest extends TestCase
         $this->assertSame([], TimestampColumns::autoUpdating(DB::connection()),
             'A NOT NULL timestamp got ON UPDATE CURRENT_TIMESTAMP; call TimestampColumns::repair() in the migration (D39).');
     }
+
+    public function test_tables_are_created_as_innodb_even_where_the_server_defaults_to_myisam(): void
+    {
+        $this->assertSame('InnoDB', config('database.connections.mysql.engine'));
+        $this->assertSame('InnoDB', config('database.connections.mariadb.engine'));
+
+        if (DB::connection()->getDriverName() === 'sqlite') {
+            return;
+        }
+        $other = DB::table('information_schema.tables')->where('table_schema', DB::connection()->getDatabaseName())
+            ->where('table_type', 'BASE TABLE')->where('engine', '!=', 'InnoDB')->pluck('table_name')->all();
+        $this->assertSame([], $other, 'Tables not using InnoDB (no transactions or foreign keys).');
+    }
 }

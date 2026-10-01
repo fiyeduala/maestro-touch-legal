@@ -323,3 +323,8 @@ The owner chose to install directly on mtouchlegal.com instead of a staging subd
 or client files exist yet and the site had been checked locally. The owner removed the WordPress files and cloned the
 app into the addon domain's folder (`~/mtouchlegal.com`); its document root points at `mtouchlegal.com/public`.
 The old pages, posts and images are in this repository, so the blog is restored from `database/wordpress-capture/`.
+
+### D47 — Tables are always InnoDB (2026-10-01)
+The hosting server's MySQL creates MyISAM tables by default, which failed the first install ("max key length is
+1000 bytes") and, worse, would ignore transactions and foreign keys. The `mysql` and `mariadb` connections now set
+`engine => InnoDB`, and `DatabaseSchemaTest` checks the setting (and, on MariaDB, every table).
