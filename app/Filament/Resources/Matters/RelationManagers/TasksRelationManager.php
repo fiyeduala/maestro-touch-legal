@@ -59,7 +59,7 @@ class TasksRelationManager extends MatterRelationManager
         $tz = config('app.firm_timezone');
 
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => $query->with(['assignee', 'dependsOn', 'parent']))
+            ->modifyQueryUsing(fn (Builder $query) => $query->with(['matter', 'assignee', 'dependsOn', 'parent']))
             ->defaultSort('due_at')
             ->columns([
                 TextColumn::make('title')->searchable()->wrap()

@@ -48,7 +48,7 @@ class DocumentsRelationManager extends MatterRelationManager
         $tz = config('app.firm_timezone');
 
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => $query->with(['currentVersion', 'releasedVersion', 'request']))
+            ->modifyQueryUsing(fn (Builder $query) => $query->with(['matter', 'currentVersion', 'releasedVersion', 'request']))
             ->defaultSort('updated_at', 'desc')
             ->columns([
                 TextColumn::make('title')->searchable()->wrap()

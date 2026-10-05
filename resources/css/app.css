@@ -74,7 +74,7 @@
     }
 
     .btn-outline {
-        @apply inline-flex items-center justify-center rounded-[6px] border-2 border-brand px-5 py-[11px] text-[15px] leading-none font-medium text-brand hover:bg-brand hover:text-white;
+        @apply inline-flex items-center justify-center rounded-[6px] border-2 border-brand bg-transparent px-5 py-[11px] text-[15px] leading-none font-medium text-brand hover:bg-brand hover:text-white;
     }
 
     .link-arrow {
