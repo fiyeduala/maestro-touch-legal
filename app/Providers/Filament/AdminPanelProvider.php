@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Domain\Operations\Settings;
 use App\Http\Middleware\EnsureStaffSessionVerified;
+use App\Notifications\StaffLoginCode;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\FontProviders\LocalFontProvider;
@@ -46,7 +47,9 @@ class AdminPanelProvider extends PanelProvider
                     ->brandName('Maestro Touch Legal')
                     ->recoverable()
                     ->regenerableRecoveryCodes(),
-                EmailAuthentication::make(),
+                EmailAuthentication::make()
+                    ->codeNotification(StaffLoginCode::class)
+                    ->codeExpiryMinutes(10),
             ], isRequired: true)
             ->brandName('Maestro Touch Legal')
             ->brandLogo(fn () => url(Settings::get('site.logo_path')))
