@@ -193,12 +193,18 @@ in `.env`:
 APP_ENV=production
 APP_DEBUG=false
 APP_URL=https://mtouchlegal.com
-MAIL_MAILER=smtp   MAIL_HOST / MAIL_PORT / MAIL_USERNAME / MAIL_PASSWORD   (a mailbox created in cPanel → Email)
-MAIL_FROM_ADDRESS=…    (an address the firm owns and has approved)
+MAIL_MAILER=smtp   MAIL_USERNAME / MAIL_PASSWORD   (a mailbox created in cPanel → Email; the full address as username)
+MAIL_HOST=premium280.web-hosting.com   MAIL_PORT=587   MAIL_SCHEME=   (STARTTLS; see below)
+MAIL_FROM_ADDRESS=…    (the same mailbox, or another address the server may send as)
 PAYSTACK_SECRET_KEY / PAYSTACK_PUBLIC_KEY   live keys, only when the firm is ready to take payments
 BACKUP_PASSWORD=…      (long, random; keep a copy away from the server; section 6 of BACKUP-AND-RESTORE.md)
 SESSION_SECURE_COOKIE=true
 ```
+
+Mail settings are the ones Naija Virtual Notary uses on the same server. `mail.mtouchlegal.com` and the domain itself
+go through Cloudflare, which carries only web traffic, so SMTP to them times out. Port 465 fails in the TLS handshake
+on this host. `localhost` fails certificate checks. Every email is queued and is only sent when the scheduled task
+runs (the cron job in section 4). Test with `php artisan queue:work --stop-when-empty -v`.
 
 Leave `STAGING_*` empty. Then, in the Paystack dashboard, set the webhook URL to
 `https://mtouchlegal.com/webhooks/paystack`.
