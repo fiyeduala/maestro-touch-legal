@@ -9,6 +9,9 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\DocumentFileController;
+use App\Http\Controllers\MeetController;
+use App\Http\Controllers\Portal\PortalNotificationController;
+use App\Http\Controllers\PushSubscriptionController;
 use App\Http\Controllers\Portal\PortalAppointmentController;
 use App\Http\Controllers\Portal\PortalBillingController;
 use App\Http\Controllers\Portal\PortalController;
@@ -54,6 +57,20 @@ Route::middleware(['auth', EnsureStaffSessionVerified::class])->prefix('preview'
     Route::get('/posts/{post}', [SiteController::class, 'previewPost'])->name('preview.post');
 });
 
+// Video calls (D50). The controller signs people in: staff through the staff login, clients with a verified email.
+Route::middleware('throttle:30,1')->prefix('meet')->name('meet.')->group(function () {
+    Route::get('/meetings/{meeting}', [MeetController::class, 'meeting'])->middleware('auth')->name('meeting');
+    Route::get('/consultations/{consultation}', [MeetController::class, 'consultation'])->middleware('auth')->name('consultation');
+    // Emailed to a consultation contact without a portal account; the signature expires when the call closes.
+    Route::get('/consultations/{consultation}/guest', [MeetController::class, 'consultationGuest'])->middleware('signed')->name('consultation.guest');
+});
+
+// Browser push notifications on or off for this browser (D49), staff and clients alike.
+Route::middleware(['auth', 'throttle:20,1'])->prefix('push')->name('push.')->group(function () {
+    Route::post('/subscribe', [PushSubscriptionController::class, 'subscribe'])->name('subscribe');
+    Route::delete('/unsubscribe', [PushSubscriptionController::class, 'unsubscribe'])->name('unsubscribe');
+});
+
 // Client portal (Phase 2 shell).
 Route::middleware(['auth', 'verified', EnsureActiveClient::class])->prefix('portal')->name('portal.')->group(function () {
     Route::get('/', [PortalController::class, 'home'])->name('home');
@@ -79,6 +96,9 @@ Route::middleware(['auth', 'verified', EnsureActiveClient::class])->prefix('port
     Route::post('/appointments', [PortalAppointmentController::class, 'store'])->middleware('throttle:auth-forms')->name('appointments.store');
     Route::post('/appointments/{consultation}/reschedule', [PortalAppointmentController::class, 'reschedule'])->middleware('throttle:auth-forms')->name('appointments.reschedule');
     Route::post('/appointments/{consultation}/cancel', [PortalAppointmentController::class, 'cancel'])->middleware('throttle:auth-forms')->name('appointments.cancel');
+    Route::get('/notifications', [PortalNotificationController::class, 'index'])->name('notifications');
+    Route::post('/notifications/read', [PortalNotificationController::class, 'readAll'])->name('notifications.read');
+    Route::get('/notifications/{id}', [PortalNotificationController::class, 'open'])->whereUuid('id')->name('notifications.open');
     Route::get('/profile', [PortalController::class, 'profile'])->name('profile');
     Route::put('/profile/recaps', [PortalController::class, 'updateRecaps'])->name('profile.recaps');
     Route::put('/profile', [PortalController::class, 'updateProfile'])->name('profile.update');

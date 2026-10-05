@@ -24,6 +24,14 @@ class EnsureStaffSessionVerified
         ]);
     }
 
+    /** Whether this session came through the staff login (password + 2-step) for $user. */
+    public static function verified(Request $request, User $user): bool
+    {
+        $mark = $request->session()->get(self::SESSION_KEY);
+
+        return is_array($mark) && ($mark['user_id'] ?? null) === $user->getKey();
+    }
+
     public function handle(Request $request, Closure $next): Response
     {
         $user = Filament::auth()->user();

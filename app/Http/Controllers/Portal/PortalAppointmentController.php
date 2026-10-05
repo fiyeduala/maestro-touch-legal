@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Consultation;
 use App\Models\ConsultationType;
 use App\Models\Matter;
+use App\Models\Meeting;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -43,6 +44,11 @@ class PortalAppointmentController extends Controller
             'past' => $all->reject(fn (Consultation $c) => $c->isActive() && $c->ends_at->isFuture())->values(),
             'cutoffHours' => (int) Settings::get('consultations.client_change_cutoff_hours'),
             'canBook' => ! $user->isFullAdministrator() && ! $user->isStaff(),
+            // Video meetings this person is invited to that have not finished (D50).
+            'meetings' => Meeting::where('status', 'scheduled')->where('ends_at', '>', now())
+                ->whereHas('participants', fn ($q) => $q->whereKey($user->id))
+                ->whereIn('client_id', $clients->modelKeys())
+                ->with(['organiser:id,name', 'matter:id,reference'])->orderBy('starts_at')->get(),
         ]);
     }
 

@@ -127,7 +127,7 @@ class Consultations
      * Staff book a consultation for an enquiry or for a client contact. Staff may book outside published
      * hours, but never into a full time or a host's existing booking.
      *
-     * @param  array{type_id: int, starts_at: Carbon, host_id?: ?int, enquiry_id?: ?int, matter_id?: ?int, contact_user_id?: ?int, meeting_url?: ?string, confirm?: bool}  $data
+     * @param  array{type_id: int, starts_at: Carbon, host_id?: ?int, enquiry_id?: ?int, matter_id?: ?int, contact_user_id?: ?int, meeting_url?: ?string, video?: bool, confirm?: bool}  $data
      */
     public function schedule(array $data, User $actor): Consultation
     {
@@ -158,13 +158,15 @@ class Consultations
         }
 
         $host = $this->host($data['host_id'] ?? null);
-        $url = $this->meetingUrl($data['meeting_url'] ?? null);
+        // A video call on this site (D50) replaces a pasted link.
+        $video = (bool) ($data['video'] ?? false);
+        $url = $video ? null : $this->meetingUrl($data['meeting_url'] ?? null);
         $confirm = (bool) ($data['confirm'] ?? false);
         if ($confirm && ! $host) {
             throw new RuleViolation('Choose who will host the consultation before confirming it.');
         }
 
-        $consultation = DB::transaction(function () use ($type, $startsAt, $enquiry, $matter, $name, $email, $clientId, $host, $url, $confirm, $actor) {
+        $consultation = DB::transaction(function () use ($type, $startsAt, $enquiry, $matter, $name, $email, $clientId, $host, $url, $video, $confirm, $actor) {
             $this->lock();
             $endsAt = $startsAt->copy()->addMinutes($type->duration_minutes);
             $this->assertRoom($startsAt, $endsAt, $host);
@@ -183,6 +185,7 @@ class Consultations
                 'status' => $confirm ? 'confirmed' : 'requested',
                 'confirmed_at' => $confirm ? now() : null,
                 'meeting_url' => $url,
+                'video' => $video,
             ]);
             if ($enquiry) {
                 $this->enquiries->advance($enquiry, EnquiryStatus::ConsultationScheduled, $actor, "Consultation {$consultation->reference} booked for {$this->local($consultation)}");
@@ -199,8 +202,8 @@ class Consultations
         return $consultation;
     }
 
-    /** Confirms a request (or updates the host/link of a confirmed booking) and sends the invitation. */
-    public function confirm(Consultation $consultation, ?int $hostId, ?string $meetingUrl, User $actor): void
+    /** Confirms a request (or updates the host/link of a confirmed booking) and sends the invitation. $video: a call on this site (D50). */
+    public function confirm(Consultation $consultation, ?int $hostId, ?string $meetingUrl, User $actor, bool $video = false): void
     {
         Gate::forUser($actor)->authorize('update', $consultation);
         if (! $consultation->isActive()) {
@@ -217,21 +220,22 @@ class Consultations
         if (! $host) {
             throw new RuleViolation('Choose who will host the consultation.');
         }
-        $url = $this->meetingUrl($meetingUrl);
+        $url = $video ? null : $this->meetingUrl($meetingUrl);
 
-        DB::transaction(function () use ($consultation, $host, $url, $actor) {
+        DB::transaction(function () use ($consultation, $host, $url, $video, $actor) {
             $this->lock();
             $this->assertRoom($consultation->starts_at, $consultation->ends_at, $host, $consultation->id, checkCapacity: false);
-            $before = $consultation->only(['status', 'host_id', 'meeting_url']);
+            $before = $consultation->only(['status', 'host_id', 'meeting_url', 'video']);
             $consultation->forceFill([
                 'status' => 'confirmed',
                 'host_id' => $host->id,
                 'meeting_url' => $url,
+                'video' => $video,
                 'confirmed_at' => $consultation->confirmed_at ?? now(),
                 'sequence' => $consultation->sequence + 1,
             ])->save();
             Audit::record('consultation.confirmed', "{$consultation->reference} confirmed for {$this->local($consultation)} with {$host->name}", $consultation,
-                ['before' => $before, 'after' => $consultation->only(['status', 'host_id', 'meeting_url'])], actor: $actor);
+                ['before' => $before, 'after' => $consultation->only(['status', 'host_id', 'meeting_url', 'video'])], actor: $actor);
         });
 
         $this->notifyContact($consultation, 'confirmed');

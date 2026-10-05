@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Notifications\Concerns\InAppAndPush;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -10,16 +11,22 @@ use Illuminate\Notifications\Notification;
 /**
  * Client-facing email: minimal text and an authenticated portal link (spec §8). Never carries matter
  * details, document contents, attachments or internal notes; callers pass generic wording only.
+ * The same generic wording appears in the portal's notifications and as a browser push (D49).
  */
 class PortalUpdate extends Notification implements ShouldQueue
 {
-    use Queueable;
+    use InAppAndPush, Queueable;
 
     public function __construct(public string $subject, public string $line, public string $path = '/portal') {}
 
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return $this->channels($notifiable);
+    }
+
+    protected function inApp(object $notifiable): array
+    {
+        return ['title' => $this->subject, 'body' => $this->line, 'url' => $this->path];
     }
 
     public function toMail(object $notifiable): MailMessage

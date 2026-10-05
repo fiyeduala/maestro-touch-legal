@@ -14,6 +14,8 @@ use App\Models\DocumentVersion;
 use App\Models\Enquiry;
 use App\Models\Matter;
 use App\Models\User;
+use App\Notifications\StaffAlert;
+use App\Domain\Operations\StaffNotifier;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -48,7 +50,7 @@ class Documents
         $this->assertMeta($meta);
         $deliverable = $owner instanceof Matter && (bool) ($meta['is_deliverable'] ?? false);
 
-        return $this->create([
+        $document = $this->create([
             'matter_id' => $owner instanceof Matter ? $owner->id : null,
             'enquiry_id' => $owner instanceof Enquiry ? $owner->id : $owner->enquiry_id,
             'client_id' => $owner->client_id,
@@ -58,6 +60,11 @@ class Documents
             'status' => $deliverable ? DocumentStatus::Draft : DocumentStatus::Filed,
             'created_by' => $actor->id,
         ], $file, $actor, false, $meta['note'] ?? null);
+        if ($owner instanceof Matter) {
+            $this->alertTeam($owner, "Document added on {$owner->reference}", "{$actor->name} added \"{$document->title}\".", $actor);
+        }
+
+        return $document;
     }
 
     /** Signed paper terms returned by the client, filed as evidence for an offline acceptance. */
@@ -88,8 +95,19 @@ class Documents
                 $document->status = DocumentStatus::Filed;
             }
         });
+        if ($document->matter) {
+            $this->alertTeam($document->matter, "Document updated on {$document->matter->reference}",
+                "{$actor->name} added version {$version->version} of \"{$document->title}\".", $actor);
+        }
 
         return $version;
+    }
+
+    /** In the bell and by push only (D49): colleagues on the matter, not the person who did it. */
+    private function alertTeam(Matter $matter, string $subject, string $line, User $actor): void
+    {
+        StaffNotifier::users($matter->activeTeam()->with('user')->get()->pluck('user'),
+            new StaffAlert($subject, $line, "/admin/matters/{$matter->id}", mail: false), except: $actor);
     }
 
     public function submitForReview(Document $document, User $actor): void

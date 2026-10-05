@@ -3,6 +3,7 @@
 use App\Domain\Communication\Digests;
 use App\Domain\Consultations\Consultations;
 use App\Domain\Matters\Tasks;
+use App\Domain\Meetings\Meetings;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schedule;
@@ -29,6 +30,10 @@ Artisan::command('consultations:remind', function (Consultations $consultations)
     $this->info('Reminders sent: '.$consultations->sendReminders());
 })->purpose('Send consultation reminders that are due');
 
+Artisan::command('meetings:remind', function (Meetings $meetings) {
+    $this->info('Reminders sent: '.$meetings->sendReminders());
+})->purpose('Send video meeting reminders that are due');
+
 Artisan::command('ops:heartbeat', function () {
     Cache::forever('ops.scheduler_last_run', now()->toIso8601String());
 })->purpose('Record that the scheduler ran (shown on the admin Operations page)');
@@ -36,6 +41,7 @@ Artisan::command('ops:heartbeat', function () {
 Schedule::command('ops:heartbeat')->everyMinute();
 Schedule::command('digests:run')->everyMinute()->withoutOverlapping(10);
 Schedule::command('consultations:remind')->everyMinute()->withoutOverlapping(10);
+Schedule::command('meetings:remind')->everyMinute()->withoutOverlapping(10);
 Schedule::command('tasks:notify')->everyFifteenMinutes()->withoutOverlapping();
 // Emails and other queued jobs: a short, bounded worker per cron call instead of a daemon.
 Schedule::command('queue:work --stop-when-empty --max-time=180 --tries=3 --backoff=60 --timeout=60')

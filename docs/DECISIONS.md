@@ -345,3 +345,51 @@ message they can act on. A full administrator can "Delete as spam", one enquiry 
 This permanently removes the enquiry with its history, parties and conflict notes. It is refused for anything linked
 to a client, quotation, terms, consultation, matter or file, which must be closed instead. The audit log keeps each
 deleted reference and who deleted it.
+
+### D49 — In-app notifications and browser push (2026-10-05)
+Staff and clients now get each alert in three places: by email, in a bell inside the app, and as a browser push. The
+bell is Filament's in the staff panel and Notifications in the Client Area. Contacts without an account still get
+email only. Bell entries and pushes are sent straight away; email still waits for the queue (cron, every five
+minutes). Alerts cover:
+- new enquiries;
+- consultation requests and changes;
+- messages;
+- documents added or updated on a matter, sent to the matter team but not to the person who uploaded;
+- documents shared with the client;
+- meeting invitations, changes, cancellations, and a reminder 15 minutes before;
+- staff applications.
+
+Push uses Web Push with VAPID keys (`minishlink/web-push`), on the pattern used by Naija Virtual Notary. This site
+has its own key pair and shares nothing with NVN. `php artisan mtl:vapid-keys` prints a pair to paste into `.env`.
+Replacing the pair later means everyone has to turn alerts on again. Without keys, the bell and email still work
+and push is skipped. A full administrator then sees a note where the "Turn on alerts" switch would be.
+- **Service worker:** `public/sw.js` only shows pushes and opens links on this site. It caches nothing.
+- **Wording:** pushes say as little as the emails do, because they can show on a lock screen.
+- **Links:** an opened notification can only lead to a page on this site.
+- **Subscriptions:** a push service that reports a subscription gone (404/410) has it deleted.
+- **Check:** `php artisan mtl:push-check --send=EMAIL` sends a test push.
+- **iPhone/iPad:** push only works after the site is added to the Home Screen; the switch explains this.
+
+### D50 — Video calls on Daily.co (2026-10-05)
+Meetings and consultations can be held as video calls on this website, using Daily.co. The firm's Daily account is
+separate from NVN's.
+- **Who can schedule:** full administrators can meet with any staff member and any client's portal contacts.
+  Lawyers and case officers can meet with colleagues, and with client contacts of matters they are on. Meetings can
+  be scheduled from Admin → Meetings or from a matter.
+- **Who can change a meeting:** only the organiser or a full administrator can reschedule, invite people or cancel.
+  Everyone invited gets an email with a calendar file, a bell entry and a push.
+- **Consultations:** a consultation can be marked "Video call on this website" instead of pasting a meeting link.
+  A contact without an account gets a signed link that stops working when the call closes.
+- **Joining:** the join page is `/meet/...`. Staff must have passed the 2-step sign-in. Clients must be signed in
+  with a verified email. Only invited people can join, and only between 15 minutes before the start and 60 minutes
+  after the end.
+- **Rooms:** rooms are private and have no knocking. A token minted by the server for that person is the only way
+  in. The organiser or host joins as the room's owner. In-call chat is off; the matter conversation is the record.
+- **Recording:** never requested. Daily's API cannot be told "recording off", so every room is read back. If
+  recording is reported on (a Daily dashboard default), it is logged and audited as
+  `video.recording_enabled_unexpectedly`.
+- **When Daily is not available:** without `DAILY_API_KEY`/`DAILY_DOMAIN`, meetings can still be scheduled, and the
+  join page says video is not set up. Daily being unreachable shows a "try again in a minute" message; nothing
+  breaks.
+- **Not live-tested:** covered by tests against a faked Daily API only, until `php artisan mtl:video-check` passes
+  on the server with the firm's real key.

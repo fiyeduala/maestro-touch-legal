@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Consultations;
 use App\Domain\Clients\ClientContacts;
 use App\Domain\Consultations\Consultations;
 use App\Domain\Matters\MatterStatus;
+use App\Domain\Meetings\VideoRooms;
 use App\Filament\Resources\Consultations\Pages\ListConsultations;
 use App\Filament\Resources\Consultations\Pages\ViewConsultation;
 use App\Filament\Resources\Enquiries\EnquiryResource;
@@ -102,7 +103,8 @@ class ConsultationResource extends Resource
                     ->formatStateUsing(fn (Consultation $record) => "{$record->contact_name} <{$record->contact_email}>"),
                 TextEntry::make('host.name')->label('Host')->placeholder('Not assigned yet'),
                 TextEntry::make('meeting_url')->label('Meeting link')->placeholder('None yet')
-                    ->url(fn (Consultation $record) => $record->meeting_url, shouldOpenInNewTab: true),
+                    ->state(fn (Consultation $record) => $record->video ? 'Video call on this website' : $record->meeting_url)
+                    ->url(fn (Consultation $record) => $record->video ? null : $record->meeting_url, shouldOpenInNewTab: true),
                 TextEntry::make('client.display_name')->label('Client')->placeholder('—'),
                 TextEntry::make('enquiry.reference')->label('Enquiry')->placeholder('—')
                     ->url(fn (Consultation $record) => $record->enquiry && auth()->user()->can('view', $record->enquiry) ? EnquiryResource::getUrl('view', ['record' => $record->enquiry]) : null),
@@ -156,6 +158,13 @@ class ConsultationResource extends Resource
         $upcoming = fn (Consultation $record) => $record->isActive() && $record->starts_at->isFuture();
 
         return [
+            Action::make('join')
+                ->label('Join video call')
+                ->icon(Heroicon::OutlinedVideoCamera)
+                ->color('primary')
+                ->authorize('update')
+                ->visible(fn (Consultation $record) => $record->video && $record->status === 'confirmed' && VideoRooms::closes($record->ends_at)->isFuture())
+                ->url(fn (Consultation $record) => route('meet.consultation', $record), shouldOpenInNewTab: true),
             Action::make('confirm')
                 ->icon(Heroicon::OutlinedCheck)
                 ->color('success')
@@ -163,16 +172,18 @@ class ConsultationResource extends Resource
                 ->visible($upcoming)
                 ->label(fn (Consultation $record) => $record->status === 'confirmed' ? 'Change host or link' : 'Confirm')
                 ->modalDescription('The client is emailed the confirmation with a calendar invitation.')
-                ->fillForm(fn (Consultation $record) => ['host_id' => $record->host_id ?? auth()->id(), 'meeting_url' => $record->meeting_url])
+                ->fillForm(fn (Consultation $record) => ['host_id' => $record->host_id ?? auth()->id(), 'video' => $record->video, 'meeting_url' => $record->meeting_url])
                 ->schema(fn (Consultation $record) => [
                     Select::make('host_id')->label('Host')->required()
                         ->options(fn () => $service()->hosts()->pluck('name', 'id'))
                         ->disabled(fn () => ! auth()->user()->can('assignHost', $record) && $record->host_id !== null),
+                    self::videoToggle(),
                     TextInput::make('meeting_url')->label('Meeting link (optional)')->maxLength(500)
-                        ->regex('#^https://#i')->helperText('Paste a Zoom, Google Meet or Teams link, starting with https://. Leave empty for an in-person or phone consultation.'),
+                        ->regex('#^https://#i')->helperText('Paste a Zoom, Google Meet or Teams link, starting with https://. Leave empty for an in-person or phone consultation.')
+                        ->hidden(fn (Get $get) => (bool) $get('video')),
                 ])
                 ->action(fn (Action $action, Consultation $record, array $data) => DomainActions::run($action,
-                    fn () => $service()->confirm($record, isset($data['host_id']) ? (int) $data['host_id'] : null, $data['meeting_url'] ?? null, $me()), 'Consultation confirmed')),
+                    fn () => $service()->confirm($record, isset($data['host_id']) ? (int) $data['host_id'] : null, $data['meeting_url'] ?? null, $me(), (bool) ($data['video'] ?? false)), 'Consultation confirmed')),
             ActionGroup::make([
                 Action::make('reschedule')
                     ->icon(Heroicon::OutlinedArrowPath)
@@ -255,7 +266,9 @@ class ConsultationResource extends Resource
                         ->mapWithKeys(fn (ConsultationType $t) => [$t->id => "{$t->name} ({$t->duration_minutes} min, {$t->priceLabel()})"])),
                 DateTimePicker::make('starts_at')->label('Time (WAT)')->required()->timezone($tz)->seconds(false)->minutesStep(5),
                 Select::make('host_id')->label('Host')->options(fn () => $service()->hosts()->pluck('name', 'id')),
-                TextInput::make('meeting_url')->label('Meeting link (optional)')->maxLength(500)->regex('#^https://#i'),
+                self::videoToggle(),
+                TextInput::make('meeting_url')->label('Meeting link (optional)')->maxLength(500)->regex('#^https://#i')
+                    ->hidden(fn (Get $get) => (bool) $get('video')),
                 Toggle::make('confirm')->label('Confirm now and email the client')->default(true),
             ])
             ->action(function (Action $action, array $data) use ($service, $enquiry, $matter) {
@@ -265,6 +278,13 @@ class ConsultationResource extends Resource
                 $booking = DomainActions::run($action, fn () => $service()->schedule($data, auth()->user()), 'Consultation booked');
                 $action->redirect(self::getUrl('view', ['record' => $booking]));
             });
+    }
+
+    /** D50: a call on this website through Daily instead of a pasted Zoom/Meet/Teams link. */
+    private static function videoToggle(): Toggle
+    {
+        return Toggle::make('video')->label('Video call on this website')->live()
+            ->helperText('The client joins from their email or Client Area; contacts without an account get a private link. Not recorded.');
     }
 
     public static function getPages(): array

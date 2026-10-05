@@ -210,6 +210,16 @@ Spam on the forms (D48): to switch on Cloudflare Turnstile, go to the Cloudflare
 Add the hostname `mtouchlegal.com` and choose the "Managed" mode. Put the two keys in `.env` as `TURNSTILE_SITE_KEY`
 and `TURNSTILE_SECRET_KEY`, then run `php artisan optimize`. Send a test enquiry afterwards.
 
+Push alerts (D49): run `php artisan mtl:vapid-keys` once and paste the two lines it prints into `.env`
+(`VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`). Keep them. A new pair means everyone has to turn alerts on again. Run
+`php artisan optimize`, turn alerts on in the admin top bar, then run `php artisan mtl:push-check --send=EMAIL` with
+your own account's email address.
+
+Video calls (D50): in the Daily dashboard, go to Developers and copy the API key. Put it in `.env` as `DAILY_API_KEY`,
+with `DAILY_DOMAIN` set to the Daily subdomain (`yourteam` or `yourteam.daily.co`). Leave recording off in the Daily
+dashboard. Run `php artisan optimize`, then `php artisan mtl:video-check`; every step must say OK. Then schedule a
+test meeting with a colleague and join it from two devices.
+
 Leave `STAGING_*` empty. Then, in the Paystack dashboard, set the webhook URL to
 `https://mtouchlegal.com/webhooks/paystack`.
 

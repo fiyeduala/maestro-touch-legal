@@ -15,6 +15,8 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Support\Facades\Blade;
 use Filament\Widgets\AccountWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -26,7 +28,8 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 /**
  * Staff portal at /admin. Every staff account must use 2-step verification
- * (authenticator app with recovery codes, or an emailed code).
+ * (authenticator app with recovery codes, or an emailed code). The bell lists in-app notifications;
+ * the button beside it turns on push notifications for this browser (D49).
  */
 class AdminPanelProvider extends PanelProvider
 {
@@ -55,6 +58,9 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->font('Poppins', url: fn () => Vite::asset('resources/css/admin-font.css'), provider: LocalFontProvider::class)
             ->sidebarCollapsibleOnDesktop()
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('30s')
+            ->renderHook(PanelsRenderHook::TOPBAR_END, fn (): string => Blade::render("@include('partials.push-toggle', ['variant' => 'panel'])"))
             ->navigationGroups(['Website', 'People', 'System'])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')

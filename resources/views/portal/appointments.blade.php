@@ -18,6 +18,22 @@
     };
     @endphp
 
+    @if ($meetings->isNotEmpty())
+        <section aria-labelledby="meetings-heading" class="mb-10">
+            <h2 id="meetings-heading" class="heading-3">Video Meetings</h2>
+            <p class="mt-1 text-sm text-body/80">Meetings the firm has invited you to. Each call opens {{ (int) config('video.join_early_minutes', 15) }} minutes before the start, is private to the people invited and is not recorded.</p>
+            <ul class="mt-4 space-y-4">
+                @foreach ($meetings as $meeting)
+                    <li class="rounded-md border border-line p-5">
+                        <p class="font-medium text-ink">Video meeting · {{ $meeting->starts_at->timezone($tz)->format('l j F Y, g:i a') }} WAT</p>
+                        <p class="mt-1 text-sm text-body/80">{{ $meeting->reference }} · {{ $meeting->starts_at->diffInMinutes($meeting->ends_at) }} minutes · with {{ $meeting->organiser->name }}@if ($meeting->matter) · {{ $meeting->matter->reference }}@endif</p>
+                        <p class="mt-3"><a class="btn" href="{{ route('meet.meeting', $meeting) }}" target="_blank" rel="noopener">Join the video meeting</a></p>
+                    </li>
+                @endforeach
+            </ul>
+        </section>
+    @endif
+
     <section aria-labelledby="upcoming-heading">
         <h2 id="upcoming-heading" class="heading-3">Upcoming</h2>
         @if ($upcoming->isEmpty())
@@ -28,7 +44,10 @@
                     <li class="rounded-md border border-line p-5">
                         <p class="font-medium text-ink">{{ $booking->type->name }} · {{ $booking->starts_at->timezone($tz)->format('l j F Y, g:i a') }} WAT</p>
                         <p class="mt-1 text-sm text-body/80">{{ $booking->reference }} · {{ $booking->status === 'requested' ? 'Waiting for the firm to confirm' : 'Confirmed' }}@if ($booking->matter) · {{ $booking->matter->reference }}@endif</p>
-                        @if ($booking->status === 'confirmed' && $booking->meeting_url)
+                        @if ($booking->status === 'confirmed' && $booking->video)
+                            <p class="mt-2"><a class="btn" href="{{ route('meet.consultation', $booking) }}" target="_blank" rel="noopener">Join the video call</a></p>
+                            <p class="mt-1 text-sm text-body/80">A video call on this website. It opens {{ (int) config('video.join_early_minutes', 15) }} minutes before the start and is not recorded.</p>
+                        @elseif ($booking->status === 'confirmed' && $booking->meeting_url)
                             <p class="mt-2"><a class="text-brand underline" href="{{ $booking->meeting_url }}" target="_blank" rel="noopener noreferrer">Join the consultation</a></p>
                         @endif
                         @if ($booking->client_agenda)

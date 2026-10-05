@@ -30,6 +30,7 @@ class Consultation extends Model
             'confirmed_at' => 'datetime',
             'cancelled_at' => 'datetime',
             'reminders_sent' => 'array',
+            'video' => 'boolean',
         ];
     }
 

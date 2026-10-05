@@ -1,6 +1,6 @@
 # Build status
 
-Last updated: 29 September 2026 (end of Phase 6: the build is complete locally).
+Last updated: 5 October 2026 (video meetings and in-app notifications added).
 
 ## Phase overview
 
@@ -14,6 +14,17 @@ Last updated: 29 September 2026 (end of Phase 6: the build is complete locally).
 | 6 | Migration dry-run, visual/content comparison, security/workflow tests, staging checks, deployment package | **Done** locally: 233 automated tests passing (see [TEST-REPORT.md](TEST-REPORT.md)). Staging on the hosting account is waiting on cPanel access ([OUTSTANDING.md](OUTSTANDING.md)) |
 
 Nothing has been deployed. The live WordPress site is untouched.
+
+## Live: video meetings and in-app notifications (5 October 2026)
+
+- **Notifications (D49):** alerts now appear in a bell in the staff panel and in Client Area → Notifications, as
+  well as by email. They also come as browser pushes once VAPID keys are in `.env` and the person turns alerts on.
+  Matter teams are told when a document is added or updated. 260 automated tests passing.
+- **Video (D50):** staff can schedule video meetings with colleagues and clients (Admin → Meetings, or from a
+  matter). Consultations can be held as video calls on the site. Calls run on Daily.co in private rooms and are
+  not recorded.
+- **Waiting on the owner:** the Daily API key and domain, and the VAPID keys. Video has only been tested against a
+  faked Daily API, so it is not live-ready until `php artisan mtl:video-check` passes on the server.
 
 ## Live: spam protection (5 October 2026)
 
@@ -230,6 +241,8 @@ repeatability/conflicts, and application file access.
 | **NGN and USD bank details** (Settings → Bank transfer, left empty for the system administrator) | Clients paying by transfer. Until then the portal shows no transfer option |
 | Which currencies the firm's Paystack account accepts (`PAYSTACK_CURRENCIES`, currently `NGN`) | USD card payments |
 | Paystack webhook URL in the Paystack dashboard, and live keys | Online payments in production |
+| Daily.co API key and domain (`DAILY_API_KEY`, `DAILY_DOMAIN`), then `php artisan mtl:video-check` | Video calls |
+| VAPID keys (`php artisan mtl:vapid-keys`, pasted into `.env`) | Browser push alerts (bell and email work without them) |
 | SMTP (owner fills `.env` on cPanel), Tawk IDs, admin notification emails (Settings → Email) | Live integration checks (build proceeds with test doubles). Owner reviews everything locally before any cPanel upload |
 
 ## Local environment notes

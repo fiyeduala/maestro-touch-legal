@@ -17,7 +17,13 @@
                 <a href="{{ route('portal.invoices') }}" @class(['text-brand' => request()->routeIs('portal.invoices*', 'portal.payments.*', 'portal.funds'), 'hover:text-brand'])>Invoices</a>
                 <a href="{{ route('portal.appointments') }}" @class(['text-brand' => request()->routeIs('portal.appointments'), 'hover:text-brand'])>Appointments</a>
                 <a href="{{ $enquiryUrl }}" class="hover:text-brand">New Request</a>
+                @php($portalAlerts = auth()->user()->unreadNotifications()->count())
+                <a href="{{ route('portal.notifications') }}" @class(['text-brand' => request()->routeIs('portal.notifications'), 'hover:text-brand'])>
+                    Notifications
+                    @if ($portalAlerts) <span class="ml-1 rounded-full bg-brand px-2 py-0.5 text-xs text-white">{{ $portalAlerts }}<span class="sr-only"> unread</span></span>@endif
+                </a>
                 <a href="{{ route('portal.profile') }}" @class(['text-brand' => request()->routeIs('portal.profile'), 'hover:text-brand'])>Profile &amp; Security</a>
+                @include('partials.push-toggle', ['variant' => 'portal'])
                 <form method="post" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="hover:text-brand">Sign Out</button>

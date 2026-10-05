@@ -23,7 +23,10 @@ class SecurityHeaders
         if (! $headers->has('X-Frame-Options')) {
             $headers->set('X-Frame-Options', 'SAMEORIGIN');
         }
-        $headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(self)');
+        // The video call page (D50) sets its own policy allowing the camera and microphone for the call frame only.
+        if (! $headers->has('Permissions-Policy')) {
+            $headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(self)');
+        }
         if ($request->isSecure() && app()->isProduction()) {
             // No includeSubDomains: other subdomains (e.g. the notary service, webmail) are managed separately.
             $headers->set('Strict-Transport-Security', 'max-age=31536000');

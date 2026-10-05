@@ -6,6 +6,7 @@ use App\Domain\Communication\Conversations;
 use App\Filament\Resources\Consultations\ConsultationResource;
 use App\Filament\Resources\Invoices\InvoiceResource;
 use App\Filament\Resources\Matters\MatterResource;
+use App\Filament\Resources\Meetings\MeetingResource;
 use App\Filament\Support\RefreshesRecord;
 use App\Models\Invoice;
 use Filament\Actions\Action;
@@ -35,6 +36,7 @@ class ViewMatter extends ViewRecord
             ...$this->refreshingAfter([
                 ...MatterResource::workActions(),
                 ConsultationResource::scheduleAction(matter: $this->record)->visible(! $this->record->isClosed()),
+                MeetingResource::scheduleAction(matter: $this->record)->visible(! $this->record->isClosed()),
             ]),
         ];
     }

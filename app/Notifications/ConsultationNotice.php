@@ -2,7 +2,10 @@
 
 namespace App\Notifications;
 
+use App\Domain\Meetings\VideoRooms;
 use App\Models\Consultation;
+use App\Models\User;
+use App\Notifications\Concerns\InAppAndPush;
 use App\Support\Ics;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -12,11 +15,13 @@ use Illuminate\Notifications\Notification;
 /**
  * Consultation emails to the client or enquirer: requested, confirmed, rescheduled, cancelled, reminder.
  * Times are shown in West Africa Time. Confirmed bookings carry a calendar invitation. The client's
- * agenda and any internal outcome notes are never included.
+ * agenda and any internal outcome notes are never included. A video consultation (D50) links to this site's
+ * join page: the sign-in route for a portal user, a signed link that closes with the call for anyone else.
+ * Portal users also get it in their notifications and as a push (D49).
  */
 class ConsultationNotice extends Notification implements ShouldQueue
 {
-    use Queueable;
+    use InAppAndPush, Queueable;
 
     public int $tries = 3;
 
@@ -24,7 +29,37 @@ class ConsultationNotice extends Notification implements ShouldQueue
 
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return $this->channels($notifiable);
+    }
+
+    protected function inApp(object $notifiable): array
+    {
+        $consultation = Consultation::with('type')->findOrFail($this->consultationId);
+        $when = $consultation->starts_at->timezone(config('app.firm_timezone'))->format('D j M, g:i a').' WAT';
+
+        return [
+            'title' => match ($this->kind) {
+                'requested' => 'Consultation request received',
+                'confirmed' => 'Consultation confirmed',
+                'rescheduled' => 'Consultation moved',
+                'cancelled' => 'Consultation cancelled',
+                'reminder' => 'Consultation reminder',
+                default => 'Consultation update',
+            },
+            'body' => "{$consultation->type->name}, {$when}.",
+            'url' => '/portal/appointments',
+            'icon' => 'heroicon-o-calendar-days',
+        ];
+    }
+
+    /** Where the contact joins: the video page for a video consultation, otherwise the pasted link. */
+    private function joinUrl(Consultation $consultation, object $notifiable): ?string
+    {
+        if ($consultation->video) {
+            return $notifiable instanceof User ? route('meet.consultation', $consultation) : VideoRooms::guestLink($consultation);
+        }
+
+        return $consultation->meeting_url;
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -32,6 +67,7 @@ class ConsultationNotice extends Notification implements ShouldQueue
         $consultation = Consultation::with('type')->findOrFail($this->consultationId);
         $when = $consultation->starts_at->timezone(config('app.firm_timezone'))->format('l j F Y, g:i a').' West Africa Time (WAT)';
         $name = $consultation->type->name;
+        $join = $this->joinUrl($consultation, $notifiable);
 
         $mail = (new MailMessage)->greeting('Hello '.$consultation->contact_name.',');
         $mail = match ($this->kind) {
@@ -40,7 +76,9 @@ class ConsultationNotice extends Notification implements ShouldQueue
                 ->line('The firm will confirm the booking by email. Your request does not yet mean the firm has agreed to act for you.'),
             'confirmed' => $mail->subject("Consultation confirmed: {$when}")
                 ->line("Your {$name} is confirmed for {$when}.")
-                ->line($consultation->meeting_url ? 'Join using the link below at the time of the consultation.' : 'The firm will tell you how the consultation will take place.'),
+                ->line($consultation->video
+                    ? 'This is a video call on our website. Use the button below at the time of the consultation; it opens '.(int) config('video.join_early_minutes', 15).' minutes before the start. Your browser will ask to use your camera and microphone. The call is not recorded.'
+                    : ($join ? 'Join using the link below at the time of the consultation.' : 'The firm will tell you how the consultation will take place.')),
             'rescheduled' => $mail->subject("Consultation moved: {$when}")
                 ->line("Your {$name} ({$consultation->reference}) is now on {$when}.")
                 ->line($consultation->status === 'requested' ? 'The firm will confirm the new time by email.' : 'An updated calendar invitation is attached.'),
@@ -52,8 +90,8 @@ class ConsultationNotice extends Notification implements ShouldQueue
             default => $mail->subject('Consultation update')->line('There is an update to your consultation.'),
         };
 
-        if ($consultation->status === 'confirmed' && $consultation->meeting_url && in_array($this->kind, ['confirmed', 'rescheduled', 'reminder'], true)) {
-            $mail->action('Join the consultation', $consultation->meeting_url);
+        if ($consultation->status === 'confirmed' && $join && in_array($this->kind, ['confirmed', 'rescheduled', 'reminder'], true)) {
+            $mail->action($consultation->video ? 'Join the video call' : 'Join the consultation', $join);
         } elseif ($consultation->client_id) {
             $mail->action('View in your portal', url('/portal/appointments'));
         }
@@ -65,8 +103,8 @@ class ConsultationNotice extends Notification implements ShouldQueue
                 start: $consultation->starts_at,
                 end: $consultation->ends_at,
                 summary: "{$name} with Maestro Touch Legal",
-                description: 'Consultation '.$consultation->reference.($consultation->meeting_url ? "\nJoin: ".$consultation->meeting_url : ''),
-                location: $consultation->meeting_url,
+                description: 'Consultation '.$consultation->reference.($join ? "\nJoin: ".$join : ''),
+                location: $join,
                 cancelled: $this->kind === 'cancelled',
             ), 'consultation.ics', ['mime' => 'text/calendar; charset=utf-8']);
         }
