@@ -9,6 +9,7 @@ use App\Domain\Intake\ConflictChecks;
 use App\Domain\Intake\Enquiries;
 use App\Domain\Intake\EnquirySource;
 use App\Domain\Intake\EnquiryStatus;
+use App\Domain\RuleViolation;
 use App\Filament\Resources\Engagements\EngagementResource;
 use App\Filament\Resources\Enquiries\Pages\ListEnquiries;
 use App\Filament\Resources\Enquiries\Pages\ViewEnquiry;
@@ -28,6 +29,7 @@ use App\Support\Money;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\BulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
@@ -35,6 +37,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -46,6 +49,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use UnitEnum;
 
 class EnquiryResource extends Resource
@@ -208,7 +212,31 @@ class EnquiryResource extends Resource
                 TernaryFilter::make('unassigned')->label('Unassigned')
                     ->queries(true: fn (Builder $query) => $query->whereNull('owner_id'), false: fn (Builder $query) => $query->whereNotNull('owner_id')),
             ])
-            ->recordActions([ViewAction::make()]);
+            ->recordActions([ViewAction::make()])
+            ->toolbarActions([
+                BulkAction::make('deleteSpam')
+                    ->label('Delete as spam')
+                    ->icon(Heroicon::OutlinedTrash)
+                    ->color('danger')
+                    ->visible(fn () => auth()->user()->isFullAdministrator())
+                    ->requiresConfirmation()
+                    ->modalDescription('Permanently deletes the selected enquiries and their history. Any linked to a client, quotation, consultation, matter or file are skipped. The audit log keeps each reference.')
+                    ->action(function (Collection $records) {
+                        $skipped = [];
+                        foreach ($records as $record) {
+                            try {
+                                app(Enquiries::class)->deleteAsSpam($record, auth()->user());
+                            } catch (RuleViolation) {
+                                $skipped[] = $record->reference;
+                            }
+                        }
+                        $deleted = $records->count() - count($skipped);
+                        Notification::make()->title("{$deleted} ".str('enquiry')->plural($deleted).' deleted')
+                            ->body($skipped ? 'Kept because they are linked to other work: '.implode(', ', $skipped) : null)
+                            ->{$skipped ? 'warning' : 'success'}()->send();
+                    })
+                    ->deselectRecordsAfterCompletion(),
+            ]);
     }
 
     /** Staff-entered enquiry (phone, WhatsApp, email, walk-in…). */
@@ -391,6 +419,18 @@ class EnquiryResource extends Resource
                     ->schema([Textarea::make('note')->required()->maxLength(5000)->rows(5)])
                     ->action(fn (Action $action, Enquiry $record, array $data) => DomainActions::run($action,
                         fn () => $service()->addNote($record, $data['note'], $me()), 'Note added')),
+
+                Action::make('deleteSpam')
+                    ->label('Delete as spam')
+                    ->icon(Heroicon::OutlinedTrash)
+                    ->color('danger')
+                    ->authorize('delete')
+                    ->requiresConfirmation()
+                    ->modalDescription('Permanently deletes this enquiry and its history. Only for spam: an enquiry linked to a client, quotation, consultation, matter or file cannot be deleted. The audit log keeps the reference.')
+                    ->action(function (Action $action, Enquiry $record) use ($service, $me) {
+                        DomainActions::run($action, fn () => $service()->deleteAsSpam($record, $me()), 'Enquiry deleted');
+                        $action->redirect(self::getUrl('index'));
+                    }),
             ])->label('More')->icon(Heroicon::OutlinedEllipsisVertical)->button()->color('gray'),
         ];
     }

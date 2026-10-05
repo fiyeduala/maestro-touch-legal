@@ -328,3 +328,20 @@ The old pages, posts and images are in this repository, so the blog is restored 
 The hosting server's MySQL creates MyISAM tables by default, which failed the first install ("max key length is
 1000 bytes") and, worse, would ignore transactions and foreign keys. The `mysql` and `mariadb` connections now set
 `engine => InnoDB`, and `DatabaseSchemaTest` checks the setting (and, on MariaDB, every table).
+
+### D48 — Spam on the public forms (2026-10-05)
+Spam enquiries reached the live site past the hidden-field trap and the per-address rate limit. Each also sent an
+acknowledgement email to whatever address the bot typed. The enquiry, contact, careers and registration forms now
+pass through `App\Support\FormGuard`, which applies these checks in order:
+- the hidden field;
+- an encrypted "form shown at" time: anything sent within `FORMS_MIN_SECONDS` (3) is treated as automated, and a
+  missing or forged time asks the person to send again;
+- a limit on web links: one in an enquiry, two in a job application, none in a registration name;
+- Cloudflare Turnstile, which stays off until `TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY` are in `.env`. Its
+  server check is covered by tests against a faked Cloudflare response and has not yet been tried with real keys.
+
+Submissions that look automated get the normal thank-you page and are not saved. A person who trips a check sees a
+message they can act on. A full administrator can "Delete as spam", one enquiry at a time or several from the list.
+This permanently removes the enquiry with its history, parties and conflict notes. It is refused for anything linked
+to a client, quotation, terms, consultation, matter or file, which must be closed instead. The audit log keeps each
+deleted reference and who deleted it.

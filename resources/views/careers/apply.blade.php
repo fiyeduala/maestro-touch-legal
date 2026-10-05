@@ -17,10 +17,7 @@
 
                 <form method="post" action="{{ route('careers.store') }}" enctype="multipart/form-data" class="space-y-6" novalidate>
                     @csrf
-                    <div class="hidden" aria-hidden="true">
-                        <label for="company_website">Leave this empty</label>
-                        <input id="company_website" name="company_website" type="text" tabindex="-1" autocomplete="off">
-                    </div>
+                    @include('partials.form-guard')
 
                     <fieldset class="space-y-6">
                         <legend class="heading-3 mb-4">About You</legend>
@@ -126,6 +123,7 @@
                         @error('consent')<p class="form-error">{{ $message }}</p>@enderror
                     </div>
 
+                    @include('partials.form-check')
                     <button type="submit" class="btn">Submit Application</button>
                 </form>
             </div>

@@ -7,9 +7,11 @@ use App\Domain\Operations\Audit;
 use App\Domain\Operations\StaffNotifier;
 use App\Domain\RuleViolation;
 use App\Models\Client;
+use App\Models\Consultation;
 use App\Models\Enquiry;
 use App\Models\EnquiryEvent;
 use App\Models\IntakeForm;
+use App\Models\Matter;
 use App\Models\Party;
 use App\Models\Service;
 use App\Models\User;
@@ -272,6 +274,30 @@ class Enquiries
         $enquiry->forceFill(['client_id' => $client->id])->save();
         $this->event($enquiry, 'client_linked', null, null, "Linked to client {$client->reference}", $actor);
         Audit::record('enquiry.client_linked', "{$enquiry->reference} linked to client {$client->reference}", $enquiry, actor: $actor);
+    }
+
+    /**
+     * Spam only (D48): removes an enquiry that never became work, with its history, parties and conflict notes.
+     * Anything linked to a client, quotation, terms, consultation, matter or file stays and must be closed instead.
+     * The audit log keeps the reference and who deleted it.
+     */
+    public function deleteAsSpam(Enquiry $enquiry, User $actor): void
+    {
+        if (! $actor->isFullAdministrator()) {
+            throw new RuleViolation('Only a full administrator can delete enquiries.');
+        }
+        if ($enquiry->client_id || $enquiry->matter_id || $enquiry->quotations()->exists() || $enquiry->engagements()->exists()
+            || $enquiry->documents()->exists() || Consultation::where('enquiry_id', $enquiry->id)->exists()
+            || Matter::where('enquiry_id', $enquiry->id)->exists()) {
+            throw new RuleViolation("{$enquiry->reference} is linked to a client, quotation, consultation, matter or file. Close it instead.");
+        }
+
+        DB::transaction(function () use ($enquiry, $actor) {
+            Audit::record('enquiry.deleted_as_spam', "Enquiry {$enquiry->reference} deleted as spam", $enquiry,
+                context: ['source' => $enquiry->source->value], actor: $actor);
+            $enquiry->parties()->whereNull('matter_id')->delete();
+            $enquiry->delete();
+        });
     }
 
     /** Creates the client record from the enquiry's contact details (no portal account is created). */

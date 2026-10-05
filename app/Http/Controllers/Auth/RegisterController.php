@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Domain\Clients\ClientRegistration;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Support\FormGuard;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -19,8 +20,8 @@ class RegisterController extends Controller
 
     public function store(Request $request, ClientRegistration $registration): RedirectResponse
     {
-        // Honeypot: bots filling hidden fields get the same neutral result as a real sign-up.
-        if ($request->filled('company_website')) {
+        // Bots (FormGuard) get the same neutral result as a real sign-up.
+        if (FormGuard::rejects($request, ['first_name', 'last_name'], 0)) {
             return redirect()->route('login')->with('status', 'Thanks for registering. Please check your email to verify your address.');
         }
 

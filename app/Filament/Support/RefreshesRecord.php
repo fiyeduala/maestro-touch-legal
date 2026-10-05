@@ -26,7 +26,12 @@ trait RefreshesRecord
      */
     protected function refreshingAfter(array $actions): array
     {
-        $refresh = fn () => $this->record = $this->resolveRecord($this->record->getKey());
+        // A deleted record (an enquiry deleted as spam) has nothing to reload; its action redirects away.
+        $refresh = function () {
+            if ($this->record->exists) {
+                $this->record = $this->resolveRecord($this->record->getKey());
+            }
+        };
 
         foreach ($actions as $action) {
             foreach ($action instanceof ActionGroup ? $action->getActions() : [$action] as $inner) {

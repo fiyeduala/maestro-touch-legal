@@ -206,6 +206,10 @@ go through Cloudflare, which carries only web traffic, so SMTP to them times out
 on this host. `localhost` fails certificate checks. Every email is queued and is only sent when the scheduled task
 runs (the cron job in section 4). Test with `php artisan queue:work --stop-when-empty -v`.
 
+Spam on the forms (D48): to switch on Cloudflare Turnstile, go to the Cloudflare dashboard → Turnstile → Add widget.
+Add the hostname `mtouchlegal.com` and choose the "Managed" mode. Put the two keys in `.env` as `TURNSTILE_SITE_KEY`
+and `TURNSTILE_SECRET_KEY`, then run `php artisan optimize`. Send a test enquiry afterwards.
+
 Leave `STAGING_*` empty. Then, in the Paystack dashboard, set the webhook URL to
 `https://mtouchlegal.com/webhooks/paystack`.
 

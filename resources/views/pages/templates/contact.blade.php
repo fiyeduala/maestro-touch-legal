@@ -42,12 +42,10 @@
             @include('partials.form-status', ['summary' => true])
             <form method="post" action="{{ route('enquiry.contact') }}" class="space-y-6" novalidate>
                 @csrf
-                <div class="hidden" aria-hidden="true">
-                    <label for="company_website">Leave this empty</label>
-                    <input id="company_website" name="company_website" type="text" tabindex="-1" autocomplete="off">
-                </div>
+                @include('partials.form-guard')
                 @include('enquiries.partials.contact-fields')
                 @include('enquiries.partials.summary-consent')
+                @include('partials.form-check')
                 <button type="submit" class="btn">Send Message</button>
             </form>
         </div>

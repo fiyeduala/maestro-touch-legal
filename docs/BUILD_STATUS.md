@@ -15,6 +15,12 @@ Last updated: 29 September 2026 (end of Phase 6: the build is complete locally).
 
 Nothing has been deployed. The live WordPress site is untouched.
 
+## Live: spam protection (5 October 2026)
+
+Spam enquiries arrived on the live site. The public forms now reject submissions that are too fast or full of links,
+and can use Cloudflare Turnstile once the owner adds its keys. Full administrators can delete spam enquiries, one at
+a time or in bulk. See D48. 242 automated tests passing.
+
 ## Clean-up (30 September 2026)
 
 Build-time material that the running site does not need was removed from the repository: the raw capture of the

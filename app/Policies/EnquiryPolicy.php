@@ -36,6 +36,12 @@ class EnquiryPolicy
         return $user->isFullAdministrator();
     }
 
+    /** Spam only; the service refuses anything that became work (D48). */
+    public function delete(User $user, Enquiry $enquiry): bool
+    {
+        return $user->isFullAdministrator();
+    }
+
     /** Clearing or flagging a conflict check: full administrators or a lawyer who owns the enquiry. Case officers: read only. */
     public function decideConflict(User $user, Enquiry $enquiry): bool
     {

@@ -6,6 +6,7 @@ use App\Domain\Identity\AccountAdministrationException;
 use App\Domain\Recruitment\StaffApplications;
 use App\Http\Controllers\Controller;
 use App\Models\StaffApplication;
+use App\Support\FormGuard;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -46,7 +47,8 @@ class CareersController extends Controller
 
     public function store(Request $request, StaffApplications $applications): RedirectResponse
     {
-        if ($request->filled('company_website')) {
+        // A CV link and a profile or portfolio link are normal in an application.
+        if (FormGuard::rejects($request, ['full_name', 'location', 'qualifications', 'professional_registration', 'statement'], 2)) {
             return redirect()->route('careers.thanks');
         }
 

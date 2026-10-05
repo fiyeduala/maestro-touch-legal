@@ -7,6 +7,7 @@ use App\Domain\Intake\EnquirySource;
 use App\Http\Controllers\Controller;
 use App\Models\Service;
 use App\Models\User;
+use App\Support\FormGuard;
 use App\Support\SiteUrl;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -27,6 +28,9 @@ class EnquiryController extends Controller
         'consent' => ['accepted'],
     ];
 
+    /** Free text checked for web links: spam is mostly links, and one is allowed (D48). */
+    private const TEXT_FIELDS = ['contact_name', 'organisation_name', 'summary', 'preferred_times'];
+
     private const MESSAGES = [
         'consent.accepted' => 'Please confirm you agree to us using these details to respond to your enquiry.',
         'summary.min' => 'Please tell us a little more about what you need.',
@@ -43,7 +47,7 @@ class EnquiryController extends Controller
 
     public function store(Request $request, Enquiries $enquiries): RedirectResponse
     {
-        if ($request->filled('company_website')) {
+        if (FormGuard::rejects($request, self::TEXT_FIELDS)) {
             return redirect()->to(SiteUrl::to('/legal-assistance/thank-you/'));
         }
 
@@ -69,7 +73,7 @@ class EnquiryController extends Controller
     /** The short Contact-page form: no service or intake questions. */
     public function storeContact(Request $request, Enquiries $enquiries): RedirectResponse
     {
-        if ($request->filled('company_website')) {
+        if (FormGuard::rejects($request, self::TEXT_FIELDS)) {
             return redirect()->to(SiteUrl::to('/legal-assistance/thank-you/'));
         }
 

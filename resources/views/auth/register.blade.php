@@ -9,10 +9,7 @@
 
             <form method="post" action="{{ route('register') }}" class="space-y-6" novalidate>
                 @csrf
-                <div class="hidden" aria-hidden="true">
-                    <label for="company_website">Leave this empty</label>
-                    <input id="company_website" name="company_website" type="text" tabindex="-1" autocomplete="off">
-                </div>
+                @include('partials.form-guard')
 
                 <div class="grid gap-6 md:grid-cols-2">
                     <div>
@@ -64,6 +61,7 @@
                     @error('accept_privacy')<p class="form-error">{{ $message }}</p>@enderror
                 </div>
 
+                @include('partials.form-check')
                 <button type="submit" class="btn">Register</button>
             </form>
 

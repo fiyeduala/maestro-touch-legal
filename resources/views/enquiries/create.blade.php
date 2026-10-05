@@ -42,10 +42,7 @@
                     <form method="post" action="{{ route('enquiry.store') }}" class="space-y-6" novalidate>
                         @csrf
                         <input type="hidden" name="service" value="{{ $selected->slug }}">
-                        <div class="hidden" aria-hidden="true">
-                            <label for="company_website">Leave this empty</label>
-                            <input id="company_website" name="company_website" type="text" tabindex="-1" autocomplete="off">
-                        </div>
+                        @include('partials.form-guard')
 
                         @include('enquiries.partials.contact-fields', ['organisation' => true])
 
@@ -88,6 +85,7 @@
 
                         @include('enquiries.partials.summary-consent', ['preferredTimes' => true])
 
+                        @include('partials.form-check')
                         <button type="submit" class="btn">Send Enquiry</button>
                     </form>
                 </div>
