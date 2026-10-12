@@ -63,6 +63,7 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarCollapsibleOnDesktop()
             ->databaseNotifications()
             ->databaseNotificationsPolling('30s')
+            ->renderHook(PanelsRenderHook::HEAD_END, fn (): string => view('partials.app-icons', ['manifest' => '/staff.webmanifest', 'appTitle' => 'MTL Staff'])->render())
             ->renderHook(PanelsRenderHook::TOPBAR_END, fn (): string => Blade::render("@include('partials.push-toggle', ['variant' => 'panel'])"))
             ->navigationGroups(['Website', 'People', 'System'])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')

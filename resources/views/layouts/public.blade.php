@@ -46,7 +46,7 @@
 
     <link rel="icon" href="{{ url('/images/2025/08/blue-1-150x150.png') }}" sizes="32x32">
     <link rel="icon" href="{{ Markup::safeUrl(Settings::get('site.favicon_path')) }}" sizes="192x192">
-    <link rel="apple-touch-icon" href="{{ Markup::safeUrl(Settings::get('site.favicon_path')) }}">
+    @include('partials.app-icons')
     <link rel="alternate" type="application/rss+xml" title="{{ $siteTitle }} &raquo; Feed" href="{{ \App\Support\SiteUrl::to('/feed/') }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
