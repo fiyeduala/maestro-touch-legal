@@ -16,7 +16,7 @@ use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Locked;
 
-/** A draft invoice for a client, optionally from a matter (?matter=). Nothing reaches the client until it is issued. */
+/** A draft invoice for a client, optionally from a matter (?matter=, which also ticks its unbilled time). Nothing reaches the client until it is issued. */
 class CreateInvoice extends CreateRecord
 {
     protected static string $resource = InvoiceResource::class;
@@ -42,13 +42,16 @@ class CreateInvoice extends CreateRecord
     protected function fillForm(): void
     {
         $matter = $this->matter();
+        // A matter's unbilled time is ticked by default; finance can untick any of it.
+        $time = $matter ? $matter->timeEntries()->unbilled()->orderBy('worked_on')->pluck('id')->map(fn ($id) => (string) $id)->all() : [];
         $this->form->fill([
             'client_id' => $matter?->client_id,
             'matter_id' => $matter?->id,
             'currency' => $matter?->client?->preferred_currency ?? 'NGN',
             'title' => $matter ? 'Professional fees – '.$matter->title : null,
             'due_date' => Invoices::dueDateDefault(),
-            'lines' => [['kind' => 'fee', 'quantity' => 1]],
+            'lines' => $time ? [] : [['kind' => 'fee', 'quantity' => 1]],
+            'time_entry_ids' => $time,
         ]);
     }
 

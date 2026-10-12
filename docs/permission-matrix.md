@@ -29,6 +29,9 @@ CO = Case Officer / Support · FIN = Finance Officer · CE = Content Editor · C
 | Accept quotation / engagement / approve draft **as client** | — | — | — | — | — | — | O only |
 | Engagement terms templates | A | A | — | — | — | — | — |
 | Invoices, payments, credit notes, expenses | A | A | R (T) | R (T) | A | — | O (view, pay) |
+| Time entries: record own time / run a timer (D53) | A | A | T (own) | T (own) | R (A) | — | — |
+| Time entries: correct or void unbilled, bill on invoices | A (correct/void any; bill as finance) | A (as TA) | own, unbilled only | own, unbilled only | A | — | sees invoice lines only |
+| Hourly rates | A | A | — | — | A | — | — |
 | Verify bank-transfer payments, refunds, reversals | A | A | — | — | A | — | — |
 | Client-funds ledger (recovered funds) | A | A | R (T) | — | A | — | O (statement) |
 | Consultations: firm hours, closed dates, rules, consultation types (no per-lawyer calendars, D27) | A | A | — | — | — | — | — |

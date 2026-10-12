@@ -75,6 +75,9 @@ class Reports extends Page
             Section::make('Money')
                 ->description('Each currency is reported on its own. No exchange rates are recorded, so NGN and USD are never added together.')
                 ->schema([View::make('filament.reports-finance')->viewData(fn () => ['finance' => app(ReportData::class)->finance($this->validFilters())])]),
+            Section::make('Time')
+                ->description('Recorded time by work date. Billed means on an issued invoice; amounts stay in each invoice\'s currency.')
+                ->schema([View::make('filament.reports-time')->viewData(fn () => ['time' => app(ReportData::class)->time($this->validFilters())])]),
             Section::make('Practice')
                 ->visible(fn () => auth()->user()->isFullAdministrator())
                 ->schema([View::make('filament.reports-practice')->viewData(fn () => ['practice' => app(ReportData::class)->practice($this->validFilters())])]),

@@ -173,6 +173,11 @@ class Matter extends Model
         return $this->hasMany(Invoice::class);
     }
 
+    public function timeEntries(): HasMany
+    {
+        return $this->hasMany(TimeEntry::class);
+    }
+
     public function expenses(): HasMany
     {
         return $this->hasMany(Expense::class);

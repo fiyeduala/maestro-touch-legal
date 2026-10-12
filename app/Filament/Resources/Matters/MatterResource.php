@@ -16,6 +16,7 @@ use App\Filament\Resources\Matters\RelationManagers\EventsRelationManager;
 use App\Filament\Resources\Matters\RelationManagers\NotarisationRelationManager;
 use App\Filament\Resources\Matters\RelationManagers\TasksRelationManager;
 use App\Filament\Resources\Matters\RelationManagers\TeamRelationManager;
+use App\Filament\Resources\Matters\RelationManagers\TimeRelationManager;
 use App\Filament\Resources\Quotations\QuotationResource;
 use App\Filament\Support\DomainActions;
 use App\Models\Matter;
@@ -267,6 +268,7 @@ class MatterResource extends Resource
             DocumentsRelationManager::class,
             DocumentRequestsRelationManager::class,
             DeadlinesRelationManager::class,
+            TimeRelationManager::class,
             NotarisationRelationManager::class,
             TeamRelationManager::class,
             EventsRelationManager::class,

@@ -35,7 +35,7 @@ class Invoices
     /**
      * Lines hold major-unit decimal strings: {kind, description, quantity, unit}.
      *
-     * @param  array{title: string, currency: string, matter_id?: ?int, quotation_id?: ?int, due_date?: ?string, notes?: ?string, lines?: list<array>, expense_ids?: list<int>}  $data
+     * @param  array{title: string, currency: string, matter_id?: ?int, quotation_id?: ?int, due_date?: ?string, notes?: ?string, lines?: list<array>, expense_ids?: list<int>, time_entry_ids?: list<int>}  $data
      */
     public function createDraft(Client $client, array $data, User $actor): Invoice
     {
@@ -57,7 +57,7 @@ class Invoices
                 'notes' => filled($data['notes'] ?? null) ? trim($data['notes']) : null,
                 'created_by' => $actor->id,
             ]);
-            $this->writeLines($invoice, $data['lines'] ?? [], $data['expense_ids'] ?? []);
+            $this->writeLines($invoice, $data['lines'] ?? [], $data['expense_ids'] ?? [], $data['time_entry_ids'] ?? []);
             Audit::record('invoice.drafted', "Invoice {$invoice->reference} drafted ({$currency} ".Money::toDecimal($invoice->total_minor).')', $invoice, actor: $actor);
 
             return $invoice;
@@ -113,7 +113,7 @@ class Invoices
                 'due_date' => $data['due_date'] ?? null,
                 'notes' => filled($data['notes'] ?? null) ? trim($data['notes']) : null,
             ])->save();
-            $this->writeLines($invoice, $data['lines'] ?? [], $data['expense_ids'] ?? []);
+            $this->writeLines($invoice, $data['lines'] ?? [], $data['expense_ids'] ?? [], $data['time_entry_ids'] ?? []);
             Audit::record('invoice.draft_updated', "Invoice {$invoice->reference} draft edited", $invoice, actor: $actor);
 
             return $invoice;
@@ -170,6 +170,7 @@ class Invoices
                 throw new RuleViolation('Only a draft can be discarded. Correct an issued invoice with a credit note.');
             }
             Expense::where('invoice_id', $invoice->id)->update(['invoice_id' => null]);
+            TimeEntries::detach($invoice);
             $invoice->forceFill(['status' => InvoiceStatus::Cancelled, 'cancelled_at' => now(), 'cancelled_by' => $actor->id, 'cancel_reason' => $reason])->save();
             Audit::record('invoice.discarded', "Draft invoice {$invoice->reference} discarded: {$reason}", $invoice, actor: $actor);
         });
@@ -268,17 +269,19 @@ class Invoices
             'matter_id' => $invoice->matter_id,
             'due_date' => $invoice->due_date?->toDateString(),
             'notes' => $invoice->notes,
-            'lines' => $invoice->lines()->whereNull('expense_id')->get()->map(fn ($l) => [
+            'lines' => $invoice->lines()->whereNull('expense_id')->whereNull('time_entry_id')->get()->map(fn ($l) => [
                 'kind' => $l->kind, 'description' => $l->description, 'quantity' => $l->quantity, 'unit' => Money::input($l->unit_minor),
             ])->all(),
             'expense_ids' => $invoice->lines()->whereNotNull('expense_id')->pluck('expense_id')->map(fn ($id) => (string) $id)->all(),
+            'time_entry_ids' => $invoice->lines()->whereNotNull('time_entry_id')->pluck('time_entry_id')->map(fn ($id) => (string) $id)->all(),
         ];
     }
 
-    private function writeLines(Invoice $invoice, array $lines, array $expenseIds): void
+    private function writeLines(Invoice $invoice, array $lines, array $expenseIds, array $timeEntryIds = []): void
     {
         $invoice->lines()->delete();
         Expense::where('invoice_id', $invoice->id)->update(['invoice_id' => null]);
+        TimeEntries::detach($invoice);
 
         $rows = [];
         foreach ($lines as $line) {
@@ -292,7 +295,7 @@ class Invoices
             }
             $unit = Money::parse((string) ($line['unit'] ?? ''));
             $kind = array_key_exists($line['kind'] ?? '', self::LINE_KINDS) ? $line['kind'] : 'fee';
-            $rows[] = ['kind' => $kind, 'description' => mb_substr($description, 0, 300), 'quantity' => $quantity, 'unit_minor' => $unit, 'amount_minor' => $unit * $quantity, 'expense_id' => null];
+            $rows[] = ['kind' => $kind, 'description' => mb_substr($description, 0, 300), 'quantity' => $quantity, 'unit_minor' => $unit, 'amount_minor' => $unit * $quantity, 'expense_id' => null, 'time_entry_id' => null];
         }
 
         $expenseIds = array_values(array_unique(array_map('intval', $expenseIds)));
@@ -303,13 +306,14 @@ class Invoices
                     || ! $expense->billable || $expense->voided_at || ($expense->invoice_id && $expense->invoice_id !== $invoice->id)) {
                     throw new RuleViolation("Expense {$expense->reference} cannot go on this invoice (different client or currency, not billable, voided or already billed).");
                 }
-                $rows[] = ['kind' => 'expense', 'description' => mb_substr($expense->description, 0, 300), 'quantity' => 1, 'unit_minor' => $expense->amount_minor, 'amount_minor' => $expense->amount_minor, 'expense_id' => $expense->id];
+                $rows[] = ['kind' => 'expense', 'description' => mb_substr($expense->description, 0, 300), 'quantity' => 1, 'unit_minor' => $expense->amount_minor, 'amount_minor' => $expense->amount_minor, 'expense_id' => $expense->id, 'time_entry_id' => null];
             }
             if ($expenses->count() !== count($expenseIds)) {
                 throw new RuleViolation('One of the selected expenses no longer exists.');
             }
             Expense::whereIn('id', $expenseIds)->update(['invoice_id' => $invoice->id]);
         }
+        $rows = array_merge($rows, TimeEntries::attach($invoice, $timeEntryIds));
 
         foreach ($rows as $i => $row) {
             $invoice->lines()->create($row + ['sort' => $i]);

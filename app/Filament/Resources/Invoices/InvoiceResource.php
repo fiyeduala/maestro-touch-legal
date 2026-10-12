@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Invoices;
 
 use App\Domain\Billing\Invoices;
+use App\Domain\Billing\TimeEntries;
 use App\Domain\Billing\InvoiceStatus;
 use App\Domain\Billing\Payments;
 use App\Filament\Resources\Invoices\Pages\CreateInvoice;
@@ -94,6 +95,9 @@ class InvoiceResource extends Resource
             Select::make('expense_ids')->label('Recorded expenses to bill')->multiple()
                 ->helperText('Only billable, unbilled expenses for this client in the invoice currency.')
                 ->options(fn () => $clientId() && $currency() ? Invoices::billableExpenseOptions($clientId(), $currency(), $invoiceId ? $invoiceId() : null) : []),
+            Select::make('time_entry_ids')->label('Recorded time to bill')->multiple()
+                ->helperText('Unbilled, billable time for this client. Each entry is billed at the staff member\'s hourly rate in the invoice currency.')
+                ->options(fn () => $clientId() && $currency() ? TimeEntries::billableOptions($clientId(), $currency(), $invoiceId ? $invoiceId() : null) : []),
             Textarea::make('notes')->label('Notes to the client')->maxLength(5000)->rows(3),
         ];
     }

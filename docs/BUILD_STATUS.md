@@ -15,6 +15,16 @@ Last updated: 5 October 2026 (video meetings and in-app notifications added).
 
 Nothing has been deployed. The live WordPress site is untouched.
 
+## Built: time recording (12 October 2026)
+
+- **Time (D53):** lawyers and case officers record time on their matters (Time tab on a matter, or Practice →
+  Time), by hand or with a timer. Finance sets hourly rates (Billing → Hourly rates) and bills unbilled time on
+  draft invoices as itemised fee lines; each entry is billed once. Reports gain a Time section.
+- **Deploying:** needs `php artisan migrate --force` (new `billing_rates` and `time_entries` tables, and a
+  `time_entry_id` column on invoice lines).
+- **Waiting on the owner:** the firm's hourly rates. Until a person has a rate in the invoice currency, their time
+  cannot be billed (recording works without one).
+
 ## Live: video meetings and in-app notifications (5 October 2026)
 
 - **Notifications (D49):** alerts now appear in a bell in the staff panel and in Client Area → Notifications, as

@@ -19,6 +19,7 @@ use App\Models\Matter;
 use App\Models\Payment;
 use App\Models\Quotation;
 use App\Models\Task;
+use App\Models\TimeEntry;
 use App\Support\Money;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
@@ -141,6 +142,39 @@ class Reports
                 ->when($filters['team_user_id'] ?? null, fn (Builder $q, $id) => $q->where('host_id', $id))
                 ->selectRaw('status, count(*) as aggregate')->groupBy('status')->pluck('aggregate', 'status')->map(fn ($n) => (int) $n)->all(),
         ];
+    }
+
+    /**
+     * Time recorded in the period (by work date), per staff member, in minutes. "Billed" is time on an
+     * issued invoice; amounts are per invoice currency. The team filter picks the person's own time.
+     *
+     * @param  array{from?: ?string, until?: ?string, currency?: ?string, service_id?: ?int, team_user_id?: ?int}  $filters
+     * @return array{people: list<array{name: string, recorded: int, billable: int, billed: int, unbilled: int}>, billed: array<string, int>}
+     */
+    public function time(array $filters): array
+    {
+        [$from, $until] = $this->range($filters);
+        $entries = TimeEntry::query()->whereNull('voided_at')->whereNotNull('minutes')
+            ->whereDate('worked_on', '>=', $from->toDateString())->whereDate('worked_on', '<=', $until->toDateString())
+            ->when($filters['team_user_id'] ?? null, fn (Builder $q, $id) => $q->where('user_id', $id))
+            ->when($filters['service_id'] ?? null, fn (Builder $q, $id) => $q->whereHas('matter', fn (Builder $m) => $m->where('service_id', $id)))
+            ->with(['user:id,name', 'invoice:id,status,currency'])->get();
+        $issued = fn (TimeEntry $e) => (bool) $e->invoice?->status->isIssued();
+
+        $people = $entries->groupBy('user_id')->map(fn (Collection $rows) => [
+            'name' => $rows->first()->user->name,
+            'recorded' => (int) $rows->sum('minutes'),
+            'billable' => (int) $rows->where('billable', true)->sum('minutes'),
+            'billed' => (int) $rows->filter($issued)->sum('minutes'),
+            'unbilled' => (int) $rows->filter(fn (TimeEntry $e) => $e->billable && ! $e->invoice_id)->sum('minutes'),
+        ])->sortByDesc('recorded')->values()->all();
+
+        $billed = [];
+        foreach ($this->currencies($filters) as $currency) {
+            $billed[$currency] = (int) $entries->filter(fn (TimeEntry $e) => $issued($e) && $e->invoice->currency === $currency)->sum('billed_minor');
+        }
+
+        return ['people' => $people, 'billed' => $billed];
     }
 
     /**

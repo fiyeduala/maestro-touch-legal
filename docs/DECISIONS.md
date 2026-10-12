@@ -422,3 +422,23 @@ are only in Cloudflare's analytics or the server's raw access logs.
 - `partials/app-icons` links the right manifest, the Apple touch icon and the theme colour; the staff panel adds
   it through a head render hook. `.htaccess` serves `.webmanifest` as `application/manifest+json`.
 - Phones cache home-screen icons: an existing shortcut must be removed and added again to pick up the new icon.
+
+### D53 — Time recording and billing by the hour (2026-10-12)
+- **Recording:** lawyers and case officers record their own time on matters they are on (full administrators on
+  any matter), from the matter's Time tab or Practice → Time. Either enter hours and minutes (1 minute to 24 hours,
+  not in the future) with a description, or start a timer. One timer runs per person; stopping rounds up to the
+  whole minute. A timer left on for more than 24 hours cannot be stopped: discard it and enter the time by hand.
+  Timers cannot start on closed matters; time can still be entered by hand after closing.
+- **Rates:** finance sets hourly rates under Billing → Hourly rates: a default per person and currency, and
+  optionally a rate for one matter, which wins on that matter. There is no conversion: time is billed only in a
+  currency the person has a rate in, otherwise the invoice is refused with the reason.
+- **Billing:** finance picks recorded time on a draft invoice ("Recorded time to bill"), or selects entries on the
+  Time list → "Create draft invoice" (one client at a time). A new invoice started from a matter ticks its unbilled
+  time. Each entry becomes its own fee line ("12 Oct 2026 · name · 1h 30m at ₦50,000.00/h: description"), amount =
+  minutes × rate ÷ 60 rounded to the nearest kobo/cent. The rate and amount are stored on the entry, so changing a
+  rate later never changes an invoice. An entry is on at most one invoice; removing it from a draft or discarding
+  the draft frees it. Issued invoices stay frozen: correct them with a credit note.
+- **Corrections:** unbilled entries can be changed by their owner or by finance, or voided with a reason.
+  Entries are never deleted (only a running timer is discarded). Every change is in the audit log.
+- **Reports:** a Time section (finance and full administrators) shows hours recorded, billable, billed (on issued
+  invoices) and not yet billed per person by work date, and time billed per currency.
