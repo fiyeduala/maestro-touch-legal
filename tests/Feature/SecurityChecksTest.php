@@ -24,6 +24,7 @@ class SecurityChecksTest extends TestCase
         'log-in', 'register', 'password-reset', 'password-reset/{token}', 'logout',
         'invitation/{token}', 'careers/application/{token}', 'careers/application/{token}/respond', 'careers/application/{token}/withdraw',
         'webhooks/paystack',
+        'blog-beacon', // blog analytics (D51): throttled, CSRF-checked, records a count only
         'admin/login', 'admin/password-reset/request', 'admin/password-reset/reset',
         // Filament checks the signed-in owner in the controller; Livewire checks a signature on uploads/previews.
         'filament/exports/{export}/download', 'filament/imports/{import}/failed-rows/download',

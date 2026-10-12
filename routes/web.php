@@ -21,6 +21,7 @@ use App\Http\Controllers\Site\CareersController;
 use App\Http\Controllers\Site\CommentController;
 use App\Http\Controllers\Site\EnquiryController;
 use App\Http\Controllers\Site\FeedController;
+use App\Http\Controllers\Site\PostBeaconController;
 use App\Http\Controllers\Site\SiteController;
 use App\Http\Controllers\Webhooks\PaystackWebhookController;
 use App\Http\Middleware\AddTrailingSlash;
@@ -37,6 +38,9 @@ use Illuminate\Support\Facades\Route;
 Route::post('/webhooks/paystack', PaystackWebhookController::class)->middleware('throttle:120,1')->name('webhooks.paystack');
 Route::get('/robots.txt', [FeedController::class, 'robots']);
 Route::get('/sitemap.xml', [FeedController::class, 'sitemap'])->name('sitemap');
+
+// Blog analytics: the post page reports views and reads here (D51).
+Route::post('/blog-beacon', PostBeaconController::class)->middleware('throttle:60,1')->name('blog.beacon');
 
 // Old image addresses (search results, other sites) move permanently to the images folder (DECISIONS D41).
 Route::get('/wp-content/uploads/{path}', fn (string $path) => redirect('/images/'.implode('/', array_map('rawurlencode', explode('/', $path))), 301))

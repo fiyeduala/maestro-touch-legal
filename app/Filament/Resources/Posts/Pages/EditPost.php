@@ -48,6 +48,10 @@ class EditPost extends EditRecord
                 ->icon(Heroicon::OutlinedEye)
                 ->color('gray')
                 ->url(fn () => route('preview.post', $this->post()), shouldOpenInNewTab: true),
+            Action::make('analytics')
+                ->icon(Heroicon::OutlinedChartBar)
+                ->color('gray')
+                ->url(fn () => PostResource::getUrl('analytics', ['record' => $this->post()])),
             Action::make('view')
                 ->label('View on site')
                 ->icon(Heroicon::OutlinedArrowTopRightOnSquare)

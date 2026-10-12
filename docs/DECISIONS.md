@@ -393,3 +393,32 @@ separate from NVN's.
   breaks.
 - **Not live-tested:** covered by tests against a faked Daily API only, until `php artisan mtl:video-check` passes
   on the server with the firm's real key.
+
+### D51 — Blog analytics (2026-10-12)
+The site now counts who visits and reads each blog post. Nothing was counted before this date, so earlier visits
+are only in Cloudflare's analytics or the server's raw access logs.
+- **How it counts:** the post page reports a "view" when it opens, and a "read" once the visitor reaches the end
+  of the article after at least 20 seconds on the page (`POST /blog-beacon`, throttled, CSRF-checked). Each
+  visitor counts once per post per day. Previews are never counted.
+- **Not counted:** signed-in staff, browsers that announce themselves as robots or link previews, and posts that
+  are not live. The report needs JavaScript, which keeps most robots out as well.
+- **Privacy:** no address is stored. An anonymous visitor is a keyed hash of address and browser that changes
+  daily, so a visitor cannot be followed from one day to the next. Signed-in clients are recorded by account, so
+  the firm can see which clients opened a post. Only the other site's host name is kept from the referrer.
+  The privacy policy page should say the firm keeps this count (a content change for the owner; not made here).
+- **Who sees it:** full administrators and Content Editors: Visits/Reads/Comments columns on Website → Blog posts,
+  an Analytics page per post (signed-in clients who opened it, where visitors came from, everyone who commented
+  with their email and moderation status), and two dashboard widgets.
+- **Past visits:** `php artisan mtl:import-post-views ~/logs/<file>.gz` reads cPanel raw access logs. Only
+  successful page loads count; robots are skipped; running it twice adds nothing. These rows are marked
+  `access_log`, never count as reads, and are approximate because behind Cloudflare the logged address may be
+  Cloudflare's.
+
+### D52 — Installed-app icons (2026-10-12)
+- Phones showed a plain letter when the site was added to the home screen, because there was no web app
+  manifest and no full-size icon. `public/icons/` now holds the firm's "M" mark on white at 180, 192 and 512
+  pixels (plus a maskable 512), and three manifests name the installed app: `site.webmanifest` (public site),
+  `portal.webmanifest` (client portal, opens at /portal/) and `staff.webmanifest` (staff panel, opens at /admin).
+- `partials/app-icons` links the right manifest, the Apple touch icon and the theme colour; the staff panel adds
+  it through a head render hook. `.htaccess` serves `.webmanifest` as `application/manifest+json`.
+- Phones cache home-screen icons: an existing shortcut must be removed and added again to pick up the new icon.

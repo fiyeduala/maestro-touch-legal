@@ -132,3 +132,52 @@ document.addEventListener('click', (event) => {
         window.print();
     }
 });
+
+// Blog analytics (D51): one "view" when a post opens, and one "read" once the visitor has reached
+// the end of the article and spent at least 20 seconds on the page. Staff and robots are filtered
+// out on the server; nothing here stores anything in the browser.
+function initPostBeacon() {
+    const article = document.querySelector('[data-post-beacon]');
+    if (!article) return;
+
+    const send = (event) => {
+        const body = new FormData();
+        body.append('_token', article.dataset.beaconToken);
+        body.append('post', article.dataset.postId);
+        body.append('event', event);
+        if (event === 'view' && document.referrer) body.append('referrer', document.referrer);
+        fetch(article.dataset.postBeacon, { method: 'POST', body, credentials: 'same-origin', keepalive: true }).catch(() => {});
+    };
+
+    send('view');
+    if (!('IntersectionObserver' in window)) return;
+
+    let reachedEnd = false;
+    let seconds = 0;
+    let sent = false;
+    const check = () => {
+        if (!sent && reachedEnd && seconds >= 20) {
+            sent = true;
+            send('read');
+        }
+    };
+
+    const end = document.createElement('div');
+    end.setAttribute('aria-hidden', 'true');
+    article.appendChild(end);
+    new IntersectionObserver((entries, observer) => {
+        if (entries.some((e) => e.isIntersecting)) {
+            reachedEnd = true;
+            observer.disconnect();
+            check();
+        }
+    }).observe(end);
+
+    const timer = setInterval(() => {
+        if (document.visibilityState === 'visible') seconds++;
+        check();
+        if (sent) clearInterval(timer);
+    }, 1000);
+}
+
+document.addEventListener('DOMContentLoaded', initPostBeacon);

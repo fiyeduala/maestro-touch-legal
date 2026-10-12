@@ -24,7 +24,8 @@
 
     <div class="bg-tint py-10 md:py-16">
         <div class="mx-auto max-w-[710px] px-2 md:px-0">
-            <article class="bg-white px-6 py-8 md:px-10 md:py-12">
+            <article class="bg-white px-6 py-8 md:px-10 md:py-12"
+                     @unless ($preview) data-post-beacon="{{ route('blog.beacon') }}" data-post-id="{{ $post->id }}" data-beacon-token="{{ csrf_token() }}" @endunless>
                 <header>
                     <h1 class="text-[21px] leading-[1.3] font-semibold text-ink md:text-[30px]">{{ $post->title }}</h1>
                     <p class="mt-4 text-sm">

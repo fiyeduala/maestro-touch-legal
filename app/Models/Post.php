@@ -69,6 +69,12 @@ class Post extends Model
         return $this->comments()->where('status', 'approved');
     }
 
+    /** Visits recorded by the blog analytics (D51). */
+    public function views(): HasMany
+    {
+        return $this->hasMany(PostView::class);
+    }
+
     public function revisions(): HasMany
     {
         return $this->hasMany(PostRevision::class)->latest('created_at');

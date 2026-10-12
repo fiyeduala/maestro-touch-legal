@@ -6,10 +6,12 @@ use App\Domain\Operations\Audit;
 use App\Filament\Resources\Posts\Pages\CreatePost;
 use App\Filament\Resources\Posts\Pages\EditPost;
 use App\Filament\Resources\Posts\Pages\ListPosts;
+use App\Filament\Resources\Posts\Pages\PostAnalytics;
 use App\Models\Page;
 use App\Models\Post;
 use BackedEnum;
 use Closure;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DateTimePicker;
@@ -131,6 +133,11 @@ class PostResource extends Resource
 
         return $table
             ->defaultSort('published_at', 'desc')
+            ->modifyQueryUsing(fn (Builder $query) => $query->withCount([
+                'views',
+                'views as reads_count' => fn (Builder $q) => $q->whereNotNull('read_at'),
+                'comments' => fn (Builder $q) => $q->reorder(),
+            ]))
             ->columns([
                 TextColumn::make('title')->searchable()->sortable()->wrap(),
                 TextColumn::make('status')->badge()
@@ -138,8 +145,12 @@ class PostResource extends Resource
                     ->color(fn (string $state) => match ($state) {
                         'published' => 'success', 'scheduled' => 'info', 'review' => 'warning', default => 'gray',
                     }),
-                TextColumn::make('author_name')->label('Author')->placeholder('—'),
+                TextColumn::make('author_name')->label('Author')->placeholder('—')->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('published_at')->label('Published')->dateTime('j M Y', $tz)->sortable()->placeholder('—'),
+                TextColumn::make('views_count')->label('Visits')->numeric()->sortable()
+                    ->url(fn (Post $record) => self::getUrl('analytics', ['record' => $record])),
+                TextColumn::make('reads_count')->label('Reads')->numeric()->sortable(),
+                TextColumn::make('comments_count')->label('Comments')->numeric()->sortable(),
                 TextColumn::make('updated_at')->label('Last change')->since()->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
@@ -147,6 +158,10 @@ class PostResource extends Resource
                 SelectFilter::make('categories')->relationship('categories', 'name'),
             ])
             ->recordActions([
+                Action::make('analytics')
+                    ->icon(Heroicon::OutlinedChartBar)
+                    ->color('gray')
+                    ->url(fn (Post $record) => self::getUrl('analytics', ['record' => $record])),
                 EditAction::make(),
                 self::deleteAction(DeleteAction::make()),
             ]);
@@ -164,6 +179,7 @@ class PostResource extends Resource
             'index' => ListPosts::route('/'),
             'create' => CreatePost::route('/create'),
             'edit' => EditPost::route('/{record}/edit'),
+            'analytics' => PostAnalytics::route('/{record}/analytics'),
         ];
     }
 }
