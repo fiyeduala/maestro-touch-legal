@@ -442,3 +442,16 @@ are only in Cloudflare's analytics or the server's raw access logs.
   Entries are never deleted (only a running timer is discarded). Every change is in the audit log.
 - **Reports:** a Time section (finance and full administrators) shows hours recorded, billable, billed (on issued
   invoices) and not yet billed per person by work date, and time billed per currency.
+
+### D54 — Staff stay signed in for 24 hours without activity (2026-10-12)
+Staff were signed out after two hours idle and had to enter a new sign-in code each time. Staff sessions that came
+through the staff login (password and 2-step code) now end after 24 hours without a request. Clients and anyone else
+keep the existing limit (`SESSION_LIFETIME`, 120 minutes).
+- **How:** the session lives for the longer of the two limits, and `EnforceIdleTimeout` (web group and staff panel)
+  signs a user out once their own limit has passed. A staff account that did not come through the staff login gets the
+  client limit.
+- **Setting:** `STAFF_SESSION_IDLE_MINUTES` in `.env` (default 1440). No `.env` change is needed for 24 hours.
+- **Signing out** still works at any time from the account menu. An open staff tab polls for notifications every 30
+  seconds, which counts as activity, as it did before.
+- **Push notifications** do not depend on being signed in: a browser's subscription is removed only when Alerts is
+  turned off on that device or the push service rejects it, never on sign-out.

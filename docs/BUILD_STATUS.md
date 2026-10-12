@@ -15,6 +15,11 @@ Last updated: 5 October 2026 (video meetings and in-app notifications added).
 
 Nothing has been deployed. The live WordPress site is untouched.
 
+## Built: staff idle sign-out after 24 hours (12 October 2026)
+
+- **Sessions (D54):** staff signed in through the staff login stay signed in until 24 hours without activity
+  (was two hours). Clients keep two hours. No migration and no `.env` change needed.
+
 ## Built: time recording (12 October 2026)
 
 - **Time (D53):** lawyers and case officers record time on their matters (Time tab on a matter, or Practice →

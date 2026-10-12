@@ -32,7 +32,14 @@ return [
     |
     */
 
-    'lifetime' => (int) env('SESSION_LIFETIME', 120),
+    // Idle limits by audience (D54), checked by EnforceIdleTimeout. SESSION_LIFETIME stays the limit for
+    // clients and everyone else; staff signed in through the staff login get STAFF_SESSION_IDLE_MINUTES.
+    // The session itself must outlive both.
+    'client_idle_minutes' => (int) env('SESSION_LIFETIME', 120),
+
+    'staff_idle_minutes' => (int) env('STAFF_SESSION_IDLE_MINUTES', 1440),
+
+    'lifetime' => max((int) env('SESSION_LIFETIME', 120), (int) env('STAFF_SESSION_IDLE_MINUTES', 1440)),
 
     'expire_on_close' => env('SESSION_EXPIRE_ON_CLOSE', false),
 

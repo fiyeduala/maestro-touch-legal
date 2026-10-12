@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\ApplyRedirects;
+use App\Http\Middleware\EnforceIdleTimeout;
 use App\Http\Middleware\ProtectNonProduction;
 use App\Http\Middleware\SecurityHeaders;
 use App\Support\Cloudflare;
@@ -22,6 +23,7 @@ $app = Application::configure(basePath: dirname(__DIR__))
         $middleware->prepend(ApplyRedirects::class);
         $middleware->prepend(ProtectNonProduction::class);
         $middleware->append(SecurityHeaders::class);
+        $middleware->appendToGroup('web', EnforceIdleTimeout::class);
         $middleware->validateCsrfTokens(except: ['webhooks/paystack']);
         $middleware->redirectGuestsTo(fn () => route('login'));
         $middleware->redirectUsersTo(fn () => route('portal.home'));

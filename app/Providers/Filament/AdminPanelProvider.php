@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Domain\Operations\Settings;
+use App\Http\Middleware\EnforceIdleTimeout;
 use App\Http\Middleware\EnsureStaffSessionVerified;
 use App\Notifications\StaffLoginCode;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
@@ -17,13 +18,13 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\View\PanelsRenderHook;
-use Illuminate\Support\Facades\Blade;
 use Filament\Widgets\AccountWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
@@ -79,6 +80,7 @@ class AdminPanelProvider extends PanelProvider
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
                 StartSession::class,
+                EnforceIdleTimeout::class,
                 AuthenticateSession::class,
                 ShareErrorsFromSession::class,
                 VerifyCsrfToken::class,
